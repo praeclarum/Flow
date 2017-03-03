@@ -1,17 +1,26 @@
-%{
-#define YYSTYPE double
+
+/* Declarations */
+%code requires
+{
 #include <math.h>
-%}
+#include <stdio.h>
+void yyerror(const char *msg);
+}
+
+%union { double val; }
+/* %destructor { type1_free ($$); } <val> */
 
 /* BISON Declarations */
 %define api.pure full
 %define api.push-pull push
 
-%token NUM
+%token <val> NUM
 %left '-' '+'
 %left '*' '/'
 %left NEG     /* negation--unary minus */
 %right '^'    /* exponentiation        */
+
+%type <val> input line exp
 
 /* Grammar follows */
 %%

@@ -62,12 +62,8 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 1 "src/Parsers/FlowParser.y" /* yacc.c:339  */
 
-#define YYSTYPE double
-#include <math.h>
-
-#line 71 "src/Parsers/FlowParser.cpp" /* yacc.c:339  */
+#line 67 "src/Parsers/FlowParser.cpp" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -96,6 +92,14 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 4 "src/Parsers/FlowParser.y" /* yacc.c:355  */
+
+#include <math.h>
+#include <stdio.h>
+void yyerror(const char *msg);
+
+#line 103 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -109,7 +113,16 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+
+union YYSTYPE
+{
+#line 10 "src/Parsers/FlowParser.y" /* yacc.c:355  */
+ double val; 
+
+#line 123 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
+};
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -132,7 +145,7 @@ void yypstate_delete (yypstate *ps);
 
 /* Copy the second part of user declarations.  */
 
-#line 136 "src/Parsers/FlowParser.cpp" /* yacc.c:358  */
+#line 149 "src/Parsers/FlowParser.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -405,8 +418,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    18,    18,    19,    22,    23,    26,    27,    28,    29,
-      30,    31,    32,    33
+       0,    27,    27,    28,    31,    32,    35,    36,    37,    38,
+      39,    40,    41,    42
 };
 #endif
 
@@ -1248,61 +1261,61 @@ yyreduce:
   switch (yyn)
     {
         case 5:
-#line 23 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { printf ("\t%.10g\n", (yyvsp[-1])); }
-#line 1254 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 32 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { printf ("\t%.10g\n", (yyvsp[-1].val)); }
+#line 1267 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 6:
-#line 26 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval) = (yyvsp[0]);         }
-#line 1260 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 35 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.val) = (yyvsp[0].val);         }
+#line 1273 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 7:
-#line 27 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval) = (yyvsp[-2]) + (yyvsp[0]);    }
-#line 1266 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 36 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.val) = (yyvsp[-2].val) + (yyvsp[0].val);    }
+#line 1279 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 8:
-#line 28 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval) = (yyvsp[-2]) - (yyvsp[0]);    }
-#line 1272 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 37 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.val) = (yyvsp[-2].val) - (yyvsp[0].val);    }
+#line 1285 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 9:
-#line 29 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval) = (yyvsp[-2]) * (yyvsp[0]);    }
-#line 1278 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 38 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.val) = (yyvsp[-2].val) * (yyvsp[0].val);    }
+#line 1291 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 10:
-#line 30 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval) = (yyvsp[-2]) / (yyvsp[0]);    }
-#line 1284 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 39 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.val) = (yyvsp[-2].val) / (yyvsp[0].val);    }
+#line 1297 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 11:
-#line 31 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval) = -(yyvsp[0]);        }
-#line 1290 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 40 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.val) = -(yyvsp[0].val);        }
+#line 1303 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 12:
-#line 32 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval) = pow ((yyvsp[-2]), (yyvsp[0])); }
-#line 1296 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 41 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.val) = pow ((yyvsp[-2].val), (yyvsp[0].val)); }
+#line 1309 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 13:
-#line 33 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval) = (yyvsp[-1]);         }
-#line 1302 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 42 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.val) = (yyvsp[-1].val);         }
+#line 1315 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
 
-#line 1306 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1319 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1533,5 +1546,5 @@ yypushreturn:
 #endif
   return yyresult;
 }
-#line 35 "src/Parsers/FlowParser.y" /* yacc.c:1906  */
+#line 44 "src/Parsers/FlowParser.y" /* yacc.c:1906  */
 

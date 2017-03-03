@@ -39,6 +39,14 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 4 "src/Parsers/FlowParser.y" /* yacc.c:1915  */
+
+#include <math.h>
+#include <stdio.h>
+void yyerror(const char *msg);
+
+#line 50 "src/Parsers/FlowParser.h" /* yacc.c:1915  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -52,7 +60,16 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+
+union YYSTYPE
+{
+#line 10 "src/Parsers/FlowParser.y" /* yacc.c:1915  */
+ double val; 
+
+#line 70 "src/Parsers/FlowParser.h" /* yacc.c:1915  */
+};
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
