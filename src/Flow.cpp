@@ -6,6 +6,17 @@ static const char kSyntaxError[] PROGMEM = "Syntax error.";
 static const char kPrompt[] PROGMEM = "> ";
 static const char kMorePrompt[] PROGMEM = ". ";
 
+#ifdef FLOW_CLICOLORS
+#define esc(k) stream->print(k);
+static const char kEscPrompt[] PROGMEM = "\x1B[36m";
+static const char kEscResult[] PROGMEM = "\x1B[33;1m";
+static const char kEscColRef[] PROGMEM = "\x1B[31;1m";
+static const char kEscError[] PROGMEM = "\x1B[37m";
+static const char kEscReset[] PROGMEM = "\x1B[0m";
+#else
+#define esc(k)
+#endif
+
 FlowController::FlowController()
     : stream(0)
     , streamParseState(0)
@@ -26,7 +37,9 @@ void FlowController::loop()
 void FlowController::printPrompt()
 {
     if (stream) {
-        stream->print("> ");
+        esc(kEscPrompt);
+        stream->print(kPrompt);
+        esc(kEscReset);
     }
 }
 
@@ -61,8 +74,11 @@ void FlowController::readStreamCode()
             }
             else if (parseres == 0) {
                 // Successful Parse!
-                if (hasResult)
+                if (hasResult) {
+                    esc(kEscResult);
                     stream->println(result);
+                    esc(kEscReset);
+                }
                 streamLexer.reset();
                 printPrompt();
                 yypstate_delete(streamParseState);
@@ -73,8 +89,11 @@ void FlowController::readStreamCode()
                 for (int i = 1; i<streamLexer.tcol + 2; i++) {
                     stream->print(' ');
                 }
+                esc(kEscColRef);
                 stream->println('^');
+                esc(kEscError);
                 stream->println(kSyntaxError);
+                esc(kEscReset);
                 streamLexer.reset();
                 printPrompt();
                 yypstate_delete(streamParseState);
@@ -82,7 +101,9 @@ void FlowController::readStreamCode()
             }
             else if (parseres == YYPUSH_MORE) {                
                 // Needs more
-                stream->print(". ");
+                esc(kEscPrompt);
+                stream->print(kMorePrompt);
+                esc(kEscReset);
             }            
         }
     }

@@ -10,7 +10,7 @@ all: $(SRC) bin/flow
 
 bin/flow: $(SRC) $(FLOW_SRC) $(HEADERS) $(FLOW_HEADERS) Makefile
 	mkdir -p bin
-	g++ -g -I src -I flow -DYYDEBUG=1 $(SRC) $(FLOW_SRC) -o $@
+	g++ -g -I src -I flow -DYYDEBUG=1 -DFLOW_CLICOLORS $(SRC) $(FLOW_SRC) -o $@
 
 src/Parsers/FlowParser.cpp: src/Parsers/FlowParser.y Makefile
 	bison --report=all --defines=src/Parsers/FlowParser.h -o $@ src/Parsers/FlowParser.y
