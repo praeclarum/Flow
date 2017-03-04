@@ -1,7 +1,7 @@
 #include "FlowLexer.h"
 
 FlowLexer::FlowLexer()
-    : tok(yytokentype(0)), state(FLS_Reset)
+    : tok(yytokentype(0)), state(FLS_Reset), col(1)
 {
 }
 
@@ -16,6 +16,7 @@ bool FlowLexer::push(int c)
         if (c == '\n') {
             consumed = true;
             tok = (yytokentype)c;
+            tcol = col;
             state = FLS_Complete;
         }
         else if (c <= ' ') {
@@ -25,6 +26,7 @@ bool FlowLexer::push(int c)
             consumed = true;
             buffer[0] = (char)c;
             bufferLength = 1;
+            tcol = col;
             state = FLS_InNumber;
         }
         else {
@@ -37,11 +39,13 @@ bool FlowLexer::push(int c)
             case ')':
                 consumed = true;
                 tok = (yytokentype)c;
+                tcol = col;
                 state = FLS_Complete;
                 break;
             default:
                 consumed = true;
                 tok = (yytokentype)9999;
+                tcol = col;
                 state = FLS_Complete;
                 break;
             }
@@ -50,7 +54,7 @@ bool FlowLexer::push(int c)
     case FLS_InNumber:
         if ('0' <= c && c <= '9') {
             consumed = true;
-            if (bufferLength < MAX_BUFFER_LENGTH) {
+            if (bufferLength + 1 < MAX_BUFFER_LENGTH) {
                 buffer[bufferLength] = c;
                 bufferLength++;
             }
@@ -58,15 +62,27 @@ bool FlowLexer::push(int c)
         else {
             tok = NUM;
             state = FLS_Complete;
+            buffer[bufferLength] = 0;
+            val.val = atof(buffer);
             consumed = false;
         }
         break;
     case FLS_Complete:
         break;
     }
+    if (consumed) {
+        col = (c == '\n') ? 1 : (col + 1);
+    }
     return consumed;
 }
 
-
+void FlowLexer::reset()
+{
+    state = FLS_Reset;
+    tok = yytokentype(0);
+    col = 1;
+    tcol = 1;
+    val.val = 0;
+}
 
 

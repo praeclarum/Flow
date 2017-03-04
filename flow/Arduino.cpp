@@ -1,11 +1,9 @@
 #include <Arduino.h>
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <math.h>
 
 float pow(float base, float exponent)
 {
@@ -76,6 +74,14 @@ int StdioStream::readBytes(char *buffer, int length)
 int StdioStream::write(const char *buffer, int length)
 {
     return fwrite(buffer, 1, length, stdout);
+}
+void StdioStream::print(char c)
+{
+    printf("%c", c);
+}
+void StdioStream::println(char c)
+{
+    printf("%c\n", c);
 }
 void StdioStream::print(const char *text)
 {

@@ -12,6 +12,8 @@ public:
     void loop();
     void eval(const char *code);
 
+    inline Stream *getStream() { return stream; }
+
 private:
     Stream *stream;
     yypstate *streamParseState;

@@ -97,9 +97,10 @@ extern int yydebug;
 
 #include <Arduino.h>
 #include <math.h>
-void yyerror(const char *msg);
+class FlowController;
+void yyerror(FlowController *flow, bool *hasResult, float *result, const char *msg);
 
-#line 103 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
+#line 104 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -116,10 +117,10 @@ void yyerror(const char *msg);
 
 union YYSTYPE
 {
-#line 10 "src/Parsers/FlowParser.y" /* yacc.c:355  */
- double val; 
+#line 11 "src/Parsers/FlowParser.y" /* yacc.c:355  */
+ float val; 
 
-#line 123 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
+#line 124 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -136,7 +137,7 @@ enum { YYPUSH_MORE = 4 };
 
 typedef struct yypstate yypstate;
 
-int yypush_parse (yypstate *ps, int pushed_char, YYSTYPE const *pushed_val);
+int yypush_parse (yypstate *ps, int pushed_char, YYSTYPE const *pushed_val, FlowController *flow, bool *hasResult, float *result);
 
 yypstate * yypstate_new (void);
 void yypstate_delete (yypstate *ps);
@@ -145,7 +146,7 @@ void yypstate_delete (yypstate *ps);
 
 /* Copy the second part of user declarations.  */
 
-#line 149 "src/Parsers/FlowParser.cpp" /* yacc.c:358  */
+#line 150 "src/Parsers/FlowParser.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -418,9 +419,9 @@ static const yytype_uint8 yytranslate[] PROGMEM =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] PROGMEM =
 {
-       0,    29,    29,    30,    34,    35,    36,    37,    38,    39,
-      40,    41,    42,    43,    44,    45,    46,    47,    48,    52,
-      53
+       0,    34,    34,    35,    39,    40,    41,    42,    43,    44,
+      45,    46,    47,    48,    49,    50,    51,    52,    53,    57,
+      58
 };
 #endif
 
@@ -565,7 +566,7 @@ do                                                              \
     }                                                           \
   else                                                          \
     {                                                           \
-      yyerror (YY_("syntax error: cannot back up")); \
+      yyerror (flow, hasResult, result, YY_("syntax error: cannot back up")); \
       YYERROR;                                                  \
     }                                                           \
 while (0)
@@ -602,7 +603,7 @@ do {                                                                      \
     {                                                                     \
       YYFPRINTF (stderr, "%s ", Title);                                   \
       yy_symbol_print (stderr,                                            \
-                  Type, Value); \
+                  Type, Value, flow, hasResult, result); \
       YYFPRINTF (stderr, "\n");                                           \
     }                                                                     \
 } while (0)
@@ -613,10 +614,13 @@ do {                                                                      \
 `----------------------------------------*/
 
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, FlowController *flow, bool *hasResult, float *result)
 {
   FILE *yyo = yyoutput;
   YYUSE (yyo);
+  YYUSE (flow);
+  YYUSE (hasResult);
+  YYUSE (result);
   if (!yyvaluep)
     return;
 # ifdef YYPRINT
@@ -632,12 +636,12 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 `--------------------------------*/
 
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, FlowController *flow, bool *hasResult, float *result)
 {
   YYFPRINTF (yyoutput, "%s %s (",
              yytype < YYNTOKENS ? "token" : "nterm", yytname[yytype]);
 
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep);
+  yy_symbol_value_print (yyoutput, yytype, yyvaluep, flow, hasResult, result);
   YYFPRINTF (yyoutput, ")");
 }
 
@@ -670,7 +674,7 @@ do {                                                            \
 `------------------------------------------------*/
 
 static void
-yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule)
+yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule, FlowController *flow, bool *hasResult, float *result)
 {
   unsigned long int yylno = yyrline[yyrule];
   int yynrhs = yyr2[yyrule];
@@ -684,7 +688,7 @@ yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule)
       yy_symbol_print (stderr,
                        yystos[yyssp[yyi + 1 - yynrhs]],
                        &(yyvsp[(yyi + 1) - (yynrhs)])
-                                              );
+                                              , flow, hasResult, result);
       YYFPRINTF (stderr, "\n");
     }
 }
@@ -692,7 +696,7 @@ yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule)
 # define YY_REDUCE_PRINT(Rule)          \
 do {                                    \
   if (yydebug)                          \
-    yy_reduce_print (yyssp, yyvsp, Rule); \
+    yy_reduce_print (yyssp, yyvsp, Rule, flow, hasResult, result); \
 } while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -950,9 +954,12 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
 `-----------------------------------------------*/
 
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, FlowController *flow, bool *hasResult, float *result)
 {
   YYUSE (yyvaluep);
+  YYUSE (flow);
+  YYUSE (hasResult);
+  YYUSE (result);
   if (!yymsg)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
@@ -1037,7 +1044,7 @@ yypstate_delete (yypstate *yyps)
 `---------------*/
 
 int
-yypush_parse (yypstate *yyps, int yypushed_char, YYSTYPE const *yypushed_val)
+yypush_parse (yypstate *yyps, int yypushed_char, YYSTYPE const *yypushed_val, FlowController *flow, bool *hasResult, float *result)
 {
 /* The lookahead symbol.  */
 int yychar;
@@ -1275,109 +1282,109 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 29 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = (yyvsp[-1].val); YYACCEPT; }
-#line 1281 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 34 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { *hasResult = true; *result = (yyvsp[-1].val); YYACCEPT; }
+#line 1288 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 3:
-#line 30 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = 0; YYACCEPT; }
-#line 1287 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 35 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { *hasResult = false; YYACCEPT; }
+#line 1294 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 4:
-#line 34 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 39 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = (yyvsp[0].val);         }
-#line 1293 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1300 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 5:
-#line 35 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 40 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = (yyvsp[-2].val) + (yyvsp[0].val);    }
-#line 1299 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1306 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 6:
-#line 36 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 41 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = (yyvsp[-3].val) + (yyvsp[0].val);    }
-#line 1305 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1312 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 7:
-#line 37 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 42 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = (yyvsp[-2].val) - (yyvsp[0].val);    }
-#line 1311 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1318 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 8:
-#line 38 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 43 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = (yyvsp[-3].val) - (yyvsp[0].val);    }
-#line 1317 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1324 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 9:
-#line 39 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 44 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = (yyvsp[-2].val) * (yyvsp[0].val);    }
-#line 1323 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1330 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 10:
-#line 40 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 45 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = (yyvsp[-3].val) * (yyvsp[0].val);    }
-#line 1329 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1336 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 11:
-#line 41 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 46 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = (yyvsp[-2].val) / (yyvsp[0].val);    }
-#line 1335 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1342 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 12:
-#line 42 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 47 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = (yyvsp[-3].val) / (yyvsp[0].val);    }
-#line 1341 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1348 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 13:
-#line 43 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 48 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = -(yyvsp[0].val);        }
-#line 1347 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1354 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 14:
-#line 44 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 49 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = pow ((yyvsp[-2].val), (yyvsp[0].val)); }
-#line 1353 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1360 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 15:
-#line 45 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 50 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = (yyvsp[-1].val);         }
-#line 1359 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1366 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 16:
-#line 46 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 51 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = (yyvsp[-2].val);         }
-#line 1365 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1372 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 17:
-#line 47 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 52 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = (yyvsp[-1].val);         }
-#line 1371 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1378 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 18:
-#line 48 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 53 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.val) = (yyvsp[-2].val);         }
-#line 1377 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1384 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
 
-#line 1381 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1388 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1427,7 +1434,7 @@ yyerrlab:
     {
       ++yynerrs;
 #if ! YYERROR_VERBOSE
-      yyerror (YY_("syntax error"));
+      yyerror (flow, hasResult, result, YY_("syntax error"));
 #else
 # define YYSYNTAX_ERROR yysyntax_error (&yymsg_alloc, &yymsg, \
                                         yyssp, yytoken)
@@ -1454,7 +1461,7 @@ yyerrlab:
                 yymsgp = yymsg;
               }
           }
-        yyerror (yymsgp);
+        yyerror (flow, hasResult, result, yymsgp);
         if (yysyntax_error_status == 2)
           goto yyexhaustedlab;
       }
@@ -1478,7 +1485,7 @@ yyerrlab:
       else
         {
           yydestruct ("Error: discarding",
-                      yytoken, &yylval);
+                      yytoken, &yylval, flow, hasResult, result);
           yychar = YYEMPTY;
         }
     }
@@ -1534,7 +1541,7 @@ yyerrlab1:
 
 
       yydestruct ("Error: popping",
-                  yystos[yystate], yyvsp);
+                  yystos[yystate], yyvsp, flow, hasResult, result);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -1571,7 +1578,7 @@ yyabortlab:
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
 yyexhaustedlab:
-  yyerror (YY_("memory exhausted"));
+  yyerror (flow, hasResult, result, YY_("memory exhausted"));
   yyresult = 2;
   /* Fall through.  */
 #endif
@@ -1583,7 +1590,7 @@ yyreturn:
          user semantic actions for why this is necessary.  */
       yytoken = YYTRANSLATE (yychar);
       yydestruct ("Cleanup: discarding lookahead",
-                  yytoken, &yylval);
+                  yytoken, &yylval, flow, hasResult, result);
     }
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
@@ -1592,7 +1599,7 @@ yyreturn:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-                  yystos[*yyssp], yyvsp);
+                  yystos[*yyssp], yyvsp, flow, hasResult, result);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -1608,5 +1615,5 @@ yypushreturn:
 #endif
   return yyresult;
 }
-#line 56 "src/Parsers/FlowParser.y" /* yacc.c:1906  */
+#line 61 "src/Parsers/FlowParser.y" /* yacc.c:1906  */
 

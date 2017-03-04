@@ -4,15 +4,20 @@
 {
 #include <Arduino.h>
 #include <math.h>
-void yyerror(const char *msg);
+class FlowController;
+void yyerror(FlowController *flow, bool *hasResult, float *result, const char *msg);
 }
 
-%union { double val; }
+%union { float val; }
 /* %destructor { type1_free ($$); } <val> */
 
 /* BISON Declarations */
 %define api.pure full
 %define api.push-pull push
+
+%parse-param {FlowController *flow} {bool *hasResult} {float *result}
+
+/* %error-verbose */
 
 %token <val> NUM
 %left '-' '+'
@@ -26,8 +31,8 @@ void yyerror(const char *msg);
 %%
 
 input
-        : exp '\n' { $$ = $1; YYACCEPT; }
-        | '\n' { $$ = 0; YYACCEPT; }
+        : exp '\n' { *hasResult = true; *result = $1; YYACCEPT; }
+        | '\n' { *hasResult = false; YYACCEPT; }
         ;
 
 exp
