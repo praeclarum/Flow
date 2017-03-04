@@ -1,5 +1,5 @@
 
-SRC=src/Flow.cpp src/Parsers/FlowLexer.cpp src/Parsers/FlowParser.cpp
+SRC=src/Flow.cpp src/Parsers/FlowLexer.cpp src/Parsers/FlowParser.cpp src/Ast/Funcs.cpp
 HEADERS=src/Flow.h src/Parsers/FlowLexer.h
 
 FLOW_SRC=flow/main.cpp flow/Arduino.cpp

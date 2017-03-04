@@ -54,7 +54,7 @@ void FlowController::readStreamCode()
         bool gotnewline = false;
         int parseres = -1;
         bool hasResult = false;
-        float result = 0;
+        Expr *result = 0;
         while (stream->available() && !gotnewline) {
             int r = stream->read();
             if (r == '\n') gotnewline = true;
@@ -75,9 +75,12 @@ void FlowController::readStreamCode()
             else if (parseres == 0) {
                 // Successful Parse!
                 if (hasResult) {
+                    Num v = result->eval();
                     esc(kEscResult);
-                    stream->println(result);
+                    stream->println(v);
                     esc(kEscReset);
+                    delete result;
+                    result = 0;
                 }
                 streamLexer.reset();
                 printPrompt();
@@ -113,12 +116,12 @@ void FlowController::eval(const char *code)
 {
     yypstate *p = yypstate_new();
     bool hr;
-    float r;
+    Expr *r;
     yypush_parse(p, 0, 0, this, &hr, &r);
     yypstate_delete(p);
 }
 
-void yyerror(FlowController *flow, bool *hasResult, float *result, const char *m)
+void yyerror(FlowController *flow, bool *hasResult, Expr **result, const char *m)
 {
 }
 

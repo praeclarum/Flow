@@ -14,7 +14,7 @@
                 "owner": "cpp",
                 "fileLocation": ["absolute"],
                 "pattern": {
-                    "regexp": "^(/.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "regexp": "^(/[^:]*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
                     "file": 1,
                     "line": 2,
                     "column": 3,
@@ -26,7 +26,7 @@
                 "owner": "cpp",
                 "fileLocation": ["relative", "${workspaceRoot}"],
                 "pattern": {
-                    "regexp": "^([^/].*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "regexp": "^([^/][^:]*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
                     "file": 1,
                     "line": 2,
                     "column": 3,
@@ -38,7 +38,7 @@
                 "owner": "cpp",
                 "fileLocation": ["absolute"],
                 "pattern": {
-                    "regexp": "^(/.*):(\\d+):\\s+(.*)$",
+                    "regexp": "^(/[^:]*):(\\d+):\\s+(.*)$",
                     "file": 1,
                     "line": 2,
                     "message": 3
@@ -48,7 +48,7 @@
                 "owner": "cpp",
                 "fileLocation": ["relative", "${workspaceRoot}"],
                 "pattern": {
-                    "regexp": "^([^/].*):(\\d+):\\s+(.*)$",
+                    "regexp": "^([^/][^:]*):(\\d+):\\s+(.*)$",
                     "file": 1,
                     "line": 2,
                     "message": 3

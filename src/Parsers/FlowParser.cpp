@@ -97,18 +97,21 @@ extern int yydebug;
 
 #include <Arduino.h>
 #include <math.h>
+#include "../Ast/Ast.h"
+#include "../Ast/Funcs.h"
 class FlowController;
-void yyerror(FlowController *flow, bool *hasResult, float *result, const char *msg);
+void yyerror(FlowController *flow, bool *hasResult, Expr **result, const char *msg);
 
-#line 104 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
+#line 106 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    NUM = 258,
-    NEG = 259
+    NUMBER = 258,
+    IDENTIFIER = 259,
+    NEG = 260
   };
 #endif
 
@@ -117,10 +120,13 @@ void yyerror(FlowController *flow, bool *hasResult, float *result, const char *m
 
 union YYSTYPE
 {
-#line 11 "src/Parsers/FlowParser.y" /* yacc.c:355  */
- float val; 
+#line 14 "src/Parsers/FlowParser.y" /* yacc.c:355  */
 
-#line 124 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
+    float number;
+    uint32_t ident;
+    Expr *expr;
+
+#line 130 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -137,7 +143,7 @@ enum { YYPUSH_MORE = 4 };
 
 typedef struct yypstate yypstate;
 
-int yypush_parse (yypstate *ps, int pushed_char, YYSTYPE const *pushed_val, FlowController *flow, bool *hasResult, float *result);
+int yypush_parse (yypstate *ps, int pushed_char, YYSTYPE const *pushed_val, FlowController *flow, bool *hasResult, Expr **result);
 
 yypstate * yypstate_new (void);
 void yypstate_delete (yypstate *ps);
@@ -146,7 +152,7 @@ void yypstate_delete (yypstate *ps);
 
 /* Copy the second part of user declarations.  */
 
-#line 150 "src/Parsers/FlowParser.cpp" /* yacc.c:358  */
+#line 156 "src/Parsers/FlowParser.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -362,23 +368,23 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  11
+#define YYFINAL  12
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   71
+#define YYLAST   80
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  13
+#define YYNTOKENS  14
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  4
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  20
+#define YYNRULES  21
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  39
+#define YYNSTATES  40
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   259
+#define YYMAXUTOK   260
 
 #define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -388,18 +394,15 @@ union yyalloc
 static const yytype_uint8 yytranslate[] PROGMEM =
 {
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      10,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+      11,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      11,    12,     6,     5,     2,     4,     2,     7,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     9,     2,     2,     2,     2,     2,
+      12,    13,     7,     6,     2,     5,     2,     8,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,    10,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -412,16 +415,20 @@ static const yytype_uint8 yytranslate[] PROGMEM =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     1,     2,     3,     8
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
+       9
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] PROGMEM =
 {
-       0,    34,    34,    35,    39,    40,    41,    42,    43,    44,
-      45,    46,    47,    48,    49,    50,    51,    52,    53,    57,
-      58
+       0,    43,    43,    44,    48,    49,    50,    51,    52,    53,
+      54,    55,    56,    57,    58,    59,    60,    61,    62,    63,
+      67,    68
 };
 #endif
 
@@ -430,8 +437,9 @@ static const yytype_uint8 yyrline[] PROGMEM =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] PROGMEM =
 {
-  "$end", "error", "$undefined", "NUM", "'-'", "'+'", "'*'", "'/'", "NEG",
-  "'^'", "'\\n'", "'('", "')'", "$accept", "input", "exp", "newlines", YY_NULLPTR
+  "$end", "error", "$undefined", "NUMBER", "IDENTIFIER", "'-'", "'+'",
+  "'*'", "'/'", "NEG", "'^'", "'\\n'", "'('", "')'", "$accept", "input",
+  "expr", "newlines", YY_NULLPTR
 };
 #endif
 
@@ -440,15 +448,15 @@ static const char *const yytname[] PROGMEM =
    (internal) symbol number NUM (which must be that of a token).  */
 static const yytype_uint16 yytoknum[] PROGMEM =
 {
-       0,   256,   257,   258,    45,    43,    42,    47,   259,    94,
-      10,    40,    41
+       0,   256,   257,   258,   259,    45,    43,    42,    47,   260,
+      94,    10,    40,    41
 };
 # endif
 
-#define YYPACT_NINF -6
+#define YYPACT_NINF -7
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-6)))
+  (!!((Yystate) == (-7)))
 
 #define YYTABLE_NINF -1
 
@@ -459,10 +467,10 @@ static const yytype_uint16 yytoknum[] PROGMEM =
      STATE-NUM.  */
 static const yytype_int8 yypact[] PROGMEM =
 {
-      49,    -6,    13,    -6,    51,     1,    61,     0,    -6,    30,
-      53,    -6,    51,    51,    51,    51,    13,    -6,    -6,    -5,
-      -6,    39,    -3,    53,    -3,    53,     0,    53,     0,    53,
-       0,    -6,    -6,     8,    -3,    -3,     0,     0,    -6
+      30,    -7,    -7,    12,    -7,    40,     1,    69,    -1,    -7,
+      51,    43,    -7,    40,    40,    40,    40,    12,    -7,    -7,
+      -6,    -7,    60,    -4,    43,    -4,    43,    -1,    43,    -1,
+      43,    -1,    -7,    -7,     7,    -4,    -4,    -1,    -1,    -7
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -470,22 +478,22 @@ static const yytype_int8 yypact[] PROGMEM =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] PROGMEM =
 {
-       0,     4,     0,     3,     0,     0,     0,    13,    19,     0,
-       0,     1,     0,     0,     0,     0,     0,     2,    15,     0,
-      20,     0,     7,     0,     5,     0,     9,     0,    11,     0,
-      14,    16,    17,     0,     8,     6,    10,    12,    18
+       0,     4,     5,     0,     3,     0,     0,     0,    14,    20,
+       0,     0,     1,     0,     0,     0,     0,     0,     2,    16,
+       0,    21,     0,     8,     0,     6,     0,    10,     0,    12,
+       0,    15,    17,    18,     0,     9,     7,    11,    13,    19
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] PROGMEM =
 {
-      -6,    -6,    -2,    17
+      -7,    -7,    -3,    16
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] PROGMEM =
 {
-      -1,     5,     6,    10
+      -1,     6,     7,    11
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -493,52 +501,54 @@ static const yytype_int8 yydefgoto[] PROGMEM =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] PROGMEM =
 {
-       7,    11,     9,    14,    15,    20,    16,    31,    21,    16,
-      22,    24,    26,    28,    30,     0,     1,     2,    20,     0,
-      38,    34,     0,    35,     4,    36,    19,    37,     0,    23,
-      25,    27,    29,     0,    12,    13,    14,    15,    33,    16,
-       8,     0,    18,    12,    13,    14,    15,     0,    16,     8,
-       0,    32,     1,     2,     1,     2,     1,     2,     0,     3,
-       4,     8,     4,    20,     4,    12,    13,    14,    15,     0,
-      16,    17
+       8,    12,    10,    15,    16,    21,    17,    32,    22,    17,
+      23,    25,    27,    29,    31,     1,     2,     3,    21,     0,
+      39,    35,     0,    36,     5,    37,    20,    38,     0,    24,
+      26,    28,    30,     1,     2,     3,     0,     0,    34,     0,
+       0,     4,     5,     1,     2,     3,     1,     2,     3,     0,
+       0,     9,     5,     0,    21,     5,    13,    14,    15,    16,
+       0,    17,     9,     0,    19,    13,    14,    15,    16,     0,
+      17,     9,     0,    33,    13,    14,    15,    16,     0,    17,
+      18
 };
 
 static const yytype_int8 yycheck[] PROGMEM =
 {
-       2,     0,     4,     6,     7,    10,     9,    12,    10,     9,
-      12,    13,    14,    15,    16,    -1,     3,     4,    10,    -1,
-      12,    23,    -1,    25,    11,    27,     9,    29,    -1,    12,
-      13,    14,    15,    -1,     4,     5,     6,     7,    21,     9,
-      10,    -1,    12,     4,     5,     6,     7,    -1,     9,    10,
-      -1,    12,     3,     4,     3,     4,     3,     4,    -1,    10,
-      11,    10,    11,    10,    11,     4,     5,     6,     7,    -1,
-       9,    10
+       3,     0,     5,     7,     8,    11,    10,    13,    11,    10,
+      13,    14,    15,    16,    17,     3,     4,     5,    11,    -1,
+      13,    24,    -1,    26,    12,    28,    10,    30,    -1,    13,
+      14,    15,    16,     3,     4,     5,    -1,    -1,    22,    -1,
+      -1,    11,    12,     3,     4,     5,     3,     4,     5,    -1,
+      -1,    11,    12,    -1,    11,    12,     5,     6,     7,     8,
+      -1,    10,    11,    -1,    13,     5,     6,     7,     8,    -1,
+      10,    11,    -1,    13,     5,     6,     7,     8,    -1,    10,
+      11
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] PROGMEM =
 {
-       0,     3,     4,    10,    11,    14,    15,    15,    10,    15,
-      16,     0,     4,     5,     6,     7,     9,    10,    12,    16,
-      10,    15,    15,    16,    15,    16,    15,    16,    15,    16,
-      15,    12,    12,    16,    15,    15,    15,    15,    12
+       0,     3,     4,     5,    11,    12,    15,    16,    16,    11,
+      16,    17,     0,     5,     6,     7,     8,    10,    11,    13,
+      17,    11,    16,    16,    17,    16,    17,    16,    17,    16,
+      17,    16,    13,    13,    17,    16,    16,    16,    16,    13
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] PROGMEM =
 {
-       0,    13,    14,    14,    15,    15,    15,    15,    15,    15,
-      15,    15,    15,    15,    15,    15,    15,    15,    15,    16,
-      16
+       0,    14,    15,    15,    16,    16,    16,    16,    16,    16,
+      16,    16,    16,    16,    16,    16,    16,    16,    16,    16,
+      17,    17
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] PROGMEM =
 {
-       0,     2,     2,     1,     1,     3,     4,     3,     4,     3,
-       4,     3,     4,     2,     3,     3,     4,     4,     5,     1,
-       2
+       0,     2,     2,     1,     1,     1,     3,     4,     3,     4,
+       3,     4,     3,     4,     2,     3,     3,     4,     4,     5,
+       1,     2
 };
 
 
@@ -614,7 +624,7 @@ do {                                                                      \
 `----------------------------------------*/
 
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, FlowController *flow, bool *hasResult, float *result)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, FlowController *flow, bool *hasResult, Expr **result)
 {
   FILE *yyo = yyoutput;
   YYUSE (yyo);
@@ -636,7 +646,7 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 `--------------------------------*/
 
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, FlowController *flow, bool *hasResult, float *result)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, FlowController *flow, bool *hasResult, Expr **result)
 {
   YYFPRINTF (yyoutput, "%s %s (",
              yytype < YYNTOKENS ? "token" : "nterm", yytname[yytype]);
@@ -674,7 +684,7 @@ do {                                                            \
 `------------------------------------------------*/
 
 static void
-yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule, FlowController *flow, bool *hasResult, float *result)
+yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule, FlowController *flow, bool *hasResult, Expr **result)
 {
   unsigned long int yylno = yyrline[yyrule];
   int yynrhs = yyr2[yyrule];
@@ -954,7 +964,7 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
 `-----------------------------------------------*/
 
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, FlowController *flow, bool *hasResult, float *result)
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, FlowController *flow, bool *hasResult, Expr **result)
 {
   YYUSE (yyvaluep);
   YYUSE (flow);
@@ -1044,7 +1054,7 @@ yypstate_delete (yypstate *yyps)
 `---------------*/
 
 int
-yypush_parse (yypstate *yyps, int yypushed_char, YYSTYPE const *yypushed_val, FlowController *flow, bool *hasResult, float *result)
+yypush_parse (yypstate *yyps, int yypushed_char, YYSTYPE const *yypushed_val, FlowController *flow, bool *hasResult, Expr **result)
 {
 /* The lookahead symbol.  */
 int yychar;
@@ -1282,109 +1292,115 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 34 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { *hasResult = true; *result = (yyvsp[-1].val); YYACCEPT; }
-#line 1288 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 43 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { *hasResult = true; *result = (yyvsp[-1].expr); YYACCEPT; }
+#line 1298 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 3:
-#line 35 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 44 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { *hasResult = false; YYACCEPT; }
-#line 1294 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1304 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 4:
-#line 39 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = (yyvsp[0].val);         }
-#line 1300 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 48 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = new NumberExpr((yyvsp[0].number));               }
+#line 1310 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 5:
-#line 40 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = (yyvsp[-2].val) + (yyvsp[0].val);    }
-#line 1306 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 49 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = new NumberExpr(0);                }
+#line 1316 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 6:
-#line 41 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = (yyvsp[-3].val) + (yyvsp[0].val);    }
-#line 1312 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 50 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = new FuncallExpr(addFunc, (yyvsp[-2].expr), (yyvsp[0].expr));}
+#line 1322 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 7:
-#line 42 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = (yyvsp[-2].val) - (yyvsp[0].val);    }
-#line 1318 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 51 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = new FuncallExpr(addFunc, (yyvsp[-3].expr), (yyvsp[0].expr));}
+#line 1328 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 8:
-#line 43 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = (yyvsp[-3].val) - (yyvsp[0].val);    }
-#line 1324 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 52 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = new FuncallExpr(subFunc, (yyvsp[-2].expr), (yyvsp[0].expr));}
+#line 1334 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 9:
-#line 44 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = (yyvsp[-2].val) * (yyvsp[0].val);    }
-#line 1330 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 53 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = new FuncallExpr(subFunc, (yyvsp[-3].expr), (yyvsp[0].expr));}
+#line 1340 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 10:
-#line 45 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = (yyvsp[-3].val) * (yyvsp[0].val);    }
-#line 1336 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 54 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = new FuncallExpr(mulFunc, (yyvsp[-2].expr), (yyvsp[0].expr));}
+#line 1346 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 11:
-#line 46 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = (yyvsp[-2].val) / (yyvsp[0].val);    }
-#line 1342 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 55 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = new FuncallExpr(mulFunc, (yyvsp[-3].expr), (yyvsp[0].expr));}
+#line 1352 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 12:
-#line 47 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = (yyvsp[-3].val) / (yyvsp[0].val);    }
-#line 1348 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 56 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = new FuncallExpr(divFunc, (yyvsp[-2].expr), (yyvsp[0].expr));}
+#line 1358 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 13:
-#line 48 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = -(yyvsp[0].val);        }
-#line 1354 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 57 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = new FuncallExpr(divFunc, (yyvsp[-3].expr), (yyvsp[0].expr));}
+#line 1364 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 14:
-#line 49 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = pow ((yyvsp[-2].val), (yyvsp[0].val)); }
-#line 1360 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 58 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = new FuncallExpr(negFunc, (yyvsp[0].expr));}
+#line 1370 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 15:
-#line 50 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = (yyvsp[-1].val);         }
-#line 1366 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 59 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = new FuncallExpr(powFunc, (yyvsp[-2].expr), (yyvsp[0].expr));}
+#line 1376 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 16:
-#line 51 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = (yyvsp[-2].val);         }
-#line 1372 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 60 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = (yyvsp[-1].expr);         }
+#line 1382 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 17:
-#line 52 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = (yyvsp[-1].val);         }
-#line 1378 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 61 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = (yyvsp[-2].expr);         }
+#line 1388 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 18:
-#line 53 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.val) = (yyvsp[-2].val);         }
-#line 1384 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 62 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = (yyvsp[-1].expr);         }
+#line 1394 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+    break;
+
+  case 19:
+#line 63 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.expr) = (yyvsp[-2].expr);         }
+#line 1400 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
 
-#line 1388 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1404 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1615,5 +1631,5 @@ yypushreturn:
 #endif
   return yyresult;
 }
-#line 61 "src/Parsers/FlowParser.y" /* yacc.c:1906  */
+#line 71 "src/Parsers/FlowParser.y" /* yacc.c:1906  */
 

@@ -37,6 +37,7 @@ bool FlowLexer::push(int c)
             case '/':
             case '(':
             case ')':
+            case '^':
                 consumed = true;
                 tok = (yytokentype)c;
                 tcol = col;
@@ -60,10 +61,10 @@ bool FlowLexer::push(int c)
             }
         }
         else {
-            tok = NUM;
+            tok = NUMBER;
             state = FLS_Complete;
             buffer[bufferLength] = 0;
-            val.val = atof(buffer);
+            val.number = atof(buffer);
             consumed = false;
         }
         break;
@@ -82,7 +83,7 @@ void FlowLexer::reset()
     tok = yytokentype(0);
     col = 1;
     tcol = 1;
-    val.val = 0;
+    val.number = 0;
 }
 
 
