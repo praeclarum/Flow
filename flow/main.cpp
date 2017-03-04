@@ -2,8 +2,16 @@
 #include <Arduino.h>
 #include <Flow.h>
 
+#include <unistd.h>
+
 int main(int argc, const char *argv[])
 {
-    return 0;
+    Flow.begin();
+
+    for (;;) {
+        Flow.loop();
+
+        usleep(10000); // 100 Hz
+    }
 }
 
