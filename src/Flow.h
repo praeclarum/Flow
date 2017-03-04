@@ -2,6 +2,8 @@
 
 #include <Arduino.h>
 
+#include "Parsers/FlowLexer.h"
+
 class FlowController
 {
 public:
@@ -12,6 +14,8 @@ public:
 
 private:
     Stream *stream;
+    yypstate *streamParseState;
+    FlowLexer streamLexer;
 
     void readStreamCode();
     void printPrompt();

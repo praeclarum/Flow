@@ -20,25 +20,37 @@ void yyerror(const char *msg);
 %left NEG     /* negation--unary minus */
 %right '^'    /* exponentiation        */
 
-%type <val> input line exp
+%type <val> input exp
 
 /* Grammar follows */
 %%
-input:    /* empty string */
-        | input line
-;
 
-line:     '\n'
-        | exp '\n'  { Serial.println($1); }
-;
+input
+        : exp '\n' { $$ = $1; YYACCEPT; }
+        | '\n' { $$ = 0; YYACCEPT; }
+        ;
 
-exp:      NUM                { $$ = $1;         }
-        | exp '+' exp        { $$ = $1 + $3;    }
-        | exp '-' exp        { $$ = $1 - $3;    }
-        | exp '*' exp        { $$ = $1 * $3;    }
-        | exp '/' exp        { $$ = $1 / $3;    }
-        | '-' exp  %prec NEG { $$ = -$2;        }
-        | exp '^' exp        { $$ = pow ($1, $3); }
-        | '(' exp ')'        { $$ = $2;         }
-;
+exp
+        : NUM                           { $$ = $1;         }
+        | exp '+' exp                   { $$ = $1 + $3;    }
+        | exp '+' newlines exp          { $$ = $1 + $4;    }
+        | exp '-' exp                   { $$ = $1 - $3;    }
+        | exp '-' newlines exp          { $$ = $1 - $4;    }
+        | exp '*' exp                   { $$ = $1 * $3;    }
+        | exp '*' newlines exp          { $$ = $1 * $4;    }
+        | exp '/' exp                   { $$ = $1 / $3;    }
+        | exp '/' newlines exp          { $$ = $1 / $4;    }
+        | '-' exp %prec NEG             { $$ = -$2;        }
+        | exp '^' exp                   { $$ = pow ($1, $3); }
+        | '(' exp ')'                   { $$ = $2;         }
+        | '(' exp newlines ')'          { $$ = $2;         }
+        | '(' newlines exp ')'          { $$ = $3;         }
+        | '(' newlines exp newlines ')' { $$ = $3;         }
+        ;
+
+newlines
+        : '\n'
+        | newlines '\n'
+        ;
+
 %%
