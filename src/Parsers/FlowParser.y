@@ -2,8 +2,8 @@
 /* Declarations */
 %code requires
 {
+#include <Arduino.h>
 #include <math.h>
-#include <stdio.h>
 void yyerror(const char *msg);
 }
 
@@ -29,7 +29,7 @@ input:    /* empty string */
 ;
 
 line:     '\n'
-        | exp '\n'  { printf ("\t%.10g\n", $1); }
+        | exp '\n'  { Serial.println($1); }
 ;
 
 exp:      NUM                { $$ = $1;         }

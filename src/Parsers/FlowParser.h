@@ -42,8 +42,8 @@ extern int yydebug;
 /* "%code requires" blocks.  */
 #line 4 "src/Parsers/FlowParser.y" /* yacc.c:1915  */
 
+#include <Arduino.h>
 #include <math.h>
-#include <stdio.h>
 void yyerror(const char *msg);
 
 #line 50 "src/Parsers/FlowParser.h" /* yacc.c:1915  */

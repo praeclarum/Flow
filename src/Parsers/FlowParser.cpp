@@ -95,8 +95,8 @@ extern int yydebug;
 /* "%code requires" blocks.  */
 #line 4 "src/Parsers/FlowParser.y" /* yacc.c:355  */
 
+#include <Arduino.h>
 #include <math.h>
-#include <stdio.h>
 void yyerror(const char *msg);
 
 #line 103 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
@@ -384,7 +384,7 @@ union yyalloc
 
 /* YYTRANSLATE[TOKEN-NUM] -- Symbol number corresponding to TOKEN-NUM
    as returned by yylex, without out-of-bounds checking.  */
-static const yytype_uint8 yytranslate[] =
+static const yytype_uint8 yytranslate[] PROGMEM =
 {
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
       10,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -416,7 +416,7 @@ static const yytype_uint8 yytranslate[] =
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_uint8 yyrline[] PROGMEM =
 {
        0,    27,    27,    28,    31,    32,    35,    36,    37,    38,
       39,    40,    41,    42
@@ -426,7 +426,7 @@ static const yytype_uint8 yyrline[] =
 #if YYDEBUG || YYERROR_VERBOSE || 0
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
-static const char *const yytname[] =
+static const char *const yytname[] PROGMEM =
 {
   "$end", "error", "$undefined", "NUM", "'-'", "'+'", "'*'", "'/'", "NEG",
   "'^'", "'\\n'", "'('", "')'", "$accept", "input", "line", "exp", YY_NULLPTR
@@ -436,7 +436,7 @@ static const char *const yytname[] =
 # ifdef YYPRINT
 /* YYTOKNUM[NUM] -- (External) token number corresponding to the
    (internal) symbol number NUM (which must be that of a token).  */
-static const yytype_uint16 yytoknum[] =
+static const yytype_uint16 yytoknum[] PROGMEM =
 {
        0,   256,   257,   258,    45,    43,    42,    47,   259,    94,
       10,    40,    41
@@ -455,7 +455,7 @@ static const yytype_uint16 yytoknum[] =
 
   /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
      STATE-NUM.  */
-static const yytype_int8 yypact[] =
+static const yytype_int8 yypact[] PROGMEM =
 {
       -9,    12,    -9,    -9,     2,    -9,     2,    -9,    29,    -8,
       20,     2,     2,     2,     2,     2,    -9,    -9,    11,    11,
@@ -465,7 +465,7 @@ static const yytype_int8 yypact[] =
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
      Performed when YYTABLE does not specify something else to do.  Zero
      means the default is an error.  */
-static const yytype_uint8 yydefact[] =
+static const yytype_uint8 yydefact[] PROGMEM =
 {
        2,     0,     1,     6,     0,     4,     0,     3,     0,    11,
        0,     0,     0,     0,     0,     0,     5,    13,     8,     7,
@@ -473,13 +473,13 @@ static const yytype_uint8 yydefact[] =
 };
 
   /* YYPGOTO[NTERM-NUM].  */
-static const yytype_int8 yypgoto[] =
+static const yytype_int8 yypgoto[] PROGMEM =
 {
       -9,    -9,    -9,    -4
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
-static const yytype_int8 yydefgoto[] =
+static const yytype_int8 yydefgoto[] PROGMEM =
 {
       -1,     1,     7,     8
 };
@@ -487,7 +487,7 @@ static const yytype_int8 yydefgoto[] =
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
      positive, shift that token.  If negative, reduce the rule whose
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
-static const yytype_uint8 yytable[] =
+static const yytype_uint8 yytable[] PROGMEM =
 {
        9,    15,    10,     0,     0,     3,     4,    18,    19,    20,
       21,    22,     2,     6,     0,     3,     4,    13,    14,     0,
@@ -495,7 +495,7 @@ static const yytype_uint8 yytable[] =
        0,     0,    17,    11,    12,    13,    14,     0,    15,    16
 };
 
-static const yytype_int8 yycheck[] =
+static const yytype_int8 yycheck[] PROGMEM =
 {
        4,     9,     6,    -1,    -1,     3,     4,    11,    12,    13,
       14,    15,     0,    11,    -1,     3,     4,     6,     7,    -1,
@@ -505,7 +505,7 @@ static const yytype_int8 yycheck[] =
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
-static const yytype_uint8 yystos[] =
+static const yytype_uint8 yystos[] PROGMEM =
 {
        0,    14,     0,     3,     4,    10,    11,    15,    16,    16,
       16,     4,     5,     6,     7,     9,    10,    12,    16,    16,
@@ -513,14 +513,14 @@ static const yytype_uint8 yystos[] =
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
-static const yytype_uint8 yyr1[] =
+static const yytype_uint8 yyr1[] PROGMEM =
 {
        0,    13,    14,    14,    15,    15,    16,    16,    16,    16,
       16,    16,    16,    16
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
-static const yytype_uint8 yyr2[] =
+static const yytype_uint8 yyr2[] PROGMEM =
 {
        0,     2,     0,     2,     1,     2,     1,     3,     3,     3,
        3,     2,     3,     3
@@ -1262,7 +1262,7 @@ yyreduce:
     {
         case 5:
 #line 32 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { printf ("\t%.10g\n", (yyvsp[-1].val)); }
+    { Serial.println((yyvsp[-1].val)); }
 #line 1267 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
