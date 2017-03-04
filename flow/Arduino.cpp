@@ -77,6 +77,10 @@ int StdioStream::write(const char *buffer, int length)
 {
     return fwrite(buffer, 1, length, stdout);
 }
+void StdioStream::print(const char *text)
+{
+    printf("%s", text);
+}
 void StdioStream::println(const char *line)
 {
     printf("%s\n", line);

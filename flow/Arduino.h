@@ -26,6 +26,7 @@ class Print
 public:
     Print() {}
     virtual ~Print() {}
+    virtual void print(const char *text) = 0;
     virtual void println(const char *line) = 0;
     virtual void println(float value) = 0;
     virtual int write(const char *buffer, int length) = 0;
@@ -56,6 +57,7 @@ public:
     virtual int available();
     virtual int readBytes(char *buffer, int length);
     virtual int write(const char *buffer, int length);
+    virtual void print(const char *text);
     virtual void println(const char *line);
     virtual void println(float value);
     virtual void flush();
