@@ -1,6 +1,6 @@
 set -e
 
-make test
+make flow test
 
 d=`pwd`
 for sketch in `find $d/examples -name '*.ino'`

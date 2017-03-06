@@ -27,31 +27,31 @@ TEST_CLASS(ExpressionTests)
     //     Assert::AreEqual(FE_None, e);
     //     Assert::AreEqual(3.14159f, x);
     // }
-    // TEST_METHOD(cos)
+    // TEST_METHOD(callNoArgs)
     // {
     //     FlowError e = FE_None;
     //     auto x = Flow.eval("cos", &e);
     //     Assert::AreEqual(FE_None, e);
     //     Assert::AreEqual(1.0f, x);
     // }
-    TEST_METHOD(sin)
+    TEST_METHOD(callEmptyArgs)
     {
         FlowError e = FE_None;
-        auto x = Flow.eval("sin", &e);
+        auto x = Flow.eval("sin()", &e);
         Assert::AreEqual(FE_None, e);
         Assert::AreEqual(0.0f, x);
     }
-    // TEST_METHOD(sinNumber)
-    // {
-    //     FlowError e = FE_None;
-    //     auto x = Flow.eval("sin(1)", &e);
-    //     Assert::AreEqual(FE_None, e);
-    //     Assert::AreEqual(1.0f, x);
-    // }
-    TEST_METHOD(sin0)
+    TEST_METHOD(callArg)
     {
         FlowError e = FE_None;
         auto x = Flow.eval("sin(0)", &e);
+        Assert::AreEqual(FE_None, e);
+        Assert::AreEqual(0.0f, x);
+    }
+    TEST_METHOD(callNewlineArg)
+    {
+        FlowError e = FE_None;
+        auto x = Flow.eval("sin(\n0)", &e);
         Assert::AreEqual(FE_None, e);
         Assert::AreEqual(0.0f, x);
     }
