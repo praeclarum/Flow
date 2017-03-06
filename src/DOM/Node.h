@@ -2,12 +2,15 @@
 
 typedef float Number;
 
+#include "Function.h"
+
 enum NodeType
 {
     NT_Document,
     NT_NumberLiteral,
     NT_BinaryOperator,
     NT_UnaryOperator,
+    NT_FunctionDefinition,
 };
 
 enum BinaryOperator
@@ -33,6 +36,7 @@ struct Node
         Number number;
         BinaryOperator binop;
         UnaryOperator unop;
+        Function *function;
     } value;
 
     Node(NodeType nodeType)

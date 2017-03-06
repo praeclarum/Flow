@@ -147,6 +147,8 @@ Number FlowController::eval(Node *node)
     }
     case NT_NumberLiteral:
         return node->value.number;
+    case NT_FunctionDefinition:
+        return 0;
     }
 }
 
