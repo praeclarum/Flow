@@ -52,6 +52,7 @@ expr
     : NUMBER                            { $$ = Node::createNumberLiteral($1);              }
     | NAME                              { $$ = Node::createName($1);                       }
     | lvalue '=' expr                   { $$ = Node::createAssignment($1, $3);             }
+    | NAME '(' expr ')'                 { $$ = Node::createCall(Node::createName($1), $3); }
     | expr '+' expr                     { $$ = Node::createBinaryOperator(BO_Add, $1, $3); }
     | expr '+' newlines expr            { $$ = Node::createBinaryOperator(BO_Add, $1, $4); }
     | expr '-' expr                     { $$ = Node::createBinaryOperator(BO_Sub, $1, $3); }

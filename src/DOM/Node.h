@@ -14,6 +14,7 @@ enum NodeType
     NT_FunctionDefinition,
     NT_Assignment,
     NT_Name,
+    NT_Call,
 };
 
 enum BinaryOperator
@@ -80,6 +81,12 @@ struct Node
         Node *n = new Node(NT_Assignment);
         n->firstChild = left;
         left->nextSibling = right;
+        return n;
+    }
+    static Node *createCall(Node *f, Node *args) {
+        Node *n = new Node(NT_Assignment);
+        n->firstChild = f;
+        f->nextSibling = args;
         return n;
     }
 };

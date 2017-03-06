@@ -114,7 +114,7 @@ void FlowController::readStreamCode()
 
 static const char newline[] = {'\n', '\0'};
 
-Number FlowController::eval(const char *code)
+Number FlowController::eval(const char *code, FlowError *error)
 {
     yypstate *parseState = yypstate_new();
     FlowLexer lexer;
@@ -132,7 +132,7 @@ Number FlowController::eval(const char *code)
             }
             int r = *p;
             if (r == '\n') gotnewline = true;
-            if (parseres == 1) continue;
+            if (parseres == 1) { gotnewline = true; break; }
             bool consumed = false;
             do {
                 consumed = lexer.push(r);
@@ -152,25 +152,30 @@ Number FlowController::eval(const char *code)
                     delete result;
                 }
                 yypstate_delete(parseState);
+                if (error) *error = FE_None;
                 return v;
             }
             else if (parseres == 1) {
                 yypstate_delete(parseState);
+                if (error) *error = FE_SyntaxError;
                 return 0;
             }
             else if (parseres == YYPUSH_MORE) {
                 if (*p == 0) {
                     yypstate_delete(parseState);
+                    if (error) *error = FE_SyntaxIncomplete;
                     return 0;
                 }
             }
             else {
                 yypstate_delete(parseState);
+                if (error) *error = FE_OutOfMemory;
                 return 0;
             }
         }
     }
     yypstate_delete(parseState);
+    if (error) *error = FE_SyntaxIncomplete;
     return 0;
 }
 
@@ -214,6 +219,8 @@ Number FlowController::eval(Node *node)
     case NT_Assignment:
         return 0;
     case NT_Name:
+        return 0;
+    case NT_Call:
         return 0;
     }
 }

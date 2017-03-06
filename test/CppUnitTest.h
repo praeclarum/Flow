@@ -26,13 +26,13 @@ public:
 };
 
 #define AreEqual(expected, actual) nop(); do { \
-    const auto &e = expected; \
-    const auto &a = actual; \
-    String s = #expected " == " #actual; \
-    std::ostringstream oss; \
-    oss << " (" << e << " == " << a << ")"; \
-    s += oss.str(); \
-    Assert::failOnCondition(e == a, s.c_str(), __FILE__, __LINE__, __FUNCTION__); \
+    const auto &_e = expected; \
+    const auto &_a = actual; \
+    String _s = #expected " == " #actual; \
+    std::ostringstream _oss; \
+    _oss << " (" << _e << " == " << _a << ")"; \
+    _s += _oss.str(); \
+    Assert::failOnCondition(_e == _a, _s.c_str(), __FILE__, __LINE__, __FUNCTION__); \
 } while(false);
 
 #define TEST_CLASS(className) \
