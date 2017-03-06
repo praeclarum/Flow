@@ -14,8 +14,8 @@ void yyerror(FlowController *flow, bool *hasResult, Node **result, const char *m
 
 %union
 {
-    float number;
-    uint32_t ident;
+    Number number;
+    Name name;
     Node *node;
 }
 
@@ -30,14 +30,15 @@ void yyerror(FlowController *flow, bool *hasResult, Node **result, const char *m
 /* %error-verbose */
 
 %token <number> NUMBER
-%token <ident> IDENTIFIER
+%token <name> NAME
 
+%left '='
 %left '-' '+'
 %left '*' '/'
 %left NEG     /* negation--unary minus */
 %right '^'    /* exponentiation        */
 
-%type <node> input expr
+%type <node> input expr lvalue
 
 /* Grammar follows */
 %%
@@ -49,7 +50,8 @@ input
 
 expr
     : NUMBER                            { $$ = Node::createNumberLiteral($1);              }
-    | IDENTIFIER                        { $$ = Node::createNumberLiteral(0);               }
+    | NAME                              { $$ = Node::createName($1);                       }
+    | lvalue '=' expr                   { $$ = Node::createAssignment($1, $3);             }
     | expr '+' expr                     { $$ = Node::createBinaryOperator(BO_Add, $1, $3); }
     | expr '+' newlines expr            { $$ = Node::createBinaryOperator(BO_Add, $1, $4); }
     | expr '-' expr                     { $$ = Node::createBinaryOperator(BO_Sub, $1, $3); }
@@ -64,6 +66,10 @@ expr
     | '(' expr newlines ')'             { $$ = $2; }
     | '(' newlines expr ')'             { $$ = $3; }
     | '(' newlines expr newlines ')'    { $$ = $3; }
+    ;
+
+lvalue
+    : NAME { $$ = Node::createName($1); }
     ;
 
 newlines

@@ -55,7 +55,7 @@ void yyerror(FlowController *flow, bool *hasResult, Node **result, const char *m
   enum yytokentype
   {
     NUMBER = 258,
-    IDENTIFIER = 259,
+    NAME = 259,
     NEG = 260
   };
 #endif
@@ -67,8 +67,8 @@ union YYSTYPE
 {
 #line 16 "src/Parsers/FlowParser.y" /* yacc.c:1915  */
 
-    float number;
-    uint32_t ident;
+    Number number;
+    Name name;
     Node *node;
 
 #line 75 "src/Parsers/FlowParser.h" /* yacc.c:1915  */

@@ -1,5 +1,9 @@
 #include "FlowLexer.h"
 
+uint32_t crc_start();
+uint32_t crc_end(uint32_t crc);
+uint32_t crc_update(uint32_t crc, byte data);
+
 FlowLexer::FlowLexer()
     : tok(yytokentype(0)), state(FLS_Reset), col(1)
 {
@@ -38,16 +42,25 @@ bool FlowLexer::push(int c)
             case '(':
             case ')':
             case '^':
+            case '=':
                 consumed = true;
                 tok = (yytokentype)c;
                 tcol = col;
                 state = FLS_Complete;
                 break;
             default:
-                consumed = true;
-                tok = (yytokentype)c;
-                tcol = col;
-                state = FLS_Complete;
+                if (c == '_' || isalpha(c)) {
+                    consumed = true;
+                    name = crc_update(crc_start(), c);
+                    tcol = col;
+                    state = FLS_InName;
+                }
+                else {
+                    consumed = true;
+                    tok = (yytokentype)c;
+                    tcol = col;
+                    state = FLS_Complete;
+                }
                 break;
             }
         }
@@ -65,6 +78,18 @@ bool FlowLexer::push(int c)
             state = FLS_Complete;
             buffer[bufferLength] = 0;
             val.number = atof(buffer);
+            consumed = false;
+        }
+        break;
+    case FLS_InName:
+        if (c == '_' || isalnum(c)) {
+            consumed = true;
+            name = crc_update(name, c);
+        }
+        else {
+            tok = NAME;
+            state = FLS_Complete;
+            val.name = crc_end(name);
             consumed = false;
         }
         break;
@@ -86,4 +111,39 @@ void FlowLexer::reset()
     val.number = 0;
 }
 
+
+
+//
+// CRC
+// Used for names to give them a fixed size representation
+// From: http://excamera.com/sphinx/article-crc.html
+// Test with: >>> hex(binascii.crc32("new") & 0xffffffff)
+//
+
+static const uint32_t crc_table[16] PROGMEM = {
+    0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
+    0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
+    0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c,
+    0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
+};
+
+uint32_t crc_start() { return ~0L; }
+uint32_t crc_end(uint32_t crc) { return ~crc; }
+uint32_t crc_update(uint32_t crc, byte data)
+{
+    byte tbl_idx;
+    tbl_idx = crc ^ (data >> (0 * 4));
+    crc = crc_table[tbl_idx & 0x0f] ^ (crc >> 4);
+    tbl_idx = crc ^ (data >> (1 * 4));
+    crc = crc_table[tbl_idx & 0x0f] ^ (crc >> 4);
+    return crc;
+}
+uint32_t crc_string(const char *s)
+{
+    if (s == 0) return 0;
+    uint32_t crc = ~0L;
+    while (*s)
+        crc = crc_update(crc, *s++);
+    return ~crc;
+}
 

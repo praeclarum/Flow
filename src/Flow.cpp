@@ -149,6 +149,10 @@ Number FlowController::eval(Node *node)
         return node->value.number;
     case NT_FunctionDefinition:
         return 0;
+    case NT_Assignment:
+        return 0;
+    case NT_Name:
+        return 0;
     }
 }
 

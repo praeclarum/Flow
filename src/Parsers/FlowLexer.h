@@ -5,7 +5,8 @@
 enum FlowLexerState {
     FLS_Reset,
     FLS_Complete,
-    FLS_InNumber
+    FLS_InNumber,
+    FLS_InName
 };
 
 class FlowLexer
@@ -14,6 +15,7 @@ class FlowLexer
     char buffer[MAX_BUFFER_LENGTH];
     int bufferLength;
     int col;
+    int name;
 public:
     yytokentype tok;
     YYSTYPE val;
