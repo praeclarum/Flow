@@ -1,4 +1,6 @@
-make
+set -e
+
+make test
 
 d=`pwd`
 for sketch in `find $d/examples -name '*.ino'`

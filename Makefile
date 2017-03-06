@@ -11,7 +11,7 @@ TEST_SRC=test/main.cpp test/ExpressionTests.cpp flow/Arduino.cpp
 TEST_HEADERS=flow/Arduino.h test/CppUnitTest.h
 
 
-all: $(SRC) bin/flow test
+all: $(SRC) bin/flow bin/test
 
 test: bin/test
 	bin/test
