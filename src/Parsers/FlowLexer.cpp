@@ -45,7 +45,7 @@ bool FlowLexer::push(int c)
                 break;
             default:
                 consumed = true;
-                tok = (yytokentype)9999;
+                tok = (yytokentype)c;
                 tcol = col;
                 state = FLS_Complete;
                 break;

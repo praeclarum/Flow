@@ -40,16 +40,14 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 4 "src/Parsers/FlowParser.y" /* yacc.c:1915  */
+#line 8 "src/Parsers/FlowParser.y" /* yacc.c:1915  */
 
 #include <Arduino.h>
-#include <math.h>
-#include "../Ast/Ast.h"
-#include "../Ast/Funcs.h"
+#include "../DOM/Node.h"
 class FlowController;
-void yyerror(FlowController *flow, bool *hasResult, Expr **result, const char *msg);
+void yyerror(FlowController *flow, bool *hasResult, Node **result, const char *msg);
 
-#line 53 "src/Parsers/FlowParser.h" /* yacc.c:1915  */
+#line 51 "src/Parsers/FlowParser.h" /* yacc.c:1915  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -67,13 +65,13 @@ void yyerror(FlowController *flow, bool *hasResult, Expr **result, const char *m
 
 union YYSTYPE
 {
-#line 14 "src/Parsers/FlowParser.y" /* yacc.c:1915  */
+#line 16 "src/Parsers/FlowParser.y" /* yacc.c:1915  */
 
     float number;
     uint32_t ident;
-    Expr *expr;
+    Node *node;
 
-#line 77 "src/Parsers/FlowParser.h" /* yacc.c:1915  */
+#line 75 "src/Parsers/FlowParser.h" /* yacc.c:1915  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -90,7 +88,7 @@ enum { YYPUSH_MORE = 4 };
 
 typedef struct yypstate yypstate;
 
-int yypush_parse (yypstate *ps, int pushed_char, YYSTYPE const *pushed_val, FlowController *flow, bool *hasResult, Expr **result);
+int yypush_parse (yypstate *ps, int pushed_char, YYSTYPE const *pushed_val, FlowController *flow, bool *hasResult, Node **result);
 
 yypstate * yypstate_new (void);
 void yypstate_delete (yypstate *ps);

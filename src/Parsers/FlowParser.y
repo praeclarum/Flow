@@ -1,28 +1,31 @@
 
 /* Declarations */
+%code top
+{
+
+}
 %code requires
 {
 #include <Arduino.h>
-#include <math.h>
-#include "../Ast/Ast.h"
-#include "../Ast/Funcs.h"
+#include "../DOM/Node.h"
 class FlowController;
-void yyerror(FlowController *flow, bool *hasResult, Expr **result, const char *msg);
+void yyerror(FlowController *flow, bool *hasResult, Node **result, const char *msg);
 }
 
 %union
 {
     float number;
     uint32_t ident;
-    Expr *expr;
+    Node *node;
 }
-/* %destructor { type1_free ($$); } <val> */
+
+%destructor { delete ($$); } <node>
 
 /* BISON Declarations */
 %define api.pure full
 %define api.push-pull push
 
-%parse-param {FlowController *flow} {bool *hasResult} {Expr **result}
+%parse-param {FlowController *flow} {bool *hasResult} {Node **result}
 
 /* %error-verbose */
 
@@ -34,33 +37,33 @@ void yyerror(FlowController *flow, bool *hasResult, Expr **result, const char *m
 %left NEG     /* negation--unary minus */
 %right '^'    /* exponentiation        */
 
-%type <expr> input expr
+%type <node> input expr
 
 /* Grammar follows */
 %%
 
 input
-    : expr '\n' { *hasResult = true; *result = $1; YYACCEPT; }
-    | '\n' { *hasResult = false; YYACCEPT; }
+    : expr '\n' { $$ = $1; *hasResult = true; *result = $1; YYACCEPT; }
+    | '\n' { $$ = 0; *hasResult = false; YYACCEPT; }
     ;
 
 expr
-    : NUMBER                            { $$ = new NumberExpr($1);               }
-    | IDENTIFIER                        { $$ = new NumberExpr(0);                }
-    | expr '+' expr                     { $$ = new FuncallExpr(addFunc, $1, $3);}
-    | expr '+' newlines expr            { $$ = new FuncallExpr(addFunc, $1, $4);}
-    | expr '-' expr                     { $$ = new FuncallExpr(subFunc, $1, $3);}
-    | expr '-' newlines expr            { $$ = new FuncallExpr(subFunc, $1, $4);}
-    | expr '*' expr                     { $$ = new FuncallExpr(mulFunc, $1, $3);}
-    | expr '*' newlines expr            { $$ = new FuncallExpr(mulFunc, $1, $4);}
-    | expr '/' expr                     { $$ = new FuncallExpr(divFunc, $1, $3);}
-    | expr '/' newlines expr            { $$ = new FuncallExpr(divFunc, $1, $4);}
-    | '-' expr %prec NEG                { $$ = new FuncallExpr(negFunc, $2);}
-    | expr '^' expr                     { $$ = new FuncallExpr(powFunc, $1, $3);}
-    | '(' expr ')'                      { $$ = $2;         }
-    | '(' expr newlines ')'             { $$ = $2;         }
-    | '(' newlines expr ')'             { $$ = $3;         }
-    | '(' newlines expr newlines ')'    { $$ = $3;         }
+    : NUMBER                            { $$ = Node::createNumberLiteral($1);              }
+    | IDENTIFIER                        { $$ = Node::createNumberLiteral(0);               }
+    | expr '+' expr                     { $$ = Node::createBinaryOperator(BO_Add, $1, $3); }
+    | expr '+' newlines expr            { $$ = Node::createBinaryOperator(BO_Add, $1, $4); }
+    | expr '-' expr                     { $$ = Node::createBinaryOperator(BO_Sub, $1, $3); }
+    | expr '-' newlines expr            { $$ = Node::createBinaryOperator(BO_Sub, $1, $4); }
+    | expr '*' expr                     { $$ = Node::createBinaryOperator(BO_Mul, $1, $3); }
+    | expr '*' newlines expr            { $$ = Node::createBinaryOperator(BO_Mul, $1, $4); }
+    | expr '/' expr                     { $$ = Node::createBinaryOperator(BO_Div, $1, $3); }
+    | expr '/' newlines expr            { $$ = Node::createBinaryOperator(BO_Div, $1, $4); }
+    | '-' expr %prec NEG                { $$ = Node::createUnaryOperator(UO_Negate, $2);   }
+    | expr '^' expr                     { $$ = Node::createBinaryOperator(BO_Pow, $1, $3); }
+    | '(' expr ')'                      { $$ = $2; }
+    | '(' expr newlines ')'             { $$ = $2; }
+    | '(' newlines expr ')'             { $$ = $3; }
+    | '(' newlines expr newlines ')'    { $$ = $3; }
     ;
 
 newlines

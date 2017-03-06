@@ -54,7 +54,7 @@ void FlowController::readStreamCode()
         bool gotnewline = false;
         int parseres = -1;
         bool hasResult = false;
-        Expr *result = 0;
+        Node *result = 0;
         while (stream->available() && !gotnewline) {
             int r = stream->read();
             if (r == '\n') gotnewline = true;
@@ -74,8 +74,8 @@ void FlowController::readStreamCode()
             }
             else if (parseres == 0) {
                 // Successful Parse!
-                if (hasResult) {
-                    Num v = result->eval();
+                if (hasResult && result) {
+                    Number v = eval(result);
                     esc(kEscResult);
                     stream->println(v);
                     esc(kEscReset);
@@ -112,16 +112,55 @@ void FlowController::readStreamCode()
     }
 }
 
-void FlowController::eval(const char *code)
+Number FlowController::eval(Node *node)
+{
+    switch (node->nodeType) {
+    case NT_Document:
+        return 0;
+    case NT_UnaryOperator: {
+        Number v = node->firstChild ? eval(node->firstChild) : 0;
+        switch (node->value.unop) {
+        case UO_Negate:
+            return -v;
+        default:
+            return 0;
+        }
+    }
+    case NT_BinaryOperator: {
+        if (!node->firstChild || !node->firstChild->nextSibling) return 0;
+        Number left = eval(node->firstChild);
+        Number right = eval(node->firstChild->nextSibling);
+        switch (node->value.binop) {
+        case BO_Add:
+            return left + right;
+        case BO_Sub:
+            return left - right;
+        case BO_Mul:
+            return left * right;
+        case BO_Div:
+            return left / right;
+        case BO_Pow:
+            return pow(left, right);
+        default:
+            return 0;
+        }
+    }
+    case NT_NumberLiteral:
+        return node->value.number;
+    }
+}
+
+Number FlowController::eval(const char *code)
 {
     yypstate *p = yypstate_new();
     bool hr;
-    Expr *r;
+    Node *r;
     yypush_parse(p, 0, 0, this, &hr, &r);
     yypstate_delete(p);
+    return -1;
 }
 
-void yyerror(FlowController *flow, bool *hasResult, Expr **result, const char *m)
+void yyerror(FlowController *flow, bool *hasResult, Node **result, const char *m)
 {
 }
 

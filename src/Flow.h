@@ -10,7 +10,7 @@ public:
     FlowController();
     void begin();
     void loop();
-    void eval(const char *code);
+    Number eval(const char *code);
 
     inline Stream *getStream() { return stream; }
 
@@ -19,6 +19,7 @@ private:
     yypstate *streamParseState;
     FlowLexer streamLexer;
 
+    Number eval(Node *node);
     void readStreamCode();
     void printPrompt();
 };

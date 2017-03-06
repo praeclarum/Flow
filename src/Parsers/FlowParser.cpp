@@ -58,12 +58,18 @@
 /* Pull parsers.  */
 #define YYPULL 0
 
+/* "%code top" blocks.  */
+#line 4 "src/Parsers/FlowParser.y" /* yacc.c:316  */
+
+
+
+#line 67 "src/Parsers/FlowParser.cpp" /* yacc.c:316  */
 
 
 
 /* Copy the first part of user declarations.  */
 
-#line 67 "src/Parsers/FlowParser.cpp" /* yacc.c:339  */
+#line 73 "src/Parsers/FlowParser.cpp" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -93,16 +99,14 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 4 "src/Parsers/FlowParser.y" /* yacc.c:355  */
+#line 8 "src/Parsers/FlowParser.y" /* yacc.c:355  */
 
 #include <Arduino.h>
-#include <math.h>
-#include "../Ast/Ast.h"
-#include "../Ast/Funcs.h"
+#include "../DOM/Node.h"
 class FlowController;
-void yyerror(FlowController *flow, bool *hasResult, Expr **result, const char *msg);
+void yyerror(FlowController *flow, bool *hasResult, Node **result, const char *msg);
 
-#line 106 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
+#line 110 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -120,13 +124,13 @@ void yyerror(FlowController *flow, bool *hasResult, Expr **result, const char *m
 
 union YYSTYPE
 {
-#line 14 "src/Parsers/FlowParser.y" /* yacc.c:355  */
+#line 16 "src/Parsers/FlowParser.y" /* yacc.c:355  */
 
     float number;
     uint32_t ident;
-    Expr *expr;
+    Node *node;
 
-#line 130 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
+#line 134 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -143,7 +147,7 @@ enum { YYPUSH_MORE = 4 };
 
 typedef struct yypstate yypstate;
 
-int yypush_parse (yypstate *ps, int pushed_char, YYSTYPE const *pushed_val, FlowController *flow, bool *hasResult, Expr **result);
+int yypush_parse (yypstate *ps, int pushed_char, YYSTYPE const *pushed_val, FlowController *flow, bool *hasResult, Node **result);
 
 yypstate * yypstate_new (void);
 void yypstate_delete (yypstate *ps);
@@ -152,7 +156,7 @@ void yypstate_delete (yypstate *ps);
 
 /* Copy the second part of user declarations.  */
 
-#line 156 "src/Parsers/FlowParser.cpp" /* yacc.c:358  */
+#line 160 "src/Parsers/FlowParser.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -426,9 +430,9 @@ static const yytype_uint8 yytranslate[] PROGMEM =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] PROGMEM =
 {
-       0,    43,    43,    44,    48,    49,    50,    51,    52,    53,
-      54,    55,    56,    57,    58,    59,    60,    61,    62,    63,
-      67,    68
+       0,    46,    46,    47,    51,    52,    53,    54,    55,    56,
+      57,    58,    59,    60,    61,    62,    63,    64,    65,    66,
+      70,    71
 };
 #endif
 
@@ -624,7 +628,7 @@ do {                                                                      \
 `----------------------------------------*/
 
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, FlowController *flow, bool *hasResult, Expr **result)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, FlowController *flow, bool *hasResult, Node **result)
 {
   FILE *yyo = yyoutput;
   YYUSE (yyo);
@@ -646,7 +650,7 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 `--------------------------------*/
 
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, FlowController *flow, bool *hasResult, Expr **result)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, FlowController *flow, bool *hasResult, Node **result)
 {
   YYFPRINTF (yyoutput, "%s %s (",
              yytype < YYNTOKENS ? "token" : "nterm", yytname[yytype]);
@@ -684,7 +688,7 @@ do {                                                            \
 `------------------------------------------------*/
 
 static void
-yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule, FlowController *flow, bool *hasResult, Expr **result)
+yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule, FlowController *flow, bool *hasResult, Node **result)
 {
   unsigned long int yylno = yyrline[yyrule];
   int yynrhs = yyr2[yyrule];
@@ -964,7 +968,7 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
 `-----------------------------------------------*/
 
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, FlowController *flow, bool *hasResult, Expr **result)
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, FlowController *flow, bool *hasResult, Node **result)
 {
   YYUSE (yyvaluep);
   YYUSE (flow);
@@ -975,7 +979,24 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, FlowController *fl
   YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
 
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-  YYUSE (yytype);
+  switch (yytype)
+    {
+          case 15: /* input  */
+#line 22 "src/Parsers/FlowParser.y" /* yacc.c:1257  */
+      { delete (((*yyvaluep).node)); }
+#line 988 "src/Parsers/FlowParser.cpp" /* yacc.c:1257  */
+        break;
+
+    case 16: /* expr  */
+#line 22 "src/Parsers/FlowParser.y" /* yacc.c:1257  */
+      { delete (((*yyvaluep).node)); }
+#line 994 "src/Parsers/FlowParser.cpp" /* yacc.c:1257  */
+        break;
+
+
+      default:
+        break;
+    }
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
@@ -1054,7 +1075,7 @@ yypstate_delete (yypstate *yyps)
 `---------------*/
 
 int
-yypush_parse (yypstate *yyps, int yypushed_char, YYSTYPE const *yypushed_val, FlowController *flow, bool *hasResult, Expr **result)
+yypush_parse (yypstate *yyps, int yypushed_char, YYSTYPE const *yypushed_val, FlowController *flow, bool *hasResult, Node **result)
 {
 /* The lookahead symbol.  */
 int yychar;
@@ -1292,115 +1313,115 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 43 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { *hasResult = true; *result = (yyvsp[-1].expr); YYACCEPT; }
-#line 1298 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 46 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = (yyvsp[-1].node); *hasResult = true; *result = (yyvsp[-1].node); YYACCEPT; }
+#line 1319 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 3:
-#line 44 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { *hasResult = false; YYACCEPT; }
-#line 1304 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 47 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = 0; *hasResult = false; YYACCEPT; }
+#line 1325 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 4:
-#line 48 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = new NumberExpr((yyvsp[0].number));               }
-#line 1310 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 51 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createNumberLiteral((yyvsp[0].number));              }
+#line 1331 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 5:
-#line 49 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = new NumberExpr(0);                }
-#line 1316 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 52 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createNumberLiteral(0);               }
+#line 1337 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 6:
-#line 50 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = new FuncallExpr(addFunc, (yyvsp[-2].expr), (yyvsp[0].expr));}
-#line 1322 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 53 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Add, (yyvsp[-2].node), (yyvsp[0].node)); }
+#line 1343 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 7:
-#line 51 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = new FuncallExpr(addFunc, (yyvsp[-3].expr), (yyvsp[0].expr));}
-#line 1328 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 54 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Add, (yyvsp[-3].node), (yyvsp[0].node)); }
+#line 1349 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 8:
-#line 52 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = new FuncallExpr(subFunc, (yyvsp[-2].expr), (yyvsp[0].expr));}
-#line 1334 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 55 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Sub, (yyvsp[-2].node), (yyvsp[0].node)); }
+#line 1355 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 9:
-#line 53 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = new FuncallExpr(subFunc, (yyvsp[-3].expr), (yyvsp[0].expr));}
-#line 1340 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 56 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Sub, (yyvsp[-3].node), (yyvsp[0].node)); }
+#line 1361 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 10:
-#line 54 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = new FuncallExpr(mulFunc, (yyvsp[-2].expr), (yyvsp[0].expr));}
-#line 1346 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 57 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Mul, (yyvsp[-2].node), (yyvsp[0].node)); }
+#line 1367 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 11:
-#line 55 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = new FuncallExpr(mulFunc, (yyvsp[-3].expr), (yyvsp[0].expr));}
-#line 1352 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 58 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Mul, (yyvsp[-3].node), (yyvsp[0].node)); }
+#line 1373 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 12:
-#line 56 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = new FuncallExpr(divFunc, (yyvsp[-2].expr), (yyvsp[0].expr));}
-#line 1358 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 59 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Div, (yyvsp[-2].node), (yyvsp[0].node)); }
+#line 1379 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 13:
-#line 57 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = new FuncallExpr(divFunc, (yyvsp[-3].expr), (yyvsp[0].expr));}
-#line 1364 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 60 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Div, (yyvsp[-3].node), (yyvsp[0].node)); }
+#line 1385 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 14:
-#line 58 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = new FuncallExpr(negFunc, (yyvsp[0].expr));}
-#line 1370 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 61 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createUnaryOperator(UO_Negate, (yyvsp[0].node));   }
+#line 1391 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 15:
-#line 59 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = new FuncallExpr(powFunc, (yyvsp[-2].expr), (yyvsp[0].expr));}
-#line 1376 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 62 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Pow, (yyvsp[-2].node), (yyvsp[0].node)); }
+#line 1397 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 16:
-#line 60 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = (yyvsp[-1].expr);         }
-#line 1382 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 63 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = (yyvsp[-1].node); }
+#line 1403 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 17:
-#line 61 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = (yyvsp[-2].expr);         }
-#line 1388 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 64 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = (yyvsp[-2].node); }
+#line 1409 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 18:
-#line 62 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = (yyvsp[-1].expr);         }
-#line 1394 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 65 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = (yyvsp[-1].node); }
+#line 1415 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 19:
-#line 63 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.expr) = (yyvsp[-2].expr);         }
-#line 1400 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 66 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = (yyvsp[-2].node); }
+#line 1421 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
 
-#line 1404 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1425 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1631,5 +1652,5 @@ yypushreturn:
 #endif
   return yyresult;
 }
-#line 71 "src/Parsers/FlowParser.y" /* yacc.c:1906  */
+#line 74 "src/Parsers/FlowParser.y" /* yacc.c:1906  */
 
