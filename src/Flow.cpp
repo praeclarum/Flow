@@ -112,6 +112,68 @@ void FlowController::readStreamCode()
     }
 }
 
+static const char newline[] = {'\n', '\0'};
+
+Number FlowController::eval(const char *code)
+{
+    yypstate *parseState = yypstate_new();
+    FlowLexer lexer;
+    const char *p = code;
+    bool onnewline = false;
+    while (*p) {
+        bool gotnewline = false;
+        int parseres = -1;
+        bool hasResult = false;
+        Node *result = 0;
+        while (!gotnewline) {
+            if (*p == 0 && !onnewline) {
+                onnewline = true;
+                p = newline;
+            }
+            int r = *p;
+            if (r == '\n') gotnewline = true;
+            if (parseres == 1) continue;
+            bool consumed = false;
+            do {
+                consumed = lexer.push(r);
+                if (lexer.state == FLS_Complete && parseres != 0 && parseres != 1) {
+                    parseres = yypush_parse(parseState, lexer.tok, &lexer.val, this, &hasResult, &result);
+                }
+            } while (!consumed);
+            if (*p == 0) break;
+            else p++;
+        }
+        if (gotnewline) {
+            if (parseres == 0) {
+                // Successful Parse!
+                Number v = 0;
+                if (hasResult && result) {
+                    v = eval(result);
+                    delete result;
+                }
+                yypstate_delete(parseState);
+                return v;
+            }
+            else if (parseres == 1) {
+                yypstate_delete(parseState);
+                return 0;
+            }
+            else if (parseres == YYPUSH_MORE) {
+                if (*p == 0) {
+                    yypstate_delete(parseState);
+                    return 0;
+                }
+            }
+            else {
+                yypstate_delete(parseState);
+                return 0;
+            }
+        }
+    }
+    yypstate_delete(parseState);
+    return 0;
+}
+
 Number FlowController::eval(Node *node)
 {
     switch (node->nodeType) {
@@ -154,16 +216,6 @@ Number FlowController::eval(Node *node)
     case NT_Name:
         return 0;
     }
-}
-
-Number FlowController::eval(const char *code)
-{
-    yypstate *p = yypstate_new();
-    bool hr;
-    Node *r;
-    yypush_parse(p, 0, 0, this, &hr, &r);
-    yypstate_delete(p);
-    return -1;
 }
 
 void yyerror(FlowController *flow, bool *hasResult, Node **result, const char *m)
