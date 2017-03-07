@@ -51,7 +51,7 @@ bool FlowLexer::push(int c)
             default:
                 if (c == '_' || isalpha(c)) {
                     consumed = true;
-                    name = crc_update(crc_start(), c);
+                    val.name = crc_update(crc_start(), c);
                     tcol = col;
                     state = FLS_InName;
                 }
@@ -84,12 +84,22 @@ bool FlowLexer::push(int c)
     case FLS_InName:
         if (c == '_' || isalnum(c)) {
             consumed = true;
-            name = crc_update(name, c);
+            val.name = crc_update(val.name, c);
         }
         else {
-            tok = NAME;
             state = FLS_Complete;
-            val.name = crc_end(name);
+            val.name = crc_end(val.name);
+            switch (val.name) {
+            case 0x580282dc:
+                tok = SUB;
+                break;
+            case 0xfc33b1:
+                tok = END;
+                break;
+            default:
+                tok = NAME;
+                break;
+            }
             consumed = false;
         }
         break;

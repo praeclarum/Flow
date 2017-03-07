@@ -25,6 +25,6 @@ bin/test: $(SRC) $(TEST_SRC) $(HEADERS) $(TEST_HEADERS) Makefile
 	g++ $(CXXFLAGS) -I test $(SRC) $(TEST_SRC) -o $@
 
 src/Parsers/FlowParser.cpp: src/Parsers/FlowParser.y Makefile
-	bison --report=all --defines=src/Parsers/FlowParser.h -o $@ src/Parsers/FlowParser.y
+	bison -Werror --report=all --defines=src/Parsers/FlowParser.h -o $@ src/Parsers/FlowParser.y
 	sed -i.bak 's/\[\] \=/\[\] PROGMEM =/g' $@
 

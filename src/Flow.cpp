@@ -181,9 +181,16 @@ Number FlowController::eval(const char *code, FlowError *error)
 
 Number FlowController::eval(Node *node)
 {
+    Node *c = 0;
+    Number r = 0;
     switch (node->nodeType) {
     case NT_Document:
-        return 0;
+        c = node->firstChild;
+        while (c) {
+            r = eval(c);
+            c = c->nextSibling;
+        }
+        return r;
     case NT_UnaryOperator: {
         Number v = node->firstChild ? eval(node->firstChild) : 0;
         switch (node->value.unop) {
@@ -221,6 +228,10 @@ Number FlowController::eval(Node *node)
     case NT_Name:
         return 0;
     case NT_Call:
+        return 0;
+    case NT_SwitchToSub:
+        return 0;
+    case NT_End:
         return 0;
     }
 }

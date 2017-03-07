@@ -115,7 +115,9 @@ void yyerror(FlowController *flow, bool *hasResult, Node **result, const char *m
   {
     NUMBER = 258,
     NAME = 259,
-    NEG = 260
+    SUB = 260,
+    END = 261,
+    NEG = 262
   };
 #endif
 
@@ -130,7 +132,7 @@ union YYSTYPE
     Name name;
     Node *node;
 
-#line 134 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
+#line 136 "src/Parsers/FlowParser.cpp" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -156,7 +158,7 @@ void yypstate_delete (yypstate *ps);
 
 /* Copy the second part of user declarations.  */
 
-#line 160 "src/Parsers/FlowParser.cpp" /* yacc.c:358  */
+#line 162 "src/Parsers/FlowParser.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -372,23 +374,23 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  14
+#define YYFINAL  19
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   124
+#define YYLAST   115
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  15
+#define YYNTOKENS  17
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  5
+#define YYNNTS  6
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  28
+#define YYNRULES  31
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  54
+#define YYNSTATES  59
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   260
+#define YYMAXUTOK   262
 
 #define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -398,15 +400,15 @@ union yyalloc
 static const yytype_uint8 yytranslate[] PROGMEM =
 {
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      12,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+      14,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      13,    14,     8,     7,     2,     6,     2,     9,     2,     2,
+      15,    16,    10,     9,     2,     8,     2,    11,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     5,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     7,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,    11,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,    13,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -423,16 +425,17 @@ static const yytype_uint8 yytranslate[] PROGMEM =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-      10
+       5,     6,    12
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] PROGMEM =
 {
-       0,    47,    47,    48,    52,    53,    54,    55,    56,    57,
-      58,    59,    60,    61,    62,    63,    64,    65,    66,    67,
-      68,    69,    70,    71,    72,    73,    77,    81,    82
+       0,    48,    48,    49,    53,    54,    55,    56,    60,    64,
+      65,    66,    67,    68,    69,    70,    71,    72,    73,    74,
+      75,    76,    77,    78,    79,    80,    81,    82,    83,    84,
+      88,    89
 };
 #endif
 
@@ -441,9 +444,9 @@ static const yytype_uint8 yyrline[] PROGMEM =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] PROGMEM =
 {
-  "$end", "error", "$undefined", "NUMBER", "NAME", "'='", "'-'", "'+'",
-  "'*'", "'/'", "NEG", "'^'", "'\\n'", "'('", "')'", "$accept", "input",
-  "expr", "lvalue", "newlines", YY_NULLPTR
+  "$end", "error", "$undefined", "NUMBER", "NAME", "SUB", "END", "'='",
+  "'-'", "'+'", "'*'", "'/'", "NEG", "'^'", "'\\n'", "'('", "')'",
+  "$accept", "input", "stmt", "lvalue", "expr", "newlines", YY_NULLPTR
 };
 #endif
 
@@ -452,17 +455,17 @@ static const char *const yytname[] PROGMEM =
    (internal) symbol number NUM (which must be that of a token).  */
 static const yytype_uint16 yytoknum[] PROGMEM =
 {
-       0,   256,   257,   258,   259,    61,    45,    43,    42,    47,
-     260,    94,    10,    40,    41
+       0,   256,   257,   258,   259,   260,   261,    61,    45,    43,
+      42,    47,   262,    94,    10,    40,    41
 };
 # endif
 
-#define YYPACT_NINF -10
+#define YYPACT_NINF -7
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-10)))
+  (!!((Yystate) == (-7)))
 
-#define YYTABLE_NINF -27
+#define YYTABLE_NINF -9
 
 #define yytable_value_is_error(Yytable_value) \
   0
@@ -471,12 +474,12 @@ static const yytype_uint16 yytoknum[] PROGMEM =
      STATE-NUM.  */
 static const yytype_int8 yypact[] PROGMEM =
 {
-      46,   -10,    -4,    73,   -10,    57,     4,   112,     2,    41,
-       0,   -10,    76,    62,   -10,    57,    57,    57,    57,    73,
-     -10,    73,   -10,    85,    62,   -10,    -9,   -10,    94,    11,
-      62,    11,    62,     0,    62,     0,    62,     0,    17,   -10,
-      22,   103,   -10,   -10,    59,    11,    11,     0,     0,   -10,
-     -10,    66,   -10,   -10
+       0,    -7,    -6,     7,    -7,    58,    -7,    43,    26,    13,
+      25,   102,    40,    -7,    34,    39,    -7,    66,    56,    -7,
+      -7,    58,    43,    43,    43,    43,    58,    -7,    75,    56,
+      -7,    -4,    -7,    84,   102,    12,    56,    12,    56,    39,
+      56,    39,    56,    39,    -7,    14,    93,    -7,    -7,    22,
+      12,    12,    39,    39,    -7,    -7,    51,    -7,    -7
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -484,24 +487,24 @@ static const yytype_int8 yypact[] PROGMEM =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] PROGMEM =
 {
-       0,     4,     5,     0,     3,     0,     0,     0,     0,     0,
-      20,    27,     0,     0,     1,     0,     0,     0,     0,     0,
-       2,     0,     7,     0,     0,    22,     0,    28,     0,    14,
-       0,    12,     0,    16,     0,    18,     0,    21,     6,     8,
-       0,     0,    23,    24,     0,    15,    13,    17,    19,     9,
-      10,     0,    25,    11
+       0,     9,    10,     0,     7,     0,     3,     0,     0,     0,
+       0,     4,     0,     6,    10,    24,    30,     0,     0,     1,
+       2,     0,     0,     0,     0,     0,     0,    11,     0,     0,
+      26,     0,    31,     0,     5,    18,     0,    16,     0,    20,
+       0,    22,     0,    25,    12,     0,     0,    27,    28,     0,
+      19,    17,    21,    23,    13,    14,     0,    29,    15
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] PROGMEM =
 {
-     -10,   -10,    -3,   -10,    23
+      -7,    -7,    -7,    -7,    -5,    17
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] PROGMEM =
 {
-      -1,     6,     7,     8,    13
+      -1,     8,     9,    10,    11,    18
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -509,64 +512,64 @@ static const yytype_int8 yydefgoto[] PROGMEM =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] PROGMEM =
 {
-      10,   -26,    12,    27,    14,    42,    23,    21,     0,     9,
-      28,    19,    29,    31,    33,    35,    37,     0,    38,    17,
-      18,    41,    19,    15,    16,    17,    18,    45,    19,    46,
-       0,    47,    24,    48,    27,    26,    49,     0,    30,    32,
-      34,    36,     0,     0,     1,     2,    40,     3,     0,     1,
-       2,    44,     3,    11,     5,    22,     0,     0,     4,     5,
-       1,     2,     0,     3,    51,     1,     2,     0,     3,    11,
-       5,    27,     0,    52,    27,     5,     1,     2,    27,     3,
-      53,     0,    15,    16,    17,    18,     5,    19,    11,     0,
-      25,    15,    16,    17,    18,     0,    19,    11,     0,    39,
-      15,    16,    17,    18,     0,    19,    11,     0,    43,    15,
-      16,    17,    18,     0,    19,    11,     0,    50,    15,    16,
-      17,    18,     0,    19,    20
+      15,    -8,    17,     1,     2,     3,     4,    28,     5,    12,
+      32,    13,    47,    33,     6,     7,    34,    35,    37,    39,
+      41,    43,    24,    25,    46,    26,    19,    20,    32,    29,
+      54,    50,    21,    51,    31,    52,    32,    53,    57,    36,
+      38,    40,    42,     1,    14,    45,     1,    14,     5,    12,
+      49,     5,    26,     0,    16,     7,    27,    16,     7,     1,
+      14,     1,    14,    56,     5,    32,     5,    58,     0,     0,
+      32,     7,     0,     7,    22,    23,    24,    25,     0,    26,
+      16,     0,    30,    22,    23,    24,    25,     0,    26,    16,
+       0,    44,    22,    23,    24,    25,     0,    26,    16,     0,
+      48,    22,    23,    24,    25,     0,    26,    16,     0,    55,
+      22,    23,    24,    25,     0,    26
 };
 
 static const yytype_int8 yycheck[] PROGMEM =
 {
-       3,     5,     5,    12,     0,    14,     9,     5,    -1,    13,
-      13,    11,    15,    16,    17,    18,    19,    -1,    21,     8,
-       9,    24,    11,     6,     7,     8,     9,    30,    11,    32,
-      -1,    34,     9,    36,    12,    12,    14,    -1,    15,    16,
-      17,    18,    -1,    -1,     3,     4,    23,     6,    -1,     3,
-       4,    28,     6,    12,    13,    14,    -1,    -1,    12,    13,
-       3,     4,    -1,     6,    41,     3,     4,    -1,     6,    12,
-      13,    12,    -1,    14,    12,    13,     3,     4,    12,     6,
-      14,    -1,     6,     7,     8,     9,    13,    11,    12,    -1,
-      14,     6,     7,     8,     9,    -1,    11,    12,    -1,    14,
-       6,     7,     8,     9,    -1,    11,    12,    -1,    14,     6,
-       7,     8,     9,    -1,    11,    12,    -1,    14,     6,     7,
-       8,     9,    -1,    11,    12
+       5,     7,     7,     3,     4,     5,     6,    12,     8,    15,
+      14,     4,    16,    18,    14,    15,    21,    22,    23,    24,
+      25,    26,    10,    11,    29,    13,     0,    14,    14,    12,
+      16,    36,     7,    38,    17,    40,    14,    42,    16,    22,
+      23,    24,    25,     3,     4,    28,     3,     4,     8,    15,
+      33,     8,    13,    -1,    14,    15,    16,    14,    15,     3,
+       4,     3,     4,    46,     8,    14,     8,    16,    -1,    -1,
+      14,    15,    -1,    15,     8,     9,    10,    11,    -1,    13,
+      14,    -1,    16,     8,     9,    10,    11,    -1,    13,    14,
+      -1,    16,     8,     9,    10,    11,    -1,    13,    14,    -1,
+      16,     8,     9,    10,    11,    -1,    13,    14,    -1,    16,
+       8,     9,    10,    11,    -1,    13
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] PROGMEM =
 {
-       0,     3,     4,     6,    12,    13,    16,    17,    18,    13,
-      17,    12,    17,    19,     0,     6,     7,     8,     9,    11,
-      12,     5,    14,    17,    19,    14,    19,    12,    17,    17,
-      19,    17,    19,    17,    19,    17,    19,    17,    17,    14,
-      19,    17,    14,    14,    19,    17,    17,    17,    17,    14,
-      14,    19,    14,    14
+       0,     3,     4,     5,     6,     8,    14,    15,    18,    19,
+      20,    21,    15,     4,     4,    21,    14,    21,    22,     0,
+      14,     7,     8,     9,    10,    11,    13,    16,    21,    22,
+      16,    22,    14,    21,    21,    21,    22,    21,    22,    21,
+      22,    21,    22,    21,    16,    22,    21,    16,    16,    22,
+      21,    21,    21,    21,    16,    16,    22,    16,    16
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] PROGMEM =
 {
-       0,    15,    16,    16,    17,    17,    17,    17,    17,    17,
-      17,    17,    17,    17,    17,    17,    17,    17,    17,    17,
-      17,    17,    17,    17,    17,    17,    18,    19,    19
+       0,    17,    18,    18,    19,    19,    19,    19,    20,    21,
+      21,    21,    21,    21,    21,    21,    21,    21,    21,    21,
+      21,    21,    21,    21,    21,    21,    21,    21,    21,    21,
+      22,    22
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] PROGMEM =
 {
-       0,     2,     2,     1,     1,     1,     3,     3,     4,     5,
-       5,     6,     3,     4,     3,     4,     3,     4,     3,     4,
-       2,     3,     3,     4,     4,     5,     1,     1,     2
+       0,     2,     2,     1,     1,     3,     2,     1,     1,     1,
+       1,     3,     4,     5,     5,     6,     3,     4,     3,     4,
+       3,     4,     3,     4,     2,     3,     3,     4,     4,     5,
+       1,     2
 };
 
 
@@ -995,22 +998,28 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, FlowController *fl
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   switch (yytype)
     {
-          case 16: /* input  */
+          case 18: /* input  */
 #line 22 "src/Parsers/FlowParser.y" /* yacc.c:1257  */
       { delete (((*yyvaluep).node)); }
-#line 1002 "src/Parsers/FlowParser.cpp" /* yacc.c:1257  */
+#line 1005 "src/Parsers/FlowParser.cpp" /* yacc.c:1257  */
         break;
 
-    case 17: /* expr  */
+    case 19: /* stmt  */
 #line 22 "src/Parsers/FlowParser.y" /* yacc.c:1257  */
       { delete (((*yyvaluep).node)); }
-#line 1008 "src/Parsers/FlowParser.cpp" /* yacc.c:1257  */
+#line 1011 "src/Parsers/FlowParser.cpp" /* yacc.c:1257  */
         break;
 
-    case 18: /* lvalue  */
+    case 20: /* lvalue  */
 #line 22 "src/Parsers/FlowParser.y" /* yacc.c:1257  */
       { delete (((*yyvaluep).node)); }
-#line 1014 "src/Parsers/FlowParser.cpp" /* yacc.c:1257  */
+#line 1017 "src/Parsers/FlowParser.cpp" /* yacc.c:1257  */
+        break;
+
+    case 21: /* expr  */
+#line 22 "src/Parsers/FlowParser.y" /* yacc.c:1257  */
+      { delete (((*yyvaluep).node)); }
+#line 1023 "src/Parsers/FlowParser.cpp" /* yacc.c:1257  */
         break;
 
 
@@ -1333,157 +1342,175 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 47 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 48 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.node) = (yyvsp[-1].node); *hasResult = true; *result = (yyvsp[-1].node); YYACCEPT; }
-#line 1339 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1348 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 3:
-#line 48 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+#line 49 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
     { (yyval.node) = 0; *hasResult = false; YYACCEPT; }
-#line 1345 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1354 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 4:
-#line 52 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createNumberLiteral((yyvsp[0].number));              }
-#line 1351 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 53 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = (yyvsp[0].node); }
+#line 1360 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 5:
-#line 53 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createName((yyvsp[0].name));                       }
-#line 1357 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 54 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createAssignment((yyvsp[-2].node), (yyvsp[0].node)); }
+#line 1366 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 6:
-#line 54 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createAssignment((yyvsp[-2].node), (yyvsp[0].node));             }
-#line 1363 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 55 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createSwitchToSub((yyvsp[0].name)); }
+#line 1372 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 7:
-#line 55 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createCall(Node::createName((yyvsp[-2].name)), 0);  }
-#line 1369 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 56 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createEnd(); }
+#line 1378 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 8:
-#line 56 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createCall(Node::createName((yyvsp[-3].name)), (yyvsp[-1].node)); }
-#line 1375 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 60 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createName((yyvsp[0].name)); }
+#line 1384 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 9:
-#line 57 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createCall(Node::createName((yyvsp[-4].name)), (yyvsp[-2].node)); }
-#line 1381 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 64 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createNumberLiteral((yyvsp[0].number));              }
+#line 1390 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 10:
-#line 58 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createCall(Node::createName((yyvsp[-4].name)), (yyvsp[-1].node)); }
-#line 1387 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 65 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createName((yyvsp[0].name));                       }
+#line 1396 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 11:
-#line 59 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createCall(Node::createName((yyvsp[-5].name)), (yyvsp[-2].node)); }
-#line 1393 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 66 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createCall(Node::createName((yyvsp[-2].name)), 0);  }
+#line 1402 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 12:
-#line 60 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createBinaryOperator(BO_Add, (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1399 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 67 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createCall(Node::createName((yyvsp[-3].name)), (yyvsp[-1].node)); }
+#line 1408 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 13:
-#line 61 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createBinaryOperator(BO_Add, (yyvsp[-3].node), (yyvsp[0].node)); }
-#line 1405 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 68 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createCall(Node::createName((yyvsp[-4].name)), (yyvsp[-2].node)); }
+#line 1414 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 14:
-#line 62 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createBinaryOperator(BO_Sub, (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1411 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 69 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createCall(Node::createName((yyvsp[-4].name)), (yyvsp[-1].node)); }
+#line 1420 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 15:
-#line 63 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createBinaryOperator(BO_Sub, (yyvsp[-3].node), (yyvsp[0].node)); }
-#line 1417 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 70 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createCall(Node::createName((yyvsp[-5].name)), (yyvsp[-2].node)); }
+#line 1426 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 16:
-#line 64 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createBinaryOperator(BO_Mul, (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1423 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 71 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Add, (yyvsp[-2].node), (yyvsp[0].node)); }
+#line 1432 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 17:
-#line 65 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createBinaryOperator(BO_Mul, (yyvsp[-3].node), (yyvsp[0].node)); }
-#line 1429 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 72 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Add, (yyvsp[-3].node), (yyvsp[0].node)); }
+#line 1438 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 18:
-#line 66 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createBinaryOperator(BO_Div, (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1435 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 73 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Sub, (yyvsp[-2].node), (yyvsp[0].node)); }
+#line 1444 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 19:
-#line 67 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createBinaryOperator(BO_Div, (yyvsp[-3].node), (yyvsp[0].node)); }
-#line 1441 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 74 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Sub, (yyvsp[-3].node), (yyvsp[0].node)); }
+#line 1450 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 20:
-#line 68 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createUnaryOperator(UO_Negate, (yyvsp[0].node));   }
-#line 1447 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 75 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Mul, (yyvsp[-2].node), (yyvsp[0].node)); }
+#line 1456 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 21:
-#line 69 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createBinaryOperator(BO_Pow, (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1453 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 76 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Mul, (yyvsp[-3].node), (yyvsp[0].node)); }
+#line 1462 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 22:
-#line 70 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = (yyvsp[-1].node); }
-#line 1459 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 77 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Div, (yyvsp[-2].node), (yyvsp[0].node)); }
+#line 1468 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 23:
-#line 71 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = (yyvsp[-2].node); }
-#line 1465 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 78 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Div, (yyvsp[-3].node), (yyvsp[0].node)); }
+#line 1474 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 24:
-#line 72 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = (yyvsp[-1].node); }
-#line 1471 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 79 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createUnaryOperator(UO_Negate, (yyvsp[0].node));   }
+#line 1480 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 25:
-#line 73 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = (yyvsp[-2].node); }
-#line 1477 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 80 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = Node::createBinaryOperator(BO_Pow, (yyvsp[-2].node), (yyvsp[0].node)); }
+#line 1486 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
   case 26:
-#line 77 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
-    { (yyval.node) = Node::createName((yyvsp[0].name)); }
-#line 1483 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 81 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = (yyvsp[-1].node); }
+#line 1492 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+    break;
+
+  case 27:
+#line 82 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = (yyvsp[-2].node); }
+#line 1498 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+    break;
+
+  case 28:
+#line 83 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = (yyvsp[-1].node); }
+#line 1504 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+    break;
+
+  case 29:
+#line 84 "src/Parsers/FlowParser.y" /* yacc.c:1661  */
+    { (yyval.node) = (yyvsp[-2].node); }
+#line 1510 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
     break;
 
 
-#line 1487 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
+#line 1514 "src/Parsers/FlowParser.cpp" /* yacc.c:1661  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1714,5 +1741,5 @@ yypushreturn:
 #endif
   return yyresult;
 }
-#line 85 "src/Parsers/FlowParser.y" /* yacc.c:1906  */
+#line 92 "src/Parsers/FlowParser.y" /* yacc.c:1906  */
 

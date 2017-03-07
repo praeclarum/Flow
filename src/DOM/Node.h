@@ -15,6 +15,8 @@ enum NodeType
     NT_Assignment,
     NT_Name,
     NT_Call,
+    NT_SwitchToSub,
+    NT_End,
 };
 
 enum BinaryOperator
@@ -56,37 +58,60 @@ struct Node
 
     static Node *createName(Name name) {
         Node *n = new Node(NT_Name);
-        n->value.name = name;
+        if (n) {
+            n->value.name = name;
+        }
         return n;
     }
     static Node *createNumberLiteral(Number value) {
         Node *n = new Node(NT_NumberLiteral);
-        n->value.number = value;
+        if (n) {
+            n->value.number = value;
+        }
         return n;
     }
     static Node *createBinaryOperator(BinaryOperator binop, Node *left, Node *right) {
         Node *n = new Node(NT_BinaryOperator);
-        n->value.binop = binop;
-        n->firstChild = left;
-        left->nextSibling = right;
+        if (n) {
+            n->value.binop = binop;
+            n->firstChild = left;
+            if (left) left->nextSibling = right;
+        }
         return n;
     }
     static Node *createUnaryOperator(UnaryOperator unop, Node *child) {
         Node *n = new Node(NT_UnaryOperator);
-        n->value.unop = unop;
-        n->firstChild = child;
+        if (n) {
+            n->value.unop = unop;
+            n->firstChild = child;
+        }
         return n;
     }
     static Node *createAssignment(Node *left, Node *right) {
         Node *n = new Node(NT_Assignment);
-        n->firstChild = left;
-        left->nextSibling = right;
+        if (n) {
+            n->firstChild = left;
+            if (left) left->nextSibling = right;
+        }
         return n;
     }
     static Node *createCall(Node *f, Node *args) {
         Node *n = new Node(NT_Assignment);
-        n->firstChild = f;
-        f->nextSibling = args;
+        if (n) {
+            n->firstChild = f;
+            if (f) f->nextSibling = args;
+        }
+        return n;
+    }
+    static Node *createSwitchToSub(Name subName) {
+        Node *n = new Node(NT_SwitchToSub);
+        if (n) {
+            n->value.name = subName;
+        }
+        return n;
+    }
+    static Node *createEnd() {
+        Node *n = new Node(NT_End);
         return n;
     }
 };

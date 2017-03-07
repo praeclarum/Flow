@@ -56,7 +56,9 @@ void yyerror(FlowController *flow, bool *hasResult, Node **result, const char *m
   {
     NUMBER = 258,
     NAME = 259,
-    NEG = 260
+    SUB = 260,
+    END = 261,
+    NEG = 262
   };
 #endif
 
@@ -71,7 +73,7 @@ union YYSTYPE
     Name name;
     Node *node;
 
-#line 75 "src/Parsers/FlowParser.h" /* yacc.c:1915  */
+#line 77 "src/Parsers/FlowParser.h" /* yacc.c:1915  */
 };
 
 typedef union YYSTYPE YYSTYPE;
