@@ -17,10 +17,23 @@ static const char kEscReset[] PROGMEM = "\x1B[0m";
 #define esc(k)
 #endif
 
+//
+// FLOW CONTROLLER
+//
+
 FlowController::FlowController()
     : stream(0)
     , streamParseState(0)
+    , document(new Node(NT_Document))
 {
+}
+
+FlowController::~FlowController()
+{
+    delete document;
+    if (streamParseState) {
+        yypstate_delete(streamParseState);
+    }
 }
 
 void FlowController::begin()
@@ -179,6 +192,19 @@ Number FlowController::eval(const char *code, FlowError *error)
     return 0;
 }
 
+void FlowController::addFunction(ApplyFunction func, int numStates, void *callbackArg)
+{
+    Function *f = new Function(func, numStates, callbackArg);
+    if (!f) return;
+    Node *n = new Node(NT_FunctionDefinition);
+    if (!n) {
+        delete f;
+        return;
+    }
+    n->value.functionDefinition = f;
+    document->appendChild(n);
+}
+
 Number FlowController::eval(Node *node)
 {
     Node *c = 0;
@@ -193,7 +219,7 @@ Number FlowController::eval(Node *node)
         return r;
     case NT_UnaryOperator: {
         Number v = node->firstChild ? eval(node->firstChild) : 0;
-        switch (node->value.unop) {
+        switch (node->value.unaryOperator) {
         case UO_Negate:
             return -v;
         default:
@@ -204,7 +230,7 @@ Number FlowController::eval(Node *node)
         if (!node->firstChild || !node->firstChild->nextSibling) return 0;
         Number left = eval(node->firstChild);
         Number right = eval(node->firstChild->nextSibling);
-        switch (node->value.binop) {
+        switch (node->value.binaryOperator) {
         case BO_Add:
             return left + right;
         case BO_Sub:
@@ -219,8 +245,10 @@ Number FlowController::eval(Node *node)
             return 0;
         }
     }
-    case NT_NumberLiteral:
+    case NT_Number:
         return node->value.number;
+    case NT_SubDefinition:
+        return 0;
     case NT_FunctionDefinition:
         return 0;
     case NT_Assignment:

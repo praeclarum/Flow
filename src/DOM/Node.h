@@ -1,16 +1,15 @@
 #pragma once
 
-typedef float Number;
-typedef uint32_t Name;
-
+#include "Primitives.h"
 #include "Function.h"
 
 enum NodeType
 {
     NT_Document,
-    NT_NumberLiteral,
+    NT_Number,
     NT_BinaryOperator,
     NT_UnaryOperator,
+    NT_SubDefinition,
     NT_FunctionDefinition,
     NT_Assignment,
     NT_Name,
@@ -40,9 +39,9 @@ struct Node
     NodeType nodeType;
     union {
         Number number;
-        BinaryOperator binop;
-        UnaryOperator unop;
-        Function *function;
+        BinaryOperator binaryOperator;
+        UnaryOperator unaryOperator;
+        Function *functionDefinition;
         Name name;
     } value;
 
@@ -64,26 +63,33 @@ struct Node
         return n;
     }
     static Node *createNumberLiteral(Number value) {
-        Node *n = new Node(NT_NumberLiteral);
+        Node *n = new Node(NT_Number);
         if (n) {
             n->value.number = value;
         }
         return n;
     }
-    static Node *createBinaryOperator(BinaryOperator binop, Node *left, Node *right) {
+    static Node *createBinaryOperator(BinaryOperator binaryOperator, Node *left, Node *right) {
         Node *n = new Node(NT_BinaryOperator);
         if (n) {
-            n->value.binop = binop;
+            n->value.binaryOperator = binaryOperator;
             n->firstChild = left;
             if (left) left->nextSibling = right;
         }
+        else {
+            delete left;
+            delete right;
+        }
         return n;
     }
-    static Node *createUnaryOperator(UnaryOperator unop, Node *child) {
+    static Node *createUnaryOperator(UnaryOperator unaryOperator, Node *child) {
         Node *n = new Node(NT_UnaryOperator);
         if (n) {
-            n->value.unop = unop;
+            n->value.unaryOperator = unaryOperator;
             n->firstChild = child;
+        }
+        else {
+            delete child;
         }
         return n;
     }
@@ -93,6 +99,10 @@ struct Node
             n->firstChild = left;
             if (left) left->nextSibling = right;
         }
+        else {
+            delete left;
+            delete right;
+        }
         return n;
     }
     static Node *createCall(Node *f, Node *args) {
@@ -100,6 +110,10 @@ struct Node
         if (n) {
             n->firstChild = f;
             if (f) f->nextSibling = args;
+        }
+        else {
+            delete f;
+            delete args;
         }
         return n;
     }

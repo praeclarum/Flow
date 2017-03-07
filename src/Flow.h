@@ -17,9 +17,11 @@ class FlowController
 {
 public:
     FlowController();
+    ~FlowController();
     void begin();
     void loop();
     Number eval(const char *code, FlowError *error = 0);
+    void addFunction(ApplyFunction func, int numStates = 0, void *callbackArg = 0);
 
     inline Stream *getStream() { return stream; }
 
@@ -27,6 +29,7 @@ private:
     Stream *stream;
     yypstate *streamParseState;
     FlowLexer streamLexer;
+    Node *document;
 
     Number eval(Node *node);
     void readStreamCode();
