@@ -148,12 +148,16 @@ uint32_t crc_update(uint32_t crc, byte data)
     crc = crc_table[tbl_idx & 0x0f] ^ (crc >> 4);
     return crc;
 }
-uint32_t crc_string(const char *s)
+uint32_t crc_string(const __FlashStringHelper *s)
 {
     if (s == 0) return 0;
+    PGM_P p = reinterpret_cast<PGM_P>(s);
     uint32_t crc = ~0L;
-    while (*s)
-        crc = crc_update(crc, *s++);
+    byte b = pgm_read_byte(p);
+    while (b) {
+        crc = crc_update(crc, b);
+        p++;
+        b = pgm_read_byte(p);
+    }
     return ~crc;
 }
-

@@ -6,7 +6,11 @@
 
 typedef unsigned char byte;
 
+typedef char __FlashStringHelper;
+typedef const __FlashStringHelper *PGM_P;
+#define pgm_read_byte(p) (*(p))
 #define PROGMEM
+#define F(s) ((const __FlashStringHelper*)(s))
 
 typedef char prog_char;
 

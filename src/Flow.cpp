@@ -26,6 +26,10 @@ FlowController::FlowController()
     , streamParseState(0)
     , document(new Node(NT_Document))
 {
+#define FUNCTION(functionName) addFunction(F(#functionName), functionName##Function, 0, 0)
+    FUNCTION(sin);
+    FUNCTION(cos);
+#undef FUNCTION
 }
 
 FlowController::~FlowController()
@@ -127,23 +131,23 @@ void FlowController::readStreamCode()
 
 static const char newline[] = {'\n', '\0'};
 
-Number FlowController::eval(const char *code, FlowError *error)
+Number FlowController::eval(const __FlashStringHelper *code, FlowError *error)
 {
+    PGM_P p = reinterpret_cast<PGM_P>(code);
     yypstate *parseState = yypstate_new();
     FlowLexer lexer;
-    const char *p = code;
     bool onnewline = false;
-    while (*p) {
+    while (pgm_read_byte(p)) {
         bool gotnewline = false;
         int parseres = -1;
         bool hasResult = false;
         Node *result = 0;
         while (!gotnewline) {
-            if (*p == 0 && !onnewline) {
+            if (pgm_read_byte(p) == 0 && !onnewline) {
                 onnewline = true;
                 p = newline;
             }
-            int r = *p;
+            int r = pgm_read_byte(p);
             if (r == '\n') gotnewline = true;
             if (parseres == 1) { gotnewline = true; break; }
             bool consumed = false;
@@ -153,7 +157,7 @@ Number FlowController::eval(const char *code, FlowError *error)
                     parseres = yypush_parse(parseState, lexer.tok, &lexer.val, this, &hasResult, &result);
                 }
             } while (!consumed);
-            if (*p == 0) break;
+            if (pgm_read_byte(p) == 0) break;
             else p++;
         }
         if (gotnewline) {
@@ -174,7 +178,7 @@ Number FlowController::eval(const char *code, FlowError *error)
                 return 0;
             }
             else if (parseres == YYPUSH_MORE) {
-                if (*p == 0) {
+                if (pgm_read_byte(p) == 0) {
                     yypstate_delete(parseState);
                     if (error) *error = FE_SyntaxIncomplete;
                     return 0;
@@ -192,17 +196,33 @@ Number FlowController::eval(const char *code, FlowError *error)
     return 0;
 }
 
-void FlowController::addFunction(ApplyFunction func, int numStates, void *callbackArg)
+uint32_t crc_string(const __FlashStringHelper *s);
+
+void FlowController::addFunction(const __FlashStringHelper *funcName, ApplyFunction func, int numStates, void *callbackArg)
 {
     Function *f = new Function(func, numStates, callbackArg);
     if (!f) return;
-    Node *n = new Node(NT_FunctionDefinition);
-    if (!n) {
+    Node *fdn = new Node(NT_FunctionDefinition);
+    if (!fdn) {
         delete f;
         return;
     }
-    n->value.functionDefinition = f;
-    document->appendChild(n);
+    fdn->value.functionDefinition = f;
+    Node *nn = new Node(NT_Name);
+    if (!nn) {
+        delete fdn;
+        return;
+    }
+    nn->value.name = crc_string(funcName);
+    Node *an = new Node(NT_Assignment);
+    if (!an) {
+        delete fdn;
+        delete nn;
+        return;
+    }
+    an->firstChild = nn;
+    nn->nextSibling = fdn;
+    document->appendChild(an);
 }
 
 Number FlowController::eval(Node *node)

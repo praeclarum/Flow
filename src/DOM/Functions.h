@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Arduino.h>
 #include "Primitives.h"
 
 class Function
@@ -16,3 +17,11 @@ public:
         return apply_(flow, numInputs, inputs, states, callbackArg);
     }
 };
+
+#define FUNCTION(functionName) \
+    Number functionName##Function(FlowController *flow, int numInputs, Number *inputs, Number *states, void *callbackArg)
+
+FUNCTION(sin);
+FUNCTION(cos);
+
+#undef FUNCTION

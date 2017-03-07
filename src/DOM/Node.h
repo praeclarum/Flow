@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Primitives.h"
-#include "Function.h"
+#include "Functions.h"
 
 enum NodeType
 {

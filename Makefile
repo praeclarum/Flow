@@ -1,7 +1,7 @@
 
 CXXFLAGS=-g -Werror --std=c++11 -I src -I flow -DYYDEBUG=1 -DFLOW_CLICOLORS 
 
-SRC=src/Flow.cpp src/Parsers/FlowLexer.cpp src/Parsers/FlowParser.cpp src/DOM/Node.cpp
+SRC=src/Flow.cpp src/Parsers/FlowLexer.cpp src/Parsers/FlowParser.cpp src/DOM/Node.cpp src/DOM/Functions.cpp
 HEADERS=src/Flow.h src/Parsers/FlowLexer.h src/DOM/Node.h
 
 FLOW_SRC=flow/main.cpp flow/Arduino.cpp
