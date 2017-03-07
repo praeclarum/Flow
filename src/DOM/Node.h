@@ -9,10 +9,11 @@ enum NodeType
     NT_Number,
     NT_BinaryOperator,
     NT_UnaryOperator,
-    NT_SubDefinition,
-    NT_FunctionDefinition,
+    NT_Sub,
+    NT_Function,
     NT_Assignment,
     NT_Name,
+    NT_Reference,
     NT_Call,
     NT_SwitchToSub,
     NT_End,
@@ -41,14 +42,17 @@ struct Node
         Number number;
         BinaryOperator binaryOperator;
         UnaryOperator unaryOperator;
-        Function *functionDefinition;
+        Function *function;
         Name name;
+        Node *reference;
     } value;
 
     Node(NodeType nodeType)
         : nextSibling(0), firstChild(0)
         , nodeType(nodeType)
-    {}
+    {
+        value.number = 0;
+    }
     ~Node();
 
     void appendChild(Node *newChild);

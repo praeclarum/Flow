@@ -2,9 +2,16 @@
 
 #include "Node.h"
 
-
 Node::~Node()
 {
+    switch (nodeType)
+    {
+    case NT_Function:
+        delete value.function;
+        break;
+    default:
+        break;
+    }
     delete firstChild;
     delete nextSibling;
 }

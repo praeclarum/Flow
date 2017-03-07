@@ -30,7 +30,10 @@ private:
     yypstate *streamParseState;
     FlowLexer streamLexer;
     Node *document;
+    Node *editingSub;
 
+    Number evalDeclaration(Node *node);
+    void link(Node *node);
     Number eval(Node *node);
     void readStreamCode();
     void printPrompt();

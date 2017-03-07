@@ -25,11 +25,14 @@ FlowController::FlowController()
     : stream(0)
     , streamParseState(0)
     , document(new Node(NT_Document))
+    , editingSub(new Node(NT_Sub))
 {
 #define FUNCTION(functionName) addFunction(F(#functionName), functionName##Function, 0, 0)
     FUNCTION(sin);
     FUNCTION(cos);
 #undef FUNCTION
+
+    document->appendChild(editingSub);
 }
 
 FlowController::~FlowController()
@@ -49,6 +52,23 @@ void FlowController::begin()
 void FlowController::loop()
 {
     readStreamCode();
+
+    //
+    // Loop subs
+    //
+    Node *sub = document->firstChild;
+    while (sub) {
+        if (sub->nodeType == NT_Sub) {
+            Node *a = sub->firstChild;
+            while (a) {
+                if (a->nodeType == NT_Assignment && a->firstChild) {
+                    a->value.number = eval(a->firstChild->nextSibling);
+                }
+                a = a->nextSibling;
+            }
+        }
+        sub = sub->nextSibling;
+    }
 }
 
 void FlowController::printPrompt()
@@ -92,12 +112,10 @@ void FlowController::readStreamCode()
             else if (parseres == 0) {
                 // Successful Parse!
                 if (hasResult && result) {
-                    Number v = eval(result);
+                    Number v = evalDeclaration(result);
                     esc(kEscResult);
                     stream->println(v);
                     esc(kEscReset);
-                    delete result;
-                    result = 0;
                 }
                 streamLexer.reset();
                 printPrompt();
@@ -165,8 +183,7 @@ Number FlowController::eval(const __FlashStringHelper *code, FlowError *error)
                 // Successful Parse!
                 Number v = 0;
                 if (hasResult && result) {
-                    v = eval(result);
-                    delete result;
+                    v = evalDeclaration(result);
                 }
                 yypstate_delete(parseState);
                 if (error) *error = FE_None;
@@ -202,12 +219,12 @@ void FlowController::addFunction(const __FlashStringHelper *funcName, ApplyFunct
 {
     Function *f = new Function(func, numStates, callbackArg);
     if (!f) return;
-    Node *fdn = new Node(NT_FunctionDefinition);
+    Node *fdn = new Node(NT_Function);
     if (!fdn) {
         delete f;
         return;
     }
-    fdn->value.functionDefinition = f;
+    fdn->value.function = f;
     Node *nn = new Node(NT_Name);
     if (!nn) {
         delete fdn;
@@ -225,18 +242,54 @@ void FlowController::addFunction(const __FlashStringHelper *funcName, ApplyFunct
     document->appendChild(an);
 }
 
+Number FlowController::evalDeclaration(Node *node)
+{
+    Number r = 0;
+    link(node);
+    switch (node->nodeType) {
+    case NT_Assignment:
+        if (node->firstChild && node->firstChild->nextSibling && node->firstChild->nodeType == NT_Name) {
+            Name name = node->firstChild->value.name;
+            Node *existing = editingSub->firstChild;
+            while (existing && !(existing->nodeType == NT_Assignment && existing->firstChild && existing->firstChild->value.name == name)) {
+                existing = existing->nextSibling;
+            }
+            if (existing) {
+                // Replace
+                delete existing->firstChild->nextSibling;
+                existing->firstChild->nextSibling = node->firstChild->nextSibling;
+                node->firstChild->nextSibling = 0;
+                delete node;
+            }
+            else {
+                existing = node;
+                editingSub->appendChild(node);
+                link(editingSub); // relink the sub
+            }            
+            r = eval(existing->firstChild->nextSibling);
+            existing->value.number = r;
+        }
+        else {
+            delete node;
+        }
+        break;
+    case NT_SwitchToSub: {
+        }
+        delete node;
+        break;
+    default:
+        r = eval(node);
+        delete node;
+        break;
+    }
+    return r;
+}
+
 Number FlowController::eval(Node *node)
 {
-    Node *c = 0;
-    Number r = 0;
     switch (node->nodeType) {
     case NT_Document:
-        c = node->firstChild;
-        while (c) {
-            r = eval(c);
-            c = c->nextSibling;
-        }
-        return r;
+        return 0;
     case NT_UnaryOperator: {
         Number v = node->firstChild ? eval(node->firstChild) : 0;
         switch (node->value.unaryOperator) {
@@ -267,14 +320,16 @@ Number FlowController::eval(Node *node)
     }
     case NT_Number:
         return node->value.number;
-    case NT_SubDefinition:
+    case NT_Sub:
         return 0;
-    case NT_FunctionDefinition:
-        return 0;
+    case NT_Function:
+        return node->value.function->apply(this, 0, 0, 0);
     case NT_Assignment:
-        return 0;
+        return node->value.number;
     case NT_Name:
-        return 0;
+        return node->firstChild ? eval(node->firstChild) : 0;
+    case NT_Reference:
+        return node->value.reference ? eval(node->value.reference) : 0;
     case NT_Call:
         return 0;
     case NT_SwitchToSub:
@@ -283,6 +338,85 @@ Number FlowController::eval(Node *node)
         return 0;
     }
 }
+
+void FlowController::link(Node *node)
+{
+    Node *c = 0;
+    Number r = 0;
+    if (!node) return; // No need to link these
+    if (node->nodeType == NT_Assignment) {
+        // Only link the RHS of assignment
+        if (node->firstChild) link(node->firstChild->nextSibling);
+    }
+    else if (node->nodeType == NT_Name) {
+        if (!node->firstChild) {
+            Name name = node->value.name;
+
+            if (node->firstChild) {
+                delete node->firstChild;
+                node->firstChild = 0;
+            }
+
+            //
+            // Is it in the doc?
+            //
+            c = document->firstChild;
+            while (c) {
+                if (c->nodeType == NT_Assignment && c->firstChild && c->firstChild->nodeType == NT_Name && c->firstChild->value.name == name) {
+                    break;
+                }
+                c = c->nextSibling;
+            }
+            //
+            // How about the sub?
+            //
+            if (!c && editingSub) {                
+                c = editingSub->firstChild;
+                while (c) {
+                    if (c->nodeType == NT_Assignment && c->firstChild && c->firstChild->nodeType == NT_Name && c->firstChild->value.name == name) {
+                        break;
+                    }
+                    c = c->nextSibling;
+                }
+            }
+            //
+            // Did we link?
+            //
+            if (c) {
+                Node *rhs = c->firstChild->nextSibling;
+                if (rhs) {
+                    Node *rn = new Node(NT_Reference);
+                    if (rn) {
+                        rn->value.reference = c;
+                        node->firstChild = rn;
+                    }
+                    else {
+                        // No memory :-(
+                    }
+                }
+                else {
+                    // Assignment is invalid
+                }
+            }
+            else {
+                // Link failed
+            }
+        }
+        else {
+            // OK, already linked
+        }
+    }
+    else {
+        //
+        // Link the children
+        //
+        c = node->firstChild;
+        while (c) {
+            link(c);
+            c = c->nextSibling;
+        }
+    }
+ }
 
 void yyerror(FlowController *flow, bool *hasResult, Node **result, const char *m)
 {

@@ -4,6 +4,11 @@
 #define FUNCTION(functionName) \
     Number functionName##Function(FlowController *flow, int numInputs, Number *inputs, Number *states, void *callbackArg)
 
+FUNCTION(pi)
+{
+    return M_PI;
+}
+
 FUNCTION(sin)
 {
     return (numInputs > 0) ? sin(inputs[0]) : 0;
