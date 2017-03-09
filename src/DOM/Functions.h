@@ -43,6 +43,7 @@ struct FunctionReference
 #define FUNCTION(functionName) \
     Number functionName##Function(FlowController *flow, int numInputs, Number *inputs, Number *states, void *callbackArg)
 
+FUNCTION(t);
 FUNCTION(pi);
 FUNCTION(sin);
 FUNCTION(cos);

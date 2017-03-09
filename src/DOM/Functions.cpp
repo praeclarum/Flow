@@ -4,6 +4,11 @@
 #define FUNCTION(functionName) \
     Number functionName##Function(FlowController *flow, int numInputs, Number *inputs, Number *states, void *callbackArg)
 
+FUNCTION(t)
+{
+    return millis() / 1000.0;
+}
+
 FUNCTION(pi)
 {
     return M_PI;

@@ -5,6 +5,18 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+static long startMillis = 0;
+
+long millis()
+{
+    struct timeval  tv;
+    gettimeofday(&tv, 0);
+    long ms = tv.tv_sec * 1000 + tv.tv_usec / 1000 ;
+    if (startMillis == 0)
+        startMillis = ms;
+    return ms - startMillis;
+}
+
 float pow(float base, float exponent)
 {
     return powf(base, exponent);

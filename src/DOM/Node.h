@@ -7,14 +7,17 @@ enum NodeType
 {
     NT_Document,
     NT_Number,
+    // Expressions
     NT_BinaryOperator,
     NT_UnaryOperator,
-    NT_Sub,
+    NT_Call,
+    // Declaring and Referencing Things
     NT_Function,
+    NT_Sub,
     NT_Assignment,
     NT_Name,
     NT_FunctionReference,
-    NT_Call,
+    // Control Statements
     NT_SwitchToSub,
     NT_End,
 };

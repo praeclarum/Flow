@@ -28,6 +28,7 @@ FlowController::FlowController()
     , editingSub(new Node(NT_Sub))
 {
 #define FUNCTION(functionName) addFunction(F(#functionName), functionName##Function, 0, 0)
+    FUNCTION(t);
     FUNCTION(pi);
     FUNCTION(sin);
     FUNCTION(cos);

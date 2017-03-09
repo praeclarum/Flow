@@ -14,6 +14,7 @@ typedef const __FlashStringHelper *PGM_P;
 
 typedef char prog_char;
 
+long millis();
 float pow(float base, float exponent);
 
 #include <string>
