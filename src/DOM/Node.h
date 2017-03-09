@@ -16,6 +16,7 @@ enum NodeType
     NT_Sub,
     NT_Assignment,
     NT_Name,
+    NT_AssignmentReference,
     NT_FunctionReference,
     // Control Statements
     NT_SwitchToSub,
@@ -47,6 +48,7 @@ struct Node
         UnaryOperator unaryOperator;
         Function *function;
         Name name;
+        Node *assignmentReference;
         FunctionReference *functionReference;
     } value;
 

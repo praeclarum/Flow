@@ -332,6 +332,8 @@ Number FlowController::eval(Node *node)
         return node->firstChild ? eval(node->firstChild) : 0;
     case NT_FunctionReference:    
         return node->value.functionReference ? node->value.functionReference->apply(this) : 0;
+    case NT_AssignmentReference:
+        return node->value.assignmentReference ? eval(node->value.assignmentReference) : 0;
     case NT_Call:
         if (node->firstChild && node->firstChild->firstChild && node->firstChild->firstChild->nodeType == NT_FunctionReference) {
             FunctionReference *f = node->firstChild->firstChild->value.functionReference;
@@ -416,6 +418,16 @@ void FlowController::link(Node *parentNode, Node *node)
                         }
                         Function *f = rhs->value.function;
                         rn->value.functionReference = new FunctionReference(f, numInputs);
+                        node->firstChild = rn;
+                    }
+                    else {
+                        // No memory :-(
+                    }
+                }
+                else if (rhs) {
+                    Node *rn = new Node(NT_AssignmentReference);
+                    if (rn) {
+                        rn->value.assignmentReference = c;
                         node->firstChild = rn;
                     }
                     else {
