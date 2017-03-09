@@ -9,6 +9,9 @@ Node::~Node()
     case NT_Function:
         delete value.function;
         break;
+    case NT_FunctionReference:
+        delete value.functionReference;
+        break;
     default:
         break;
     }

@@ -13,7 +13,7 @@ enum NodeType
     NT_Function,
     NT_Assignment,
     NT_Name,
-    NT_Reference,
+    NT_FunctionReference,
     NT_Call,
     NT_SwitchToSub,
     NT_End,
@@ -44,7 +44,7 @@ struct Node
         UnaryOperator unaryOperator;
         Function *function;
         Name name;
-        Node *reference;
+        FunctionReference *functionReference;
     } value;
 
     Node(NodeType nodeType)
@@ -110,7 +110,7 @@ struct Node
         return n;
     }
     static Node *createCall(Node *f, Node *args) {
-        Node *n = new Node(NT_Assignment);
+        Node *n = new Node(NT_Call);
         if (n) {
             n->firstChild = f;
             if (f) f->nextSibling = args;

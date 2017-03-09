@@ -33,7 +33,7 @@ private:
     Node *editingSub;
 
     Number evalDeclaration(Node *node);
-    void link(Node *node);
+    void link(Node *parentNode, Node *node);
     Number eval(Node *node);
     void readStreamCode();
     void printPrompt();

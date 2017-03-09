@@ -28,6 +28,7 @@ FlowController::FlowController()
     , editingSub(new Node(NT_Sub))
 {
 #define FUNCTION(functionName) addFunction(F(#functionName), functionName##Function, 0, 0)
+    FUNCTION(pi);
     FUNCTION(sin);
     FUNCTION(cos);
 #undef FUNCTION
@@ -245,7 +246,7 @@ void FlowController::addFunction(const __FlashStringHelper *funcName, ApplyFunct
 Number FlowController::evalDeclaration(Node *node)
 {
     Number r = 0;
-    link(node);
+    link(editingSub, node);
     switch (node->nodeType) {
     case NT_Assignment:
         if (node->firstChild && node->firstChild->nextSibling && node->firstChild->nodeType == NT_Name) {
@@ -264,7 +265,7 @@ Number FlowController::evalDeclaration(Node *node)
             else {
                 existing = node;
                 editingSub->appendChild(node);
-                link(editingSub); // relink the sub
+                link(document, editingSub); // relink the sub
             }            
             r = eval(existing->firstChild->nextSibling);
             existing->value.number = r;
@@ -323,14 +324,31 @@ Number FlowController::eval(Node *node)
     case NT_Sub:
         return 0;
     case NT_Function:
-        return node->value.function->apply(this, 0, 0, 0);
+        return node->value.function ? node->value.function->apply(this, 0, 0, 0) : 0;
     case NT_Assignment:
         return node->value.number;
     case NT_Name:
         return node->firstChild ? eval(node->firstChild) : 0;
-    case NT_Reference:
-        return node->value.reference ? eval(node->value.reference) : 0;
+    case NT_FunctionReference:    
+        return node->value.functionReference ? node->value.functionReference->apply(this) : 0;
     case NT_Call:
+        if (node->firstChild && node->firstChild->firstChild && node->firstChild->firstChild->nodeType == NT_FunctionReference) {
+            FunctionReference *f = node->firstChild->firstChild->value.functionReference;
+            if (f) {
+                Number *inputs = f->inputs();
+                if (inputs) {
+                    
+                    Node *a = node->firstChild->nextSibling;
+                    int i = 0;
+                    while (a && i < f->numInputs) {
+                        inputs[i] = eval(a);
+                        a = a->nextSibling;
+                        i++;
+                    }
+                }
+                return f->apply(this);
+            }
+        }
         return 0;
     case NT_SwitchToSub:
         return 0;
@@ -339,14 +357,14 @@ Number FlowController::eval(Node *node)
     }
 }
 
-void FlowController::link(Node *node)
+void FlowController::link(Node *parentNode, Node *node)
 {
     Node *c = 0;
     Number r = 0;
     if (!node) return; // No need to link these
     if (node->nodeType == NT_Assignment) {
         // Only link the RHS of assignment
-        if (node->firstChild) link(node->firstChild->nextSibling);
+        if (node->firstChild) link(node, node->firstChild->nextSibling);
     }
     else if (node->nodeType == NT_Name) {
         if (!node->firstChild) {
@@ -384,10 +402,19 @@ void FlowController::link(Node *node)
             //
             if (c) {
                 Node *rhs = c->firstChild->nextSibling;
-                if (rhs) {
-                    Node *rn = new Node(NT_Reference);
+                if (rhs && rhs->nodeType == NT_Function) {
+                    Node *rn = new Node(NT_FunctionReference);
                     if (rn) {
-                        rn->value.reference = c;
+                        int numInputs = 0;
+                        if (parentNode && parentNode->nodeType == NT_Call && parentNode->firstChild == node) {
+                            Node *a = node->nextSibling;
+                            while (a) {
+                                numInputs++;
+                                a = a->nextSibling;
+                            }
+                        }
+                        Function *f = rhs->value.function;
+                        rn->value.functionReference = new FunctionReference(f, numInputs);
                         node->firstChild = rn;
                     }
                     else {
@@ -412,7 +439,7 @@ void FlowController::link(Node *node)
         //
         c = node->firstChild;
         while (c) {
-            link(c);
+            link(node, c);
             c = c->nextSibling;
         }
     }
