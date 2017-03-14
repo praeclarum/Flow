@@ -47,5 +47,7 @@ FUNCTION(t);
 FUNCTION(pi);
 FUNCTION(sin);
 FUNCTION(cos);
+FUNCTION(save);
+FUNCTION(load);
 
 #undef FUNCTION

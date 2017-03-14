@@ -34,6 +34,8 @@ FlowController::FlowController()
     FUNCTION(pi);
     FUNCTION(sin);
     FUNCTION(cos);
+    FUNCTION(save);
+    FUNCTION(load);
 #undef FUNCTION
 }
 

@@ -13,7 +13,8 @@ EEPROMClass::EEPROMClass()
     sprintf(dir, "%s/.flow", getenv("HOME"));
     mkdir(dir, 0777);
     sprintf(path, "%s/eeprom", dir);
-    file = fopen(path, "w+b");
+    file = fopen(path, "r+b");
+    if (!file) file = fopen(path, "w+b");
     if (!file) return;
     fseek(file, 0, SEEK_END);
     long flen = ftell(file);
