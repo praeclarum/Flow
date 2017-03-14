@@ -1,4 +1,5 @@
 #include <Flow.h>
+#include <EEPROM.h>
 
 #include <Parsers/FlowParser.h>
 
@@ -25,16 +26,27 @@ FlowController::FlowController()
     : stream(0)
     , streamParseState(0)
     , document(new Node(NT_Document))
-    , editingSub(new Node(NT_Sub))
+    , editingSub(0)
 {
+    clear();
+}
+
+void FlowController::clear()
+{
+    if (!document) return;
+
+    delete document->firstChild;
+    document->firstChild = 0;
+
+    editingSub = new Node(NT_Sub);
+    document->appendChild(editingSub);
+
 #define FUNCTION(functionName) addFunction(F(#functionName), functionName##Function, 0, 0)
     FUNCTION(t);
     FUNCTION(pi);
     FUNCTION(sin);
     FUNCTION(cos);
 #undef FUNCTION
-
-    document->appendChild(editingSub);
 }
 
 FlowController::~FlowController()
@@ -290,6 +302,8 @@ Number FlowController::evalDeclaration(Node *node)
 Number FlowController::eval(Node *node)
 {
     switch (node->nodeType) {
+    case NT_Null:
+        return 0;
     case NT_Document:
         return 0;
     case NT_UnaryOperator: {
@@ -457,6 +471,14 @@ void FlowController::link(Node *parentNode, Node *node)
         }
     }
  }
+
+int FlowController::saveToEEPROM()
+{
+    if (!document) return false;
+    EEPROM.update(0, 42);
+    EEPROM.update(1, sizeof(Node::value));
+    return document->saveToEEPROM(2);
+}
 
 void yyerror(FlowController *flow, bool *hasResult, Node **result, const char *m)
 {

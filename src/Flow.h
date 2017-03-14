@@ -25,6 +25,9 @@ public:
 
     inline Stream *getStream() { return stream; }
 
+    int saveToEEPROM();
+    void clear();
+
 private:
     Stream *stream;
     yypstate *streamParseState;

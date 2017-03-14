@@ -5,6 +5,7 @@
 
 enum NodeType
 {
+    NT_Null,
     NT_Document,
     NT_Number,
     // Expressions
@@ -63,6 +64,7 @@ struct Node
     void appendChild(Node *newChild);
     inline bool hasChildNodes(Node *newChild) const { return firstChild != 0; }
     int childNodesLength() const;
+    int saveToEEPROM(int idx);
 
     static Node *createName(Name name) {
         Node *n = new Node(NT_Name);
