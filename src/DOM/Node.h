@@ -62,9 +62,11 @@ struct Node
     ~Node();
 
     void appendChild(Node *newChild);
+    void removeChild(Node *child);
     inline bool hasChildNodes(Node *newChild) const { return firstChild != 0; }
     int childNodesLength() const;
     int saveToEEPROM(int idx);
+    int loadFromEEPROM(int idx);
 
     static Node *createName(Name name) {
         Node *n = new Node(NT_Name);

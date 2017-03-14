@@ -34,6 +34,17 @@ TEST_CLASS(SaveTests)
         Assert::AreEqual(6, y);
         Assert::AreEqual(DOC_HEADER_SIZE + (2 + 2*3)*NODE_SIZE, end);
     }
+    TEST_METHOD(loadResolvedAssignments)
+    {
+        Flow.clear();
+        Flow.eval("x = 6");
+        auto y = Flow.eval("y = x");
+        auto end = Flow.saveToEEPROM();
+
+        Flow.loadFromEEPROM();
+        auto yy = Flow.eval("y");
+        Assert::AreEqual(6, yy);
+    }
 };
 
 static SaveTests t;

@@ -32,6 +32,32 @@ void Node::appendChild(Node *child)
     ps->nextSibling = child;
 }
 
+void Node::removeChild(Node *child)
+{
+    if (!firstChild)
+        return;
+    Node *c = firstChild;
+    Node *pc = 0;
+    while (c) {
+        if (c == child) {
+            if (pc) {
+                pc->nextSibling = c->nextSibling;
+                c->nextSibling = 0;
+                delete c;
+                return;
+            }
+            else {
+                firstChild = c->nextSibling;
+                c->nextSibling = 0;
+                delete c;
+                return;
+            }
+        }
+        pc = c;
+        c = c->nextSibling;
+    }
+}
+
 int Node::saveToEEPROM(int idx)
 {
     // Is there enough space?
@@ -57,5 +83,33 @@ int Node::saveToEEPROM(int idx)
         }
     }
     EEPROM.update(i++, 0);
+    return i;
+}
+
+int Node::loadFromEEPROM(int idx)
+{
+    // Is there enough space?
+    if (idx + 2 + sizeof(value) > EEPROM.length()) {
+        return EEPROM.length();
+    }
+    int i = idx;
+    nodeType = (NodeType)EEPROM.read(i++);
+    EEPROM.get(i, value);
+    i += sizeof(value);
+    delete firstChild;
+    firstChild = 0;
+    byte nt = EEPROM.read(i);
+    while (nt != 0) {
+        Node *c = new Node((NodeType)nt);
+        if (c) {
+            i = c->loadFromEEPROM(i);
+            appendChild(c);
+            nt = EEPROM.read(i);
+        }
+        else {
+            return EEPROM.length();
+        }
+    }
+    i++;
     return i;
 }

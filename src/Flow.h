@@ -26,6 +26,7 @@ public:
     inline Stream *getStream() { return stream; }
 
     int saveToEEPROM();
+    int loadFromEEPROM();
     void clear();
 
 private:

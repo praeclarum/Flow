@@ -29,24 +29,40 @@ FlowController::FlowController()
     , editingSub(0)
 {
     clear();
-}
-
-void FlowController::clear()
-{
-    if (!document) return;
-
-    delete document->firstChild;
-    document->firstChild = 0;
-
-    editingSub = new Node(NT_Sub);
-    document->appendChild(editingSub);
-
 #define FUNCTION(functionName) addFunction(F(#functionName), functionName##Function, 0, 0)
     FUNCTION(t);
     FUNCTION(pi);
     FUNCTION(sin);
     FUNCTION(cos);
 #undef FUNCTION
+}
+
+void FlowController::clear()
+{
+    if (!document) return;
+
+    //
+    // Remove all subs
+    //
+    bool changed = true;
+    while (changed) {
+        changed = false;
+        Node *c = document->firstChild;
+        while (c) {
+            if (c->nodeType == NT_Sub) {
+                document->removeChild(c);
+                changed = true;
+                break;
+            }
+            c = c->nextSibling;
+        }
+    }
+
+    //
+    // Add new blank one
+    //
+    editingSub = new Node(NT_Sub);
+    document->appendChild(editingSub);
 }
 
 FlowController::~FlowController()
@@ -478,6 +494,36 @@ int FlowController::saveToEEPROM()
     EEPROM.update(0, 42);
     EEPROM.update(1, sizeof(Node::value));
     return document->saveToEEPROM(2);
+}
+
+int FlowController::loadFromEEPROM()
+{
+    if (!document) return false;
+    clear();
+    if (EEPROM.read(0) != 42) return 0;
+    if (EEPROM.read(1) != sizeof(Node::value)) return 0;
+    Node *newDocument = new Node(NT_Document);
+    int end = 0;
+    int r = newDocument->loadFromEEPROM(2);
+    document->removeChild(editingSub);
+    editingSub = 0;
+    Node *c = newDocument->firstChild;
+    while (c) {
+        if (c->nodeType == NT_Sub && editingSub == 0)
+            editingSub = c;
+        Node *ns = c->nextSibling;
+        c->nextSibling = 0;
+        document->appendChild(c);
+        c = ns;
+    }
+    newDocument->firstChild = 0;
+    delete newDocument;
+    if (!editingSub) {
+        editingSub = new Node(NT_Sub);
+        document->appendChild(editingSub);
+    }
+    link(0, document);
+    return r;
 }
 
 void yyerror(FlowController *flow, bool *hasResult, Node **result, const char *m)
