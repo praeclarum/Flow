@@ -43,6 +43,17 @@ FUNCTION(max)
     return m;
 }
 
+FUNCTION(clamp)
+{
+    if (numInputs <= 0) return 0;
+    Number v = inputs[0];
+    if (numInputs > 1 && v < inputs[1])
+        v = inputs[1];
+    if (numInputs > 2 && v > inputs[2])
+        v = inputs[2];
+    return v;
+}
+
 FUNCTION(save)
 {
     return flow->saveToEEPROM();

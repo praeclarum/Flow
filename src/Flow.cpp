@@ -36,6 +36,7 @@ FlowController::FlowController()
     FUNCTION(cos);
     FUNCTION(min);
     FUNCTION(max);
+    FUNCTION(clamp);
     FUNCTION(save);
     FUNCTION(load);
 #undef FUNCTION

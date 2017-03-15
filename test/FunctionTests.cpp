@@ -54,6 +54,17 @@ TEST_CLASS(FunctionTests)
         Assert::AreEqual(1.0f, Flow.eval("max(1, -2)"));
         Assert::AreEqual(-1.0f, Flow.eval("max(-1, -2)"));
     }
+
+    TEST_METHOD(clamp)
+    {
+        Assert::AreEqual(0.0f, Flow.eval("clamp"));
+        Assert::AreEqual(13.0f, Flow.eval("clamp (13)"));
+        Assert::AreEqual(13.0f, Flow.eval("clamp (13, 0)"));
+        Assert::AreEqual(20.0f, Flow.eval("clamp (13, 20)"));
+        Assert::AreEqual(10.0f, Flow.eval("clamp (13, 0, 10)"));
+        Assert::AreEqual(13.0f, Flow.eval("clamp (13, 10, 20)"));
+        Assert::AreEqual(20.0f, Flow.eval("clamp (26, 10, 20)"));
+    }
 };
 
 static FunctionTests t;

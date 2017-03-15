@@ -49,6 +49,7 @@ FUNCTION(sin);
 FUNCTION(cos);
 FUNCTION(min);
 FUNCTION(max);
+FUNCTION(clamp);
 FUNCTION(save);
 FUNCTION(load);
 
