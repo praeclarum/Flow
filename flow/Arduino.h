@@ -38,6 +38,7 @@ public:
     virtual ~Print() {}
     virtual void print(char c) = 0;
     virtual void print(const char *text) = 0;
+    virtual void println() = 0;
     virtual void println(const char *line) = 0;
     virtual void println(char c) = 0;
     virtual void println(float value) = 0;
@@ -71,6 +72,7 @@ public:
     virtual int write(const char *buffer, int length);
     virtual void print(char c);
     virtual void print(const char *text);
+    virtual void println();
     virtual void println(const char *line);
     virtual void println(char c);
     virtual void println(float value);
