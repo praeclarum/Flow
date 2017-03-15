@@ -27,6 +27,7 @@ FlowController::FlowController()
     , streamParseState(0)
     , document(new Node(NT_Document))
     , editingSub(0)
+    , webServer(this, 8080)
 {
     clear();
 #define FUNCTION(functionName) addFunction(F(#functionName), functionName##Function, 0, 0)
@@ -80,13 +81,23 @@ FlowController::~FlowController()
 
 void FlowController::begin()
 {
+    while (!Serial);
+    webServer.setup();
     stream = &Serial;
     printPrompt();
 }
 
 void FlowController::loop()
 {
+    //
+    // Read serial input
+    //
     readStreamCode();
+
+    //
+    // Read web input
+    //
+    webServer.loop();
 
     //
     // Loop subs

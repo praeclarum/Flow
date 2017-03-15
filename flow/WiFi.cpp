@@ -4,8 +4,9 @@
 
 #include <sys/socket.h>
 #include <unistd.h>
+#include <netinet/in.h>
 
-void WiFiClass::begin(const char *ssid, const char *password)
+void WiFiClass::begin(char *ssid, const char *password)
 {
 }
 
@@ -24,32 +25,30 @@ WiFiClient::WiFiClient(int socket)
 
 WiFiClient::operator bool ()
 {
-    return socket != 0;
+    return socket >= 0;
 }
 
 bool WiFiClient::connected()
 {
-    return socket != 0;
+    return socket >= 0;
 }
 
 int WiFiClient::available()
 {
-    if (socket == 0)
-        return 0;
+    if (socket < 0) return 0;
     fd_set rfds;
     FD_ZERO(&rfds);
     FD_SET(socket, &rfds);
     struct timeval tv;
     tv.tv_sec = 0;
     tv.tv_usec = 0;
-    int r = select(1, &rfds, NULL, NULL, &tv);    
+    int r = select(socket+1, &rfds, NULL, NULL, &tv);    
     return r > 0 ? 1 : 0;
 }
 
 int WiFiClient::read()
 {
-    if (socket == 0)
-        return -1;
+    if (socket < 0) return -1;
     byte b;
     int n = recv(socket, &b, 1, 0);
     if (n == 1) {
@@ -62,7 +61,7 @@ int WiFiClient::read()
 
 void WiFiClient::print(const char *text)
 {
-    if (socket == 0) return;
+    if (socket < 0) return;
     send(socket, text, strlen(text), 0);
 }
 
@@ -87,6 +86,7 @@ void WiFiClient::print(float value)
 void WiFiClient::stop()
 {
     close(socket);
+    socket = -1;
 }
 
 WiFiServer::WiFiServer(int port)
@@ -96,9 +96,37 @@ WiFiServer::WiFiServer(int port)
 
 void WiFiServer::begin()
 {
+    socket = ::socket(PF_INET, SOCK_STREAM, 0);
+    if (socket < 0) return;
+
+    sockaddr_in addr = {0};
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = htons(port);
+    if (bind(socket, (sockaddr *)&addr, sizeof(addr)) < 0) {
+        close(socket);
+        socket = -1;
+        Serial.println(F("WiFiServer: Failed to bind"));
+        return;
+    }
+    listen(socket, 5);
 }
 
 WiFiClient WiFiServer::available()
 {
-    return WiFiClient(0);
+    if (socket < 0) return WiFiClient(-1);
+    fd_set rfds;
+    FD_ZERO(&rfds);
+    FD_SET(socket, &rfds);
+    struct timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = 0;
+    int r = select(socket+1, &rfds, NULL, NULL, &tv);    
+    if (r > 0) {
+        sockaddr_in caddr = {0};
+        socklen_t len = sizeof(caddr);
+        int csocket = accept(socket, (sockaddr*)&caddr, &len);
+        return WiFiClient(csocket);
+    }
+    return WiFiClient(-1);
 }

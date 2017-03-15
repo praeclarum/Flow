@@ -28,6 +28,7 @@ public:
 class WiFiServer
 {
     int port;
+    int socket;
 public:
     WiFiServer(int port);
     void begin();
@@ -37,7 +38,7 @@ public:
 class WiFiClass
 {
 public:
-    void begin(const char *ssid, const char *password);
+    void begin(char *ssid, const char *password);
     WiFiStatus status();
 };
 

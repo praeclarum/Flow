@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 #include "Parsers/FlowLexer.h"
+#include "WebServer/WebServer.h"
 
 enum FlowError
 {
@@ -35,6 +36,7 @@ private:
     FlowLexer streamLexer;
     Node *document;
     Node *editingSub;
+    WebServer webServer;
 
     Number evalDeclaration(Node *node);
     void link(Node *parentNode, Node *node);

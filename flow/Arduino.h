@@ -67,6 +67,7 @@ class StdioStream : public Stream
 public:
     StdioStream();
     virtual ~StdioStream();
+    operator bool() { return true; }
     virtual int available();
     virtual int readBytes(char *buffer, int length);
     virtual int write(const char *buffer, int length);

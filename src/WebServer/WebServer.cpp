@@ -2,11 +2,11 @@
 #include "WebServer.h"
 #include "../Flow.h"
 
-char ssid[] = "yourNetwork";      // your network SSID (name)
-char pass[] = "secretPassword";   // your network password
+char ssid[] = "ssid";
+char pass[] = "pwd";
 
-WebServer::WebServer(FlowController *flow)
-    : server(80)
+WebServer::WebServer(FlowController *flow, int port)
+    : server(port)
     , flow(flow)
 {
 }
@@ -48,21 +48,21 @@ void WebServer::loop()
 void WebServer::sendReply(const char *url, WiFiClient &client)
 {
     // send a standard http response header
-    client.println("HTTP/1.1 200 OK");
-    client.println("Content-Type: text/html");
-    client.println("Connection: close");  // the connection will be closed after completion of the response
+    client.println(F("HTTP/1.1 200 OK"));
+    client.println(F("Content-Type: text/html"));
+    client.println(F("Connection: close"));  // the connection will be closed after completion of the response
     client.println();
-    client.println("<!DOCTYPE HTML>");
-    client.println("<html>");
+    client.println(F("<!DOCTYPE HTML>"));
+    client.println(F("<html>"));
     // output the value of each analog input pin
     for (int analogChannel = 0; analogChannel < 6; analogChannel++) {
         int sensorReading = 42;
-        client.print("analog input ");
+        client.print(F("analog input "));
         client.print(analogChannel);
-        client.print(" is ");
+        client.print(F(" is "));
         client.print(sensorReading);
-        client.println("<br />");
+        client.println(F("<br />"));
     }
-    client.println("</html>");
+    client.println(F("</html>"));
 }
 

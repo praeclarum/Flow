@@ -13,7 +13,7 @@ class WebServer
     void sendReply(const char *url, WiFiClient &client);
 
 public:
-    WebServer(FlowController *flow);
+    WebServer(FlowController *flow, int port);
     void setup();
     void loop();
 };
