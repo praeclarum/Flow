@@ -76,10 +76,28 @@ void WiFiClient::println(const char *line)
     print("\r\n");
 }
 
+void WiFiClient::print(char ch)
+{
+    char text[2];
+    text[0] = ch;
+    text[1] = 0;
+    print(text);
+}
+
 void WiFiClient::print(float value)
 {
     char text[32];
     sprintf(text, "%g", value);
+    print(text);
+}
+
+void WiFiClient::print(uintptr_t value, int base)
+{
+    char text[32];
+    if (base == HEX)
+        sprintf(text, "0x%lx", value);
+    else
+        sprintf(text, "%lu", value);
     print(text);
 }
 

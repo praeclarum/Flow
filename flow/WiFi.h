@@ -5,7 +5,6 @@ enum WiFiStatus
     WL_CONNECTED = 1,
 };
 
-
 class WiFiClient
 {
     int socket;
@@ -19,10 +18,12 @@ public:
     int read();
 
     void print(const char *text);
+    void print(char ch);
+    void print(float value);
+    void print(uintptr_t, int base);
     void println();
     void println(const char *line);
     void println(char c);
-    void print(float value);
 };
 
 class WiFiServer

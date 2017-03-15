@@ -31,6 +31,9 @@ public:
     void remove(unsigned int index, unsigned int count);
 };
 
+#define DEC 10
+#define HEX 16
+
 class Print
 {
 public:

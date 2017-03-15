@@ -45,6 +45,110 @@ void WebServer::loop()
     }
 }
 
+static void printNode(Node *node, WiFiClient &client)
+{
+    switch (node->nodeType)
+    {
+    case NT_Null:
+        client.print(F("Null"));
+        break;
+    case NT_Document:
+        client.print(F("Document"));
+        break;
+    case NT_Number:
+        client.print(F("Number"));
+        break;
+    case NT_BinaryOperator:
+        client.print(F("BinaryOperator"));
+        break;
+    case NT_UnaryOperator:
+        client.print(F("UnaryOperator"));
+        break;
+    case NT_Call:
+        client.print(F("Call"));
+        break;
+    case NT_Function:
+        client.print(F("Function"));
+        break;
+    case NT_Sub:
+        client.print(F("Sub"));
+        break;
+    case NT_Assignment:
+        client.print(F("Assignment"));
+        break;
+    case NT_Name:
+        client.print(F("Name"));
+        break;
+    case NT_AssignmentReference:
+        client.print(F("AssignmentReference"));
+        break;
+    case NT_FunctionReference:
+        client.print(F("FunctionReference"));
+        break;
+    case NT_SwitchToSub:
+        client.print(F("SwitchToSub"));
+        break;
+    case NT_End:
+        client.print(F("End"));
+        break;        
+    }
+    client.print(F(" "));
+    client.print((uintptr_t)node, HEX);
+    client.print(F(" "));
+    switch (node->nodeType)
+    {
+    case NT_Null:
+        break;
+    case NT_Document:
+        break;
+    case NT_Number:
+        client.print(node->value.number);
+        break;
+    case NT_BinaryOperator:
+        client.print((char)node->value.binaryOperator);
+        break;
+    case NT_UnaryOperator:
+        client.print((char)node->value.unaryOperator);
+        break;
+    case NT_Call:
+        break;
+    case NT_Function:
+        client.print((uintptr_t)node->value.function, HEX);
+        break;
+    case NT_Sub:
+        break;
+    case NT_Assignment:
+        client.print(node->value.number);
+        break;
+    case NT_Name:
+        client.print(node->value.name, HEX);
+        break;
+    case NT_AssignmentReference:
+        client.print((uintptr_t)node->value.assignmentReference, HEX);
+        break;
+    case NT_FunctionReference:
+        client.print((uintptr_t)node->value.functionReference->function, HEX);
+        break;
+    case NT_SwitchToSub:
+        client.print(F("SwitchToSub"));
+        break;
+    case NT_End:
+        client.print(F("End"));
+        break;        
+    }
+    Node *c = node->firstChild;
+    if (c) {
+        client.println(F("<ul>"));
+        while (c) {
+            client.println(F("<li>"));
+            printNode(c, client);
+            client.println(F("</li>"));
+            c = c->nextSibling;
+        }
+        client.println(F("</ul>"));
+    }
+}
+
 void WebServer::sendReply(const char *url, WiFiClient &client)
 {
     // send a standard http response header
@@ -54,15 +158,11 @@ void WebServer::sendReply(const char *url, WiFiClient &client)
     client.println();
     client.println(F("<!DOCTYPE HTML>"));
     client.println(F("<html>"));
-    // output the value of each analog input pin
-    for (int analogChannel = 0; analogChannel < 6; analogChannel++) {
-        int sensorReading = 42;
-        client.print(F("analog input "));
-        client.print(analogChannel);
-        client.print(F(" is "));
-        client.print(sensorReading);
-        client.println(F("<br />"));
-    }
+
+    client.println(F("<ul><li>"));
+    printNode(flow->getDocument(), client);
+    client.println(F("</li></ul>"));
+
     client.println(F("</html>"));
 }
 
