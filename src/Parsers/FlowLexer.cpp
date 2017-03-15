@@ -26,6 +26,13 @@ bool FlowLexer::push(int c)
         else if (c <= ' ') {
             consumed = true;
         }
+        else if (c == '.') {
+            consumed = true;
+            buffer[0] = (char)c;
+            bufferLength = 1;
+            tcol = col;
+            state = FLS_Dot;
+        }
         else if ('0' <= c && c <= '9') {
             consumed = true;
             buffer[0] = (char)c;
@@ -65,7 +72,40 @@ bool FlowLexer::push(int c)
             }
         }
         break;
+    case FLS_Dot:
+        if ('0' <= c && c <= '9') {
+            consumed = true;
+            if (bufferLength + 1 < MAX_BUFFER_LENGTH) {
+                buffer[bufferLength] = c;
+                bufferLength++;
+            }
+            state = FLS_InNumberAfterDot;
+        }
+        else {
+            consumed = false;
+            tok = (yytokentype)'.';
+            state = FLS_Complete;
+            buffer[bufferLength] = 0;
+        }
+        break;
     case FLS_InNumber:
+        if (c == '.' || ('0' <= c && c <= '9')) {
+            consumed = true;
+            if (bufferLength + 1 < MAX_BUFFER_LENGTH) {
+                buffer[bufferLength] = c;
+                bufferLength++;
+            }
+            if (c == '.')
+                state = FLS_InNumberAfterDot;
+        }
+        else {
+            tok = NUMBER;
+            state = FLS_Complete;
+            buffer[bufferLength] = 0;
+            val.number = atof(buffer);
+        }
+        break;
+    case FLS_InNumberAfterDot:
         if ('0' <= c && c <= '9') {
             consumed = true;
             if (bufferLength + 1 < MAX_BUFFER_LENGTH) {
@@ -78,7 +118,6 @@ bool FlowLexer::push(int c)
             state = FLS_Complete;
             buffer[bufferLength] = 0;
             val.number = atof(buffer);
-            consumed = false;
         }
         break;
     case FLS_InName:

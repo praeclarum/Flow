@@ -13,20 +13,33 @@ TEST_CLASS(ExpressionTests)
         Assert::AreEqual(FE_None, e);
         Assert::AreEqual(2.0f, x);
     }
-    // TEST_METHOD(onlyDecimalNumber)
-    // {
-    //     FlowError e = FE_None;
-    //     auto x = Flow.eval(".14159", &e);
-    //     Assert::AreEqual(FE_None, e);
-    //     Assert::AreEqual(.14159f, x);
-    // }
-    // TEST_METHOD(decimalNumber)
-    // {
-    //     FlowError e = FE_None;
-    //     auto x = Flow.eval("3.14159", &e);
-    //     Assert::AreEqual(FE_None, e);
-    //     Assert::AreEqual(3.14159f, x);
-    // }
+    TEST_METHOD(onlyDecimalNumber)
+    {
+        FlowError e = FE_None;
+        auto x = Flow.eval(".14159", &e);
+        Assert::AreEqual(FE_None, e);
+        Assert::AreEqual(.14159f, x);
+    }
+    TEST_METHOD(numberEndingInDecimal)
+    {
+        FlowError e = FE_None;
+        auto x = Flow.eval("14159.", &e);
+        Assert::AreEqual(FE_None, e);
+        Assert::AreEqual(14159.0f, x);
+    }
+    TEST_METHOD(decimalNumber)
+    {
+        FlowError e = FE_None;
+        auto x = Flow.eval("3.14159", &e);
+        Assert::AreEqual(FE_None, e);
+        Assert::AreEqual(3.14159f, x);
+    }
+    TEST_METHOD(decimal)
+    {
+        FlowError e = FE_None;
+        auto x = Flow.eval(".", &e);
+        Assert::AreEqual(FE_SyntaxError, e);
+    }
     TEST_METHOD(callNoArgs)
     {
         FlowError e = FE_None;

@@ -5,8 +5,10 @@
 enum FlowLexerState {
     FLS_Reset,
     FLS_Complete,
+    FLS_Dot,
     FLS_InNumber,
-    FLS_InName
+    FLS_InNumberAfterDot,
+    FLS_InName,
 };
 
 class FlowLexer
