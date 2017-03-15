@@ -61,6 +61,7 @@ struct Node
     }
     ~Node();
 
+    void append(Node *lastSibling);
     void appendChild(Node *newChild);
     void removeChild(Node *child);
     inline bool hasChildNodes(Node *newChild) const { return firstChild != 0; }

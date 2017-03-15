@@ -36,7 +36,11 @@ FUNCTION(min)
 
 FUNCTION(max)
 {
-    return 0;
+    if (numInputs <= 0) return 0;
+    Number m = inputs[0];
+    for (int i = 1; i < numInputs; i++)
+        if (inputs[i] > m) m = inputs[i];
+    return m;
 }
 
 FUNCTION(save)

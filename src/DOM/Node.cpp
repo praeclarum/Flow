@@ -20,6 +20,14 @@ Node::~Node()
     delete nextSibling;
 }
 
+void Node::append(Node *lastSibling)
+{
+    Node *s = this;
+    while (s->nextSibling)
+        s = s->nextSibling;
+    s->nextSibling = lastSibling;
+}
+
 void Node::appendChild(Node *child)
 {
     if (!firstChild) {

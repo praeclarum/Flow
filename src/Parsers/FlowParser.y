@@ -39,7 +39,7 @@ void yyerror(FlowController *flow, bool *hasResult, Node **result, const char *m
 %left NEG     /* negation--unary minus */
 %right '^'    /* exponentiation        */
 
-%type <node> input stmt expr lvalue
+%type <node> input stmt expr lvalue args
 
 /* Grammar follows */
 %%
@@ -64,10 +64,10 @@ expr
     : NUMBER                            { $$ = Node::createNumberLiteral($1);              }
     | NAME                              { $$ = Node::createName($1);                       }
     | NAME '(' ')'                      { $$ = Node::createCall(Node::createName($1), 0);  }
-    | NAME '(' expr ')'                 { $$ = Node::createCall(Node::createName($1), $3); }
-    | NAME '(' expr newlines ')'        { $$ = Node::createCall(Node::createName($1), $3); }
-    | NAME '(' newlines expr ')'        { $$ = Node::createCall(Node::createName($1), $4); }
-    | NAME '(' newlines expr newlines ')' { $$ = Node::createCall(Node::createName($1), $4); }
+    | NAME '(' args ')'                 { $$ = Node::createCall(Node::createName($1), $3); }
+    | NAME '(' args newlines ')'        { $$ = Node::createCall(Node::createName($1), $3); }
+    | NAME '(' newlines args ')'        { $$ = Node::createCall(Node::createName($1), $4); }
+    | NAME '(' newlines args newlines ')' { $$ = Node::createCall(Node::createName($1), $4); }
     | expr '+' expr                     { $$ = Node::createBinaryOperator(BO_Add, $1, $3); }
     | expr '+' newlines expr            { $$ = Node::createBinaryOperator(BO_Add, $1, $4); }
     | expr '-' expr                     { $$ = Node::createBinaryOperator(BO_Sub, $1, $3); }
@@ -82,6 +82,12 @@ expr
     | '(' expr newlines ')'             { $$ = $2; }
     | '(' newlines expr ')'             { $$ = $3; }
     | '(' newlines expr newlines ')'    { $$ = $3; }
+    ;
+
+args
+    : expr                      { $$ = $1; }
+    | args ',' expr             { $$ = $1; $1->append($3); }
+    | args ',' newlines expr    { $$ = $1; $1->append($4); }
     ;
 
 newlines

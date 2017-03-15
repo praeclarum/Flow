@@ -38,10 +38,21 @@ TEST_CLASS(FunctionTests)
         Assert::AreEqual(0.0f, Flow.eval("min"));
         Assert::AreEqual(1.0f, Flow.eval("min(1)"));
         Assert::AreEqual(-1.0f, Flow.eval("min(-1)"));
-        // Assert::AreEqual(1.0f, Flow.eval("min(1, 2)"));
-        // Assert::AreEqual(-1.0f, Flow.eval("min(-1, 2)"));
-        // Assert::AreEqual(-2.0f, Flow.eval("min(1, -2)"));
-        // Assert::AreEqual(-2.0f, Flow.eval("min(-1, -2)"));
+        Assert::AreEqual(1.0f, Flow.eval("min(1, 2)"));
+        Assert::AreEqual(-1.0f, Flow.eval("min(-1, 2)"));
+        Assert::AreEqual(-2.0f, Flow.eval("min(1, -2)"));
+        Assert::AreEqual(-2.0f, Flow.eval("min(-1, -2)"));
+    }
+
+    TEST_METHOD(max)
+    {
+        Assert::AreEqual(0.0f, Flow.eval("max"));
+        Assert::AreEqual(1.0f, Flow.eval("max(1)"));
+        Assert::AreEqual(-1.0f, Flow.eval("max(-1)"));
+        Assert::AreEqual(2.0f, Flow.eval("max(1, 2)"));
+        Assert::AreEqual(2.0f, Flow.eval("max(-1, 2)"));
+        Assert::AreEqual(1.0f, Flow.eval("max(1, -2)"));
+        Assert::AreEqual(-1.0f, Flow.eval("max(-1, -2)"));
     }
 };
 
