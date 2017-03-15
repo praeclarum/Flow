@@ -27,13 +27,13 @@ TEST_CLASS(ExpressionTests)
     //     Assert::AreEqual(FE_None, e);
     //     Assert::AreEqual(3.14159f, x);
     // }
-    // TEST_METHOD(callNoArgs)
-    // {
-    //     FlowError e = FE_None;
-    //     auto x = Flow.eval("cos", &e);
-    //     Assert::AreEqual(FE_None, e);
-    //     Assert::AreEqual(1.0f, x);
-    // }
+    TEST_METHOD(callNoArgs)
+    {
+        FlowError e = FE_None;
+        auto x = Flow.eval("cos", &e);
+        Assert::AreEqual(FE_None, e);
+        Assert::AreEqual(1.0f, x);
+    }
     TEST_METHOD(callEmptyArgs)
     {
         FlowError e = FE_None;
@@ -65,8 +65,4 @@ TEST_CLASS(ExpressionTests)
 };
 
 static ExpressionTests t;
-
-
-
-
 

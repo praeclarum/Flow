@@ -47,6 +47,8 @@ FUNCTION(t);
 FUNCTION(pi);
 FUNCTION(sin);
 FUNCTION(cos);
+FUNCTION(min);
+FUNCTION(max);
 FUNCTION(save);
 FUNCTION(load);
 

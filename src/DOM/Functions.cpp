@@ -7,7 +7,7 @@
 
 FUNCTION(t)
 {
-    return millis() / 1000.0;
+    return micros() / 1000000.0;
 }
 
 FUNCTION(pi)
@@ -23,6 +23,20 @@ FUNCTION(sin)
 FUNCTION(cos)
 {
     return (numInputs > 0) ? cos(inputs[0]) : 1;
+}
+
+FUNCTION(min)
+{
+    if (numInputs <= 0) return 0;
+    Number m = inputs[0];
+    for (int i = 1; i < numInputs; i++)
+        if (inputs[i] < m) m = inputs[i];
+    return m;
+}
+
+FUNCTION(max)
+{
+    return 0;
 }
 
 FUNCTION(save)

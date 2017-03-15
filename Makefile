@@ -7,7 +7,10 @@ HEADERS=src/Flow.h src/Parsers/FlowLexer.h src/DOM/Node.h
 FLOW_SRC=flow/main.cpp flow/Arduino.cpp flow/EEPROM.cpp
 FLOW_HEADERS=flow/Arduino.h flow/EEPROM.h
 
-TEST_SRC=test/main.cpp flow/Arduino.cpp flow/EEPROM.cpp test/ExpressionTests.cpp test/SaveTests.cpp
+TEST_SRC=test/main.cpp flow/Arduino.cpp flow/EEPROM.cpp \
+	test/ExpressionTests.cpp \
+	test/SaveTests.cpp \
+	test/FunctionTests.cpp
 TEST_HEADERS=flow/Arduino.h flow/EEPROM.h test/CppUnitTest.h
 
 

@@ -3,8 +3,10 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 static long startMillis = 0;
+static unsigned long startMicros = 0;
 
 long millis()
 {
@@ -14,6 +16,21 @@ long millis()
     if (startMillis == 0)
         startMillis = ms;
     return ms - startMillis;
+}
+
+long micros()
+{
+    struct timeval  tv;
+    gettimeofday(&tv, 0);
+    uint64_t ms = tv.tv_sec * 1000000ull + tv.tv_usec;
+    if (startMicros == 0)
+        startMicros = ms;
+    return ms - startMicros;
+}
+
+void delay(unsigned long ms)
+{
+    usleep(ms*1000);
 }
 
 float pow(float base, float exponent)
