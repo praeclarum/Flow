@@ -156,13 +156,18 @@ void WebServer::sendReply(const char *url, WiFiClient &client)
     client.println(F("Content-Type: text/html"));
     client.println(F("Connection: close"));  // the connection will be closed after completion of the response
     client.println();
-    client.println(F("<!DOCTYPE HTML>"));
+    client.println(F("<!DOCTYPE html>"));
     client.println(F("<html>"));
-
+    client.println(F("<head>"));
+    client.println(F("<link href=\"http://fonts.googleapis.com/icon?family=Material+Icons\" rel=\"stylesheet\">"));
+    client.println(F("<link type=\"text/css\" rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css\" media=\"screen,projection\"/>"));
+    client.println(F("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>"));
+    client.println(F("</head><body>"));
     client.println(F("<ul><li>"));
     printNode(flow->getDocument(), client);
     client.println(F("</li></ul>"));
-
-    client.println(F("</html>"));
+    client.println(F("<script type=\"text/javascript\" src=\"https://code.jquery.com/jquery-2.1.1.min.js\"></script>"));
+    client.println(F("<script type=\"text/javascript\" src=\"https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js\"></script>"));
+    client.println(F("</body></html>"));
 }
 
