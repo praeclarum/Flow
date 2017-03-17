@@ -1,9 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { Hello } from "./components/Hello";
+import { Device } from "./components/Device";
 
 ReactDOM.render(
-    <Hello compiler="Device" framework="Flow" />,
-    document.getElementById("example")
+    <Device />,
+    document.getElementById("device")
 );

@@ -61,7 +61,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -72,6 +72,13 @@ module.exports = React;
 
 /***/ },
 /* 1 */
+/***/ function(module, exports) {
+
+module.exports = ReactDOM;
+
+/***/ },
+/* 2 */,
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -87,23 +94,18 @@ exports.Hello = function (props) { return React.createElement("h1", null,
 
 
 /***/ },
-/* 2 */
-/***/ function(module, exports) {
-
-module.exports = ReactDOM;
-
-/***/ },
-/* 3 */,
-/* 4 */
+/* 4 */,
+/* 5 */,
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
-var ReactDOM = __webpack_require__(2);
-var Hello_1 = __webpack_require__(1);
-ReactDOM.render(React.createElement(Hello_1.Hello, { compiler: "Web", framework: "Flow" }), document.getElementById("example"));
+var ReactDOM = __webpack_require__(1);
+var Hello_1 = __webpack_require__(3);
+ReactDOM.render(React.createElement(Hello_1.Hello, { compiler: "Index", framework: "Flow" }), document.getElementById("index"));
 
 
 /***/ }

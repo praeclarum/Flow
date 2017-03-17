@@ -1,0 +1,35 @@
+{
+    "nodeType": "Document",
+    "childNodes": [
+        {
+            "nodeType": "Sub",
+            "name": "Foo",
+            "childNodes": [
+                {
+                    "nodeType": "Assignment",
+                    "value": 0,
+                    "childNodes": [
+                        {
+                            "nodeType": "Name",
+                            "name": "x",
+                            "childNodes": [
+                            ]
+                        },
+                        {
+                            "nodeType": "Number",
+                            "value": 42,
+                            "childNodes": [
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "nodeType": "Sub",
+            "name": "Bar",
+            "childNodes": [                
+            ]
+        }
+    ]
+}

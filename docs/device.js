@@ -61,7 +61,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -72,37 +72,95 @@ module.exports = React;
 
 /***/ },
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(0);
-exports.Hello = function (props) { return React.createElement("h1", null,
-    "Hello from ",
-    props.compiler,
-    " and ",
-    props.framework,
-    "!"); };
-
-
-/***/ },
-/* 2 */
 /***/ function(module, exports) {
 
 module.exports = ReactDOM;
 
 /***/ },
-/* 3 */
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = __webpack_require__(0);
+var FNode_1 = __webpack_require__(4);
+var Device = (function (_super) {
+    __extends(Device, _super);
+    function Device(props) {
+        var _this = _super.call(this, props) || this;
+        _this.state = { documentNode: new FNode_1.FNode("Document") };
+        _this.refresh();
+        return _this;
+    }
+    Device.prototype.refresh = function () {
+        var _this = this;
+        var xhr = new XMLHttpRequest();
+        var url = "document.json";
+        xhr.open("GET", url);
+        xhr.onload = function (ev) {
+            var n = FNode_1.FNode.fromJSON(xhr.responseText);
+            _this.setState({ documentNode: n });
+        };
+        xhr.send();
+    };
+    Device.prototype.render = function () {
+        return React.createElement("nav", null,
+            React.createElement("div", { className: "nav-wrapper" },
+                React.createElement("a", { href: "#", className: "brand-logo" },
+                    "Flow ",
+                    this.state.documentNode.childNodes.length),
+                React.createElement("ul", { id: "nav-mobile", className: "right hide-on-med-and-down" })));
+    };
+    return Device;
+}(React.Component));
+exports.Device = Device;
+
+
+/***/ },
+/* 3 */,
+/* 4 */
+/***/ function(module, exports) {
+
+"use strict";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var FNode = (function () {
+    function FNode(nodeType) {
+        this.nodeType = "Null";
+        this.nodeType = nodeType;
+        this.childNodes = [];
+    }
+    FNode.fromJSON = function (json) {
+        var n = JSON.parse(json);
+        return n;
+    };
+    return FNode;
+}());
+exports.FNode = FNode;
+
+
+/***/ },
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
-var ReactDOM = __webpack_require__(2);
-var Hello_1 = __webpack_require__(1);
-ReactDOM.render(React.createElement(Hello_1.Hello, { compiler: "Device", framework: "Flow" }), document.getElementById("example"));
+var ReactDOM = __webpack_require__(1);
+var Device_1 = __webpack_require__(2);
+ReactDOM.render(React.createElement(Device_1.Device, null), document.getElementById("device"));
 
 
 /***/ }
