@@ -4,7 +4,7 @@
     "version": "0.1.0",
     "tasks": [{
         "taskName": "examples",
-        "command": "./buildexamples.sh",
+        "command": "make",
         "isBuildCommand": true,
         "isShellCommand": true,
         "args": [],
