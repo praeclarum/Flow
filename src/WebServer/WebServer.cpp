@@ -163,11 +163,12 @@ void WebServer::sendReply(const char *url, WiFiClient &client)
     client.println(F("<link type=\"text/css\" rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css\" media=\"screen,projection\"/>"));
     client.println(F("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>"));
     client.println(F("</head><body>"));
-    client.println(F("<ul><li>"));
-    printNode(flow->getDocument(), client);
-    client.println(F("</li></ul>"));
-    client.println(F("<script type=\"text/javascript\" src=\"https://code.jquery.com/jquery-2.1.1.min.js\"></script>"));
-    client.println(F("<script type=\"text/javascript\" src=\"https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js\"></script>"));
+    client.println(F("<div id=\"device\"></div>"));
+    client.println(F("<script src=\"https://unpkg.com/react@15/dist/react.js\"></script>"));
+    client.println(F("<script src=\"https://unpkg.com/react-dom@15/dist/react-dom.js\"></script>"));
+    client.println(F("<script src=\"https://code.jquery.com/jquery-2.1.1.min.js\"></script>"));
+    client.println(F("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js\"></script>"));
+    client.println(F("<script src=\"https://praeclarum.github.io/Flow/device.js\"></script>"));
     client.println(F("</body></html>"));
 }
 
