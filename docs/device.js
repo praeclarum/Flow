@@ -95,6 +95,34 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
 var FNode_1 = __webpack_require__(4);
+var NodeHeader = (function (_super) {
+    __extends(NodeHeader, _super);
+    function NodeHeader() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    NodeHeader.prototype.render = function () {
+        return React.createElement("span", null, this.props.node.nodeType);
+    };
+    return NodeHeader;
+}(React.Component));
+exports.NodeHeader = NodeHeader;
+var NodeBody = (function (_super) {
+    __extends(NodeBody, _super);
+    function NodeBody() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    NodeBody.prototype.render = function () {
+        return React.createElement("div", null,
+            React.createElement("div", null, this.props.node.value),
+            (this.props.node.childNodes.length > 0) ?
+                React.createElement("ul", null, this.props.node.childNodes.map(function (x, i) {
+                    return React.createElement("li", null,
+                        React.createElement(NodeHeader, { node: x }));
+                })) : "no children");
+    };
+    return NodeBody;
+}(React.Component));
+exports.NodeBody = NodeBody;
 var Device = (function (_super) {
     __extends(Device, _super);
     function Device(props) {
@@ -115,12 +143,21 @@ var Device = (function (_super) {
         xhr.send();
     };
     Device.prototype.render = function () {
-        return React.createElement("nav", null,
-            React.createElement("div", { className: "nav-wrapper" },
-                React.createElement("a", { href: "#", className: "brand-logo" },
-                    "Flow ",
-                    this.state.documentNode.childNodes.length),
-                React.createElement("ul", { id: "nav-mobile", className: "right hide-on-med-and-down" })));
+        return React.createElement("div", null,
+            React.createElement("nav", null,
+                React.createElement("div", { className: "nav-wrapper" },
+                    React.createElement("a", { href: "#", className: "brand-logo" },
+                        "Flow ",
+                        this.state.documentNode.childNodes.length),
+                    React.createElement("ul", { id: "nav-mobile", className: "right hide-on-med-and-down" }))),
+            React.createElement("div", { className: "container" },
+                React.createElement("ul", { className: "collapsible", "data-collapsible": "expandable" }, this.state.documentNode.childNodes.map(function (x, i) {
+                    return React.createElement("li", null,
+                        React.createElement("div", { className: "collapsible-header" },
+                            React.createElement(NodeHeader, { node: x })),
+                        React.createElement("div", { className: "collapsible-body" },
+                            React.createElement(NodeBody, { node: x })));
+                }))));
     };
     return Device;
 }(React.Component));
