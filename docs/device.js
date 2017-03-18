@@ -112,14 +112,14 @@ var NodeTree = (function (_super) {
         var body = null;
         if (this.state.expanded) {
             body = React.createElement("div", { className: "body" }, this.props.node.childNodes.map(function (x, i) {
-                return React.createElement(NodeTree, { node: x });
+                return React.createElement(NodeTree, { key: i.toString(), index: i, node: x });
             }));
         }
         var cls = "nodeTree";
         if (this.state.expanded)
             cls += " expanded";
         return (React.createElement("div", { className: cls },
-            React.createElement("div", { className: "header", onClick: function (_) { return _this.handleClick(); } }, this.props.node.nodeType),
+            React.createElement("div", { className: "header", onClick: function (_) { return _this.handleClick(); } }, FNode_1.getHeaderText(this.props.node)),
             body));
     };
     return NodeTree;
@@ -129,7 +129,7 @@ var Device = (function (_super) {
     __extends(Device, _super);
     function Device(props) {
         var _this = _super.call(this, props) || this;
-        _this.state = { documentNode: new FNode_1.FNode("Document") };
+        _this.state = { documentNode: FNode_1.newFNode("Document") };
         _this.refresh();
         return _this;
     }
@@ -139,7 +139,7 @@ var Device = (function (_super) {
         var url = "document.json";
         xhr.open("GET", url);
         xhr.onload = function (ev) {
-            var n = FNode_1.FNode.fromJSON(xhr.responseText);
+            var n = JSON.parse(xhr.responseText);
             _this.setState({ documentNode: n });
         };
         xhr.send();
@@ -149,7 +149,7 @@ var Device = (function (_super) {
             React.createElement("div", { className: "pure-u-1-5" }),
             React.createElement("div", { className: "pure-u-1-5" },
                 React.createElement("nav", null,
-                    React.createElement(NodeTree, { node: this.state.documentNode }))),
+                    React.createElement(NodeTree, { index: 0, node: this.state.documentNode }))),
             React.createElement("div", { className: "pure-u-2-5" }),
             React.createElement("div", { className: "pure-u-1-5" }));
     };
@@ -166,19 +166,33 @@ exports.Device = Device;
 "use strict";
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var FNode = (function () {
-    function FNode(nodeType) {
-        this.nodeType = "Null";
-        this.nodeType = nodeType;
-        this.childNodes = [];
+function newFNode(nodeType) {
+    return { nodeType: nodeType, value: 0, childNodes: new Array() };
+}
+exports.newFNode = newFNode;
+function getHeaderText(node) {
+    var left;
+    var right;
+    switch (node.nodeType) {
+        case "Document":
+            return "Flow";
+        case "Name":
+            return node.value.toString();
+        case "Assignment":
+            left = "?";
+            if (node.childNodes.length > 0) {
+                left = getHeaderText(node.childNodes[0]);
+            }
+            right = "?";
+            if (node.childNodes.length > 1) {
+                right = getHeaderText(node.childNodes[1]);
+            }
+            return left + " = " + right;
+        default:
+            return node.nodeType;
     }
-    FNode.fromJSON = function (json) {
-        var n = JSON.parse(json);
-        return n;
-    };
-    return FNode;
-}());
-exports.FNode = FNode;
+}
+exports.getHeaderText = getHeaderText;
 
 
 /***/ },

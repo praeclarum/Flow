@@ -1,10 +1,11 @@
 import * as React from "react";
 
-import { FNode } from "../FNode"
+import { FNode, newFNode, getHeaderText } from "../FNode"
 
 import * as $ from "jquery"
 
 export interface NodeTreeProps {
+    index: number
     node: FNode
 }
 
@@ -27,7 +28,7 @@ export class NodeTree extends React.Component<NodeTreeProps, NodeTreeState> {
         if (this.state.expanded) {
             body = <div className="body">
                 {this.props.node.childNodes.map((x, i) =>
-                    <NodeTree node={x}/>
+                    <NodeTree key={i.toString()} index={i} node={x}/>
                 )}
                 </div>
         }
@@ -35,7 +36,9 @@ export class NodeTree extends React.Component<NodeTreeProps, NodeTreeState> {
         if (this.state.expanded)
             cls += " expanded";
         return (<div className={cls}>
-            <div className="header" onClick={_=>this.handleClick()}>{this.props.node.nodeType}</div>
+            <div className="header" onClick={_=>this.handleClick()}>
+                {getHeaderText(this.props.node)}
+            </div>
             {body}
             </div>);
     }
@@ -51,7 +54,7 @@ export interface DeviceState {
 export class Device extends React.Component<DeviceProps, DeviceState> {
     constructor(props: DeviceProps) {
         super(props);
-        this.state = {documentNode: new FNode("Document")};
+        this.state = {documentNode: newFNode("Document")};
         this.refresh();
     }
     refresh()
@@ -60,7 +63,7 @@ export class Device extends React.Component<DeviceProps, DeviceState> {
         let url = "document.json";
         xhr.open("GET", url);
         xhr.onload = ev => {
-            let n = FNode.fromJSON(xhr.responseText);
+            let n: FNode = JSON.parse(xhr.responseText);
             this.setState ({documentNode: n});
         };
         xhr.send();
@@ -70,7 +73,7 @@ export class Device extends React.Component<DeviceProps, DeviceState> {
             <div className="pure-u-1-5"/>
             <div className="pure-u-1-5">
                 <nav>
-                    <NodeTree node={this.state.documentNode} />
+                    <NodeTree index={0} node={this.state.documentNode} />
                 </nav>
             </div>
             <div className="pure-u-2-5"/>

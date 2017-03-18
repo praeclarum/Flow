@@ -5,7 +5,124 @@
         {
             "nodeType": "Sub",
             "value": 0,
-            "childNodes": []
+            "childNodes": [
+                {
+                    "nodeType": "Assignment",
+                    "value": 5,
+                    "childNodes": [
+                        {
+                            "nodeType": "Name",
+                            "value": "x",
+                            "childNodes": []
+                        },
+                        {
+                            "nodeType": "BinaryOperator",
+                            "value": "+",
+                            "childNodes": [
+                                {
+                                    "nodeType": "Number",
+                                    "value": 2,
+                                    "childNodes": []
+                                },
+                                {
+                                    "nodeType": "Number",
+                                    "value": 3,
+                                    "childNodes": []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "nodeType": "Assignment",
+                    "value": 500,
+                    "childNodes": [
+                        {
+                            "nodeType": "Name",
+                            "value": "y",
+                            "childNodes": []
+                        },
+                        {
+                            "nodeType": "BinaryOperator",
+                            "value": "*",
+                            "childNodes": [
+                                {
+                                    "nodeType": "Name",
+                                    "value": "x",
+                                    "childNodes": [
+                                        {
+                                            "nodeType": "AssignmentReference",
+                                            "value": 0,
+                                            "childNodes": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "nodeType": "Number",
+                                    "value": 100,
+                                    "childNodes": []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "nodeType": "Assignment",
+                    "value": 525,
+                    "childNodes": [
+                        {
+                            "nodeType": "Name",
+                            "value": "z",
+                            "childNodes": []
+                        },
+                        {
+                            "nodeType": "BinaryOperator",
+                            "value": "+",
+                            "childNodes": [
+                                {
+                                    "nodeType": "BinaryOperator",
+                                    "value": "*",
+                                    "childNodes": [
+                                        {
+                                            "nodeType": "Name",
+                                            "value": "x",
+                                            "childNodes": [
+                                                {
+                                                    "nodeType": "AssignmentReference",
+                                                    "value": 0,
+                                                    "childNodes": []
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "nodeType": "Name",
+                                            "value": "x",
+                                            "childNodes": [
+                                                {
+                                                    "nodeType": "AssignmentReference",
+                                                    "value": 0,
+                                                    "childNodes": []
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "nodeType": "Name",
+                                    "value": "y",
+                                    "childNodes": [
+                                        {
+                                            "nodeType": "AssignmentReference",
+                                            "value": 0,
+                                            "childNodes": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "nodeType": "Assignment",
@@ -13,7 +130,7 @@
             "childNodes": [
                 {
                     "nodeType": "Name",
-                    "value": "0x856a5aa8",
+                    "value": "t",
                     "childNodes": []
                 },
                 {
@@ -29,7 +146,7 @@
             "childNodes": [
                 {
                     "nodeType": "Name",
-                    "value": "0x5a88b2f5",
+                    "value": "pi",
                     "childNodes": []
                 },
                 {
@@ -45,7 +162,7 @@
             "childNodes": [
                 {
                     "nodeType": "Name",
-                    "value": "0xb7c393aa",
+                    "value": "sin",
                     "childNodes": []
                 },
                 {
@@ -61,7 +178,7 @@
             "childNodes": [
                 {
                     "nodeType": "Name",
-                    "value": "0x9eb9fb85",
+                    "value": "cos",
                     "childNodes": []
                 },
                 {
@@ -77,7 +194,7 @@
             "childNodes": [
                 {
                     "nodeType": "Name",
-                    "value": "0xa17b1dd0",
+                    "value": "min",
                     "childNodes": []
                 },
                 {
@@ -93,7 +210,7 @@
             "childNodes": [
                 {
                     "nodeType": "Name",
-                    "value": "0x9d762289",
+                    "value": "max",
                     "childNodes": []
                 },
                 {
@@ -109,7 +226,7 @@
             "childNodes": [
                 {
                     "nodeType": "Name",
-                    "value": "0xa00377fa",
+                    "value": "clamp",
                     "childNodes": []
                 },
                 {
@@ -125,7 +242,7 @@
             "childNodes": [
                 {
                     "nodeType": "Name",
-                    "value": "0x55663ade",
+                    "value": "save",
                     "childNodes": []
                 },
                 {
@@ -141,7 +258,7 @@
             "childNodes": [
                 {
                     "nodeType": "Name",
-                    "value": "0x2506e41d",
+                    "value": "load",
                     "childNodes": []
                 },
                 {
