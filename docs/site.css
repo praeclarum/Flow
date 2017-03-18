@@ -26,6 +26,21 @@ b {
     font-weight: bold;
 }
 
+.ok {
+    color: #C1FFBE;
+}
+
+.incomplete {
+    color: #EEDD92;
+}
+
+.error {
+    color: #FB8577;
+}
+
+
+/*-----------NAV-------------------*/
+
 nav {
     margin-top: 8em;
 }
@@ -73,3 +88,33 @@ nav {
     background-color: #E29BF7;
 }
 
+
+/*-----------EVAL-BOX-------------------*/
+
+.eval-box {
+    margin-top: 10em;
+}
+
+.eval-box > input {
+    outline: none;
+    background-color: transparent;
+    border: solid 1px #37474f;
+    font-size: 200%;
+    padding: 0.5em 0.5em;
+    border-radius: 0.5em;
+}
+
+.eval-box > input:focus {
+    background-color: #37474f;
+}
+
+.eval-box > .result-value {
+    display: block;
+    padding: 0.5em 0.5em;
+    font-size: 200%;
+}
+
+.eval-box > .error-message {
+    padding: 0.5em 0.5em;
+    display: block;
+}

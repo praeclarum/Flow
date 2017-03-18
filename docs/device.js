@@ -174,11 +174,11 @@ var Device = (function (_super) {
                         var c = "functionNav";
                         if (_this.state.selection == x)
                             c += " selected";
-                        return React.createElement("span", null,
-                            React.createElement("a", { href: "#" + x, key: x, onClick: function (_) { return _this.select(x); }, className: c }, x),
+                        return React.createElement("span", { key: x },
+                            React.createElement("a", { href: "#" + x, onClick: function (_) { return _this.select(x); }, className: c }, x),
                             " ");
                     })))),
-            React.createElement("div", { className: "pure-u-2-5" },
+            React.createElement("main", { className: "pure-u-2-5" },
                 React.createElement(EvalBox_1.EvalBox, null),
                 sel),
             React.createElement("div", { className: "pure-u-1-5" }));
@@ -243,25 +243,40 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
+function getErrorMessage(errorCode) {
+    switch (errorCode) {
+        case 0:
+            return "Success";
+        case 2:
+            return "Out of memory";
+        case 3:
+            return "Syntax error";
+        case 4:
+            return "Incomplete";
+        case 1:
+        default:
+            return "Unknown error";
+    }
+}
 var EvalBox = (function (_super) {
     __extends(EvalBox, _super);
     function EvalBox(props) {
         var _this = _super.call(this, props) || this;
-        _this.state = { input: "", lastEval: { req: "init", resp: { value: 0 } } };
+        _this.state = { input: "", lastEval: { req: "init", resp: { value: 0, errorCode: 0 } } };
         return _this;
     }
     EvalBox.prototype.eval = function (code) {
-        var _this = this;
         var xhr = new XMLHttpRequest();
         var url = "eval";
-        xhr.open("POST", url);
-        xhr.onload = function (_) {
-            var resp = JSON.parse(xhr.responseText);
-            if (code === _this.state.input) {
-                _this.setState({ input: code, lastEval: { req: code, resp: resp } });
-            }
-        };
-        xhr.send(code);
+        this.setState({ input: code, lastEval: { req: code, resp: { value: 42, errorCode: 4 } } });
+        // xhr.open("POST", url);
+        // xhr.onload = _ => {
+        //     let resp: EvalResponse = JSON.parse(xhr.responseText);
+        //     if (code === this.state.input) {
+        //         this.setState ({ input: code, lastEval: { req: code, resp: resp } });
+        //     }
+        // };
+        // xhr.send(code);
     };
     EvalBox.prototype.handleChange = function (code) {
         this.setState({ input: code, lastEval: this.state.lastEval });
@@ -269,13 +284,28 @@ var EvalBox = (function (_super) {
     };
     EvalBox.prototype.render = function () {
         var _this = this;
-        var res = null;
-        if (this.state.input === this.state.lastEval.req) {
-            res = React.createElement("div", null, this.state.lastEval.resp.value);
+        var em = React.createElement("div", null);
+        var rv = React.createElement("div", null);
+        var c = "empty";
+        if (this.state.input.trim() === "") {
+            // It's all good            
         }
-        return React.createElement("form", { className: "pure-form" },
-            React.createElement("input", { type: "text", value: this.state.input, onChange: function (e) { return _this.handleChange(e.target.value); } }),
-            res);
+        else if (this.state.lastEval && this.state.input === this.state.lastEval.req) {
+            var e = this.state.lastEval.resp.errorCode;
+            if (e !== 0) {
+                c = (e == 4) ? "incomplete" : "error";
+                var msg = getErrorMessage(e);
+                em = React.createElement("div", { className: "error-message " + c }, msg);
+            }
+            else {
+                c = "ok";
+                rv = React.createElement("div", { className: "result-value " + c }, this.state.lastEval.resp.value);
+            }
+        }
+        return React.createElement("form", { className: "eval-box" },
+            React.createElement("input", { type: "text", value: this.state.input, className: c, onChange: function (e) { return _this.handleChange(e.target.value); } }),
+            em,
+            rv);
     };
     return EvalBox;
 }(React.Component));

@@ -91,6 +91,13 @@ void WiFiClient::print(float value)
     print(text);
 }
 
+void WiFiClient::print(int value)
+{
+    char text[32];
+    sprintf(text, "%d", value);
+    print(text);
+}
+
 void WiFiClient::print(uintptr_t value, int base)
 {
     char text[32];

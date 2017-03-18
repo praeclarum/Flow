@@ -98,15 +98,15 @@ export class Device extends React.Component<DeviceProps, DeviceState> {
                             var c = "functionNav";
                             if (this.state.selection == x)
                                 c += " selected";
-                            return <span><a href={"#"+x} key={x} onClick={_=>this.select(x)} className={c}>{x}</a> </span>;
+                            return <span key={x}><a href={"#"+x} onClick={_=>this.select(x)} className={c}>{x}</a> </span>;
                         })}
                     </section>
                 </nav>
             </div>
-            <div className="pure-u-2-5">
+            <main className="pure-u-2-5">
                 <EvalBox />
                 {sel}
-            </div>
+            </main>
             <div className="pure-u-1-5"/>        
         </div>
     }

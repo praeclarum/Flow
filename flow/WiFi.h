@@ -19,6 +19,7 @@ public:
 
     void print(const char *text);
     void print(char ch);
+    void print(int value);
     void print(float value);
     void print(uintptr_t, int base);
     void println();

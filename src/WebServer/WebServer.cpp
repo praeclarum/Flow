@@ -224,9 +224,12 @@ void WebServer::sendReply(const char *url, const char *content, WiFiClient &clie
         client.println(F("Content-Type: application/json"));
         client.println(F("Connection: close"));  // the connection will be closed after completion of the response
         client.println();
-        client.println(F("{\"value\":"));
-        Number r = flow->eval(content);
+        FlowError e = FE_None;
+        Number r = flow->eval(content, &e);
+        client.print(F("{\"value\":"));
         client.print(r);
+        client.print(F(",\"errorCode\":"));
+        client.print(e);
         client.print('}');
     }
     else {
