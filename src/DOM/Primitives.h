@@ -6,7 +6,7 @@ typedef uint32_t Name;
 
 class FlowController;
 
-typedef Number (*ApplyFunction)(FlowController *flow, int numInputs, Number *inputs, Number *states, void *callbackArg);
+typedef Number (*ApplyFunction)(FlowController *flow, void *state, int numInputs, Number *inputs);
 
 class NNode;
 

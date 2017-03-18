@@ -22,7 +22,7 @@ public:
     void begin();
     void loop();
     Number eval(const __FlashStringHelper *code, FlowError *error = 0);
-    void addFunction(const __FlashStringHelper *funcName, ApplyFunction func, int numStates = 0, void *callbackArg = 0);
+    void addFunction(const __FlashStringHelper *funcName, ApplyFunction func, int stateSize = 0);
 
     inline Stream *getStream() { return stream; }
     inline Node *getDocument() { return document; }

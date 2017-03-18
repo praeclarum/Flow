@@ -31,7 +31,7 @@ FlowController::FlowController()
     , streamLexer(&names)
 {
     clear();
-#define FUNCTION(functionName) addFunction(F(#functionName), functionName##Function, 0, 0)
+#define FUNCTION(functionName) addFunction(F(#functionName), functionName##Function, 0)
     FUNCTION(t);
     FUNCTION(pi);
     FUNCTION(sin);
@@ -262,9 +262,9 @@ Number FlowController::eval(const __FlashStringHelper *code, FlowError *error)
 
 uint32_t crc_string(const __FlashStringHelper *s);
 
-void FlowController::addFunction(const __FlashStringHelper *funcName, ApplyFunction func, int numStates, void *callbackArg)
+void FlowController::addFunction(const __FlashStringHelper *funcName, ApplyFunction func, int stateSize)
 {
-    Function *f = new Function(func, numStates, callbackArg);
+    Function *f = new Function(func, stateSize);
     if (!f) return;
     Node *fdn = new Node(NT_Function);
     if (!fdn) {

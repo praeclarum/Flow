@@ -6,15 +6,14 @@
 class Function
 {
     ApplyFunction apply_;
-    byte numStates_;
-    void *callbackArg;
+    byte stateSize_;
 public:
-    Function(ApplyFunction func, int numStates, void *callbackArg)
-        : apply_(func), numStates_(numStates), callbackArg(callbackArg)
+    Function(ApplyFunction func, byte stateSize)
+        : apply_(func), stateSize_(stateSize)
     {}
-    inline int numStates() { return numStates_; }
-    inline Number apply(FlowController *flow, int numInputs, Number *inputs, Number *states) {
-        return apply_(flow, numInputs, inputs, states, callbackArg);
+    inline int stateSize() { return stateSize_; }
+    inline Number apply(FlowController *flow, void *state, int numInputs, Number *inputs) {
+        return apply_(flow, state, numInputs, inputs);
     }
 };
 
@@ -22,26 +21,27 @@ struct FunctionReference
 {
     const int numInputs;
     Function *function;
-    Number *values;
+    byte *values;
     FunctionReference(Function *function, int numInputs)
         : function(function), numInputs(numInputs)
     {
-        int nvalues = numInputs + function->numStates();
-        values = nvalues > 0 ? (Number*)calloc(nvalues, sizeof(Number)) : 0;
+        int nvalues = numInputs*sizeof(Number) + function->stateSize();
+        values = (byte*)calloc(nvalues, 1);
     }
     ~FunctionReference()
     {
         if (values)
             free(values);
     }
-    inline Number *inputs() { return numInputs > 0 ? values : 0; }
+    inline Number *inputs() { return numInputs > 0 ? (Number*)values : 0; }
     inline Number apply(FlowController *flow) {
-        return function->apply(flow, numInputs, values, values + numInputs);
+        byte *state = values + numInputs*sizeof(Number);
+        return function->apply(flow, state, numInputs, (Number*)values);
     }
 };
 
 #define FUNCTION(functionName) \
-    Number functionName##Function(FlowController *flow, int numInputs, Number *inputs, Number *states, void *callbackArg)
+    Number functionName##Function(FlowController *flow, void *state, int numInputs, Number *inputs)
 
 FUNCTION(t);
 FUNCTION(pi);

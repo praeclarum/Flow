@@ -3,7 +3,7 @@
 #include "../Flow.h"
 
 #define FUNCTION(functionName) \
-    Number functionName##Function(FlowController *flow, int numInputs, Number *inputs, Number *states, void *callbackArg)
+    Number functionName##Function(FlowController *flow, void *state, int numInputs, Number *inputs)
 
 FUNCTION(t)
 {
