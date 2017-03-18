@@ -42,17 +42,21 @@ export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
     }
     eval(code: string)
     {
+        let tcode = code.trim();
+        if (tcode === this.state.lastEval.req)
+            return;
+
         let xhr = new XMLHttpRequest();
         let url = "eval";
-        // this.setState ({ input: code, lastEval: { req: code, resp: {value:42,errorCode:4} } });
+        // this.setState ({ input: code, lastEval: { req: tcode, resp: {value:42,errorCode:4} } });
         xhr.open("POST", url);
         xhr.onload = _ => {
             let resp: EvalResponse = JSON.parse(xhr.responseText);
-            if (code === this.state.input) {
-                this.setState ({ input: code, lastEval: { req: code, resp: resp } });
+            if (tcode === this.state.input.trim()) {
+                this.setState ({ input: code, lastEval: { req: tcode, resp: resp } });
             }
         };
-        xhr.send(code);
+        xhr.send(tcode);
     }
     handleChange(code: string)
     {
@@ -63,10 +67,11 @@ export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
         let em = <div />
         let rv = <div />
         let c = "empty";
-        if (this.state.input.trim() === "") {
+        let tinput = this.state.input.trim();
+        if (tinput === "") {
             // It's all good            
         }
-        else if (this.state.lastEval && this.state.input === this.state.lastEval.req) {
+        else if (this.state.lastEval && tinput === this.state.lastEval.req) {
             let e = this.state.lastEval.resp.errorCode;
             if (e !== 0) {
                 c = (e == 4) ? "incomplete" : "error";

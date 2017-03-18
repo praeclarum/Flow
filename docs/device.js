@@ -267,17 +267,20 @@ var EvalBox = (function (_super) {
     }
     EvalBox.prototype.eval = function (code) {
         var _this = this;
+        var tcode = code.trim();
+        if (tcode === this.state.lastEval.req)
+            return;
         var xhr = new XMLHttpRequest();
         var url = "eval";
-        // this.setState ({ input: code, lastEval: { req: code, resp: {value:42,errorCode:4} } });
+        // this.setState ({ input: code, lastEval: { req: tcode, resp: {value:42,errorCode:4} } });
         xhr.open("POST", url);
         xhr.onload = function (_) {
             var resp = JSON.parse(xhr.responseText);
-            if (code === _this.state.input) {
-                _this.setState({ input: code, lastEval: { req: code, resp: resp } });
+            if (tcode === _this.state.input.trim()) {
+                _this.setState({ input: code, lastEval: { req: tcode, resp: resp } });
             }
         };
-        xhr.send(code);
+        xhr.send(tcode);
     };
     EvalBox.prototype.handleChange = function (code) {
         this.setState({ input: code, lastEval: this.state.lastEval });
@@ -288,10 +291,11 @@ var EvalBox = (function (_super) {
         var em = React.createElement("div", null);
         var rv = React.createElement("div", null);
         var c = "empty";
-        if (this.state.input.trim() === "") {
+        var tinput = this.state.input.trim();
+        if (tinput === "") {
             // It's all good            
         }
-        else if (this.state.lastEval && this.state.input === this.state.lastEval.req) {
+        else if (this.state.lastEval && tinput === this.state.lastEval.req) {
             var e = this.state.lastEval.resp.errorCode;
             if (e !== 0) {
                 c = (e == 4) ? "incomplete" : "error";
