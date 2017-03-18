@@ -2,36 +2,44 @@ import * as React from "react";
 
 import { FNode } from "../FNode"
 
-export interface NodeHeaderProps {
+import * as $ from "jquery"
+
+export interface NodeTreeProps {
     node: FNode
 }
 
-export interface NodeBodyProps {
-    node: FNode
+export interface NodeTreeState {
+    expanded: boolean
 }
 
-export class NodeHeader extends React.Component<NodeHeaderProps, undefined> {
-    render() {
-        return <span>{this.props.node.nodeType}</span>
+export class NodeTree extends React.Component<NodeTreeProps, NodeTreeState> {
+    constructor (props: NodeTreeProps) {
+        super(props);
+        this.state = {expanded: false};
     }
-}
-
-export class NodeBody extends React.Component<NodeBodyProps, undefined> {
+    handleClick() {
+        console.log('The node was clicked.');
+        this.setState({expanded:!this.state.expanded});
+        return 0;
+    }
     render(): JSX.Element {
-        return <div>
-            <div>{this.props.node.value}</div>
-            {(this.props.node.childNodes.length > 0)?
-            <ul>
-            {this.props.node.childNodes.map((x, i) =>
-                <li>
-                    <NodeHeader node={x} />
-                </li>
-            )}
-            </ul>:"no children"}
-        </div>;
+        let body = null;
+        if (this.state.expanded) {
+            body = <div className="body">
+                {this.props.node.childNodes.map((x, i) =>
+                    <NodeTree node={x}/>
+                )}
+                </div>
+        }
+        let cls = "nodeTree";
+        if (this.state.expanded)
+            cls += " expanded";
+        return (<div className={cls}>
+            <div className="header" onClick={_=>this.handleClick()}>{this.props.node.nodeType}</div>
+            {body}
+            </div>);
     }
 }
-
 
 export interface DeviceProps {
 }
@@ -58,23 +66,15 @@ export class Device extends React.Component<DeviceProps, DeviceState> {
         xhr.send();
     }
     render() {
-        return <div><nav>
-            <div className="nav-wrapper">
-                <a href="#" className="brand-logo">Flow {this.state.documentNode.childNodes.length}</a>
-                    <ul id="nav-mobile" className="right hide-on-med-and-down">
-                </ul>
+        return <div className="pure-g">
+            <div className="pure-u-1-5"/>
+            <div className="pure-u-1-5">
+                <nav>
+                    <NodeTree node={this.state.documentNode} />
+                </nav>
             </div>
-        </nav>
-        <div className="container">
-            <ul className="collapsible" data-collapsible="expandable">
-            {this.state.documentNode.childNodes.map((x, i) =>
-                <li>
-                    <div className="collapsible-header"><NodeHeader node={x} /></div>
-                    <div className="collapsible-body"><NodeBody node={x} /></div>
-                </li>
-            )}
-            </ul>
-        </div>
+            <div className="pure-u-2-5"/>
+            <div className="pure-u-1-5"/>        
         </div>
     }
 }

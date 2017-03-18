@@ -95,34 +95,36 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
 var FNode_1 = __webpack_require__(4);
-var NodeHeader = (function (_super) {
-    __extends(NodeHeader, _super);
-    function NodeHeader() {
-        return _super !== null && _super.apply(this, arguments) || this;
+var NodeTree = (function (_super) {
+    __extends(NodeTree, _super);
+    function NodeTree(props) {
+        var _this = _super.call(this, props) || this;
+        _this.state = { expanded: false };
+        return _this;
     }
-    NodeHeader.prototype.render = function () {
-        return React.createElement("span", null, this.props.node.nodeType);
+    NodeTree.prototype.handleClick = function () {
+        console.log('The node was clicked.');
+        this.setState({ expanded: !this.state.expanded });
+        return 0;
     };
-    return NodeHeader;
-}(React.Component));
-exports.NodeHeader = NodeHeader;
-var NodeBody = (function (_super) {
-    __extends(NodeBody, _super);
-    function NodeBody() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    NodeBody.prototype.render = function () {
-        return React.createElement("div", null,
-            React.createElement("div", null, this.props.node.value),
-            (this.props.node.childNodes.length > 0) ?
-                React.createElement("ul", null, this.props.node.childNodes.map(function (x, i) {
-                    return React.createElement("li", null,
-                        React.createElement(NodeHeader, { node: x }));
-                })) : "no children");
+    NodeTree.prototype.render = function () {
+        var _this = this;
+        var body = null;
+        if (this.state.expanded) {
+            body = React.createElement("div", { className: "body" }, this.props.node.childNodes.map(function (x, i) {
+                return React.createElement(NodeTree, { node: x });
+            }));
+        }
+        var cls = "nodeTree";
+        if (this.state.expanded)
+            cls += " expanded";
+        return (React.createElement("div", { className: cls },
+            React.createElement("div", { className: "header", onClick: function (_) { return _this.handleClick(); } }, this.props.node.nodeType),
+            body));
     };
-    return NodeBody;
+    return NodeTree;
 }(React.Component));
-exports.NodeBody = NodeBody;
+exports.NodeTree = NodeTree;
 var Device = (function (_super) {
     __extends(Device, _super);
     function Device(props) {
@@ -143,21 +145,13 @@ var Device = (function (_super) {
         xhr.send();
     };
     Device.prototype.render = function () {
-        return React.createElement("div", null,
-            React.createElement("nav", null,
-                React.createElement("div", { className: "nav-wrapper" },
-                    React.createElement("a", { href: "#", className: "brand-logo" },
-                        "Flow ",
-                        this.state.documentNode.childNodes.length),
-                    React.createElement("ul", { id: "nav-mobile", className: "right hide-on-med-and-down" }))),
-            React.createElement("div", { className: "container" },
-                React.createElement("ul", { className: "collapsible", "data-collapsible": "expandable" }, this.state.documentNode.childNodes.map(function (x, i) {
-                    return React.createElement("li", null,
-                        React.createElement("div", { className: "collapsible-header" },
-                            React.createElement(NodeHeader, { node: x })),
-                        React.createElement("div", { className: "collapsible-body" },
-                            React.createElement(NodeBody, { node: x })));
-                }))));
+        return React.createElement("div", { className: "pure-g" },
+            React.createElement("div", { className: "pure-u-1-5" }),
+            React.createElement("div", { className: "pure-u-1-5" },
+                React.createElement("nav", null,
+                    React.createElement(NodeTree, { node: this.state.documentNode }))),
+            React.createElement("div", { className: "pure-u-2-5" }),
+            React.createElement("div", { className: "pure-u-1-5" }));
     };
     return Device;
 }(React.Component));

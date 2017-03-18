@@ -1,0 +1,25 @@
+body {
+    background-color: #263238;
+    color: #bdbdbd;
+}
+
+nav {
+    margin-top: 8em;
+}
+
+.nodeTree {    
+    margin: 1em 0em 1em 0.2em;
+}
+.nodeTree.expanded > .body {    
+    border-left: solid 1px #37474f;
+}
+.nodeTree > .header {
+    /*background-color: #4fc3f7;*/
+    cursor: pointer;
+    border-radius: 0.25em;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+}
+
+.nodeTree > .header:hover {
+    background-color: #37474f;
+}
