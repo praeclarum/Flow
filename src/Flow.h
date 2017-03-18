@@ -26,6 +26,7 @@ public:
 
     inline Stream *getStream() { return stream; }
     inline Node *getDocument() { return document; }
+    inline Function *getFunctions() { return functions; }
     inline const char *getNameText(Name name) { return names.get(name); }
 
     int saveToEEPROM();

@@ -1,8 +1,6 @@
 import * as React from "react";
 
-import { FNode, newFNode, getHeaderText } from "../FNode"
-
-import * as $ from "jquery"
+import { Flow, FNode, newFNode, getHeaderText } from "../Flow"
 
 export interface NodeTreeProps {
     index: number
@@ -48,13 +46,13 @@ export interface DeviceProps {
 }
 
 export interface DeviceState {
-    documentNode: FNode;
+    flow: Flow;
 }
 
 export class Device extends React.Component<DeviceProps, DeviceState> {
     constructor(props: DeviceProps) {
         super(props);
-        this.state = {documentNode: newFNode("Document")};
+        this.state = {flow:{documentNode: newFNode("Document"),functions:[]}};
         this.refresh();
     }
     refresh()
@@ -63,8 +61,8 @@ export class Device extends React.Component<DeviceProps, DeviceState> {
         let url = "document.json";
         xhr.open("GET", url);
         xhr.onload = ev => {
-            let n: FNode = JSON.parse(xhr.responseText);
-            this.setState ({documentNode: n});
+            let flow: Flow = JSON.parse(xhr.responseText);
+            this.setState ({flow: flow});
         };
         xhr.send();
     }
@@ -73,7 +71,11 @@ export class Device extends React.Component<DeviceProps, DeviceState> {
             <div className="pure-u-1-5"/>
             <div className="pure-u-1-5">
                 <nav>
-                    <NodeTree index={0} node={this.state.documentNode} />
+                    <NodeTree index={0} node={this.state.flow.documentNode} />
+                    <section className="functions">
+                        {this.state.flow.functions.map(x =>
+                            <a className="function">{x} </a>)}
+                    </section>
                 </nav>
             </div>
             <div className="pure-u-2-5"/>

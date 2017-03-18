@@ -1,4 +1,10 @@
 
+export interface Flow
+{
+    documentNode: FNode
+    functions: string[]
+}
+
 export interface FNode
 {
     nodeType: string;

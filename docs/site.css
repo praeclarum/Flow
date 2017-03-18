@@ -3,6 +3,7 @@ body {
     color: #bdbdbd;
 }
 
+
 nav {
     margin-top: 8em;
 }
@@ -23,3 +24,19 @@ nav {
 .nodeTree > .header:hover {
     background-color: #37474f;
 }
+
+.functions {
+    line-height: 2em;
+}
+
+.function {    
+    margin: 1em 0.2em 1em 0.2em;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+    cursor: pointer;
+    border-radius: 0.25em;
+}
+
+.function:hover {
+    background-color: #37474f;
+}
+

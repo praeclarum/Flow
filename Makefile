@@ -1,3 +1,4 @@
+DIR=$(CURDIR)
 
 CXXFLAGS=-g -Werror --std=c++11 -I src -I flow -DYYDEBUG=1 -DFLOW_CLICOLORS 
 
@@ -17,7 +18,7 @@ TEST_SRC=test/main.cpp flow/Arduino.cpp flow/EEPROM.cpp flow/WiFi.cpp \
 TEST_HEADERS=flow/Arduino.h flow/EEPROM.h test/CppUnitTest.h
 
 WEB_SRC=web/webpack.config.js web/tsconfig.json \
-	web/src/FNode.ts \
+	web/src/Flow.ts \
 	web/src/components/Device.tsx \
 	web/src/components/Hello.tsx
 
@@ -44,6 +45,5 @@ docs/device.js: web/src/device.tsx $(WEB_SRC)
 	cd web && webpack
 
 examples/Blink/Blink.ino: $(SRC)
-	PWD=`pwd`
-	$(ARDUINO_BUILDER) -libraries $(PWD)/.. $(PWD)/$@
+	$(ARDUINO_BUILDER) -libraries $(DIR)/.. $(DIR)/$@
 	touch $@

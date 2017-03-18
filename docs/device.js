@@ -94,7 +94,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
-var FNode_1 = __webpack_require__(4);
+var Flow_1 = __webpack_require__(4);
 var NodeTree = (function (_super) {
     __extends(NodeTree, _super);
     function NodeTree(props) {
@@ -119,7 +119,7 @@ var NodeTree = (function (_super) {
         if (this.state.expanded)
             cls += " expanded";
         return (React.createElement("div", { className: cls },
-            React.createElement("div", { className: "header", onClick: function (_) { return _this.handleClick(); } }, FNode_1.getHeaderText(this.props.node)),
+            React.createElement("div", { className: "header", onClick: function (_) { return _this.handleClick(); } }, Flow_1.getHeaderText(this.props.node)),
             body));
     };
     return NodeTree;
@@ -129,7 +129,7 @@ var Device = (function (_super) {
     __extends(Device, _super);
     function Device(props) {
         var _this = _super.call(this, props) || this;
-        _this.state = { documentNode: FNode_1.newFNode("Document") };
+        _this.state = { flow: { documentNode: Flow_1.newFNode("Document"), functions: [] } };
         _this.refresh();
         return _this;
     }
@@ -139,8 +139,8 @@ var Device = (function (_super) {
         var url = "document.json";
         xhr.open("GET", url);
         xhr.onload = function (ev) {
-            var n = JSON.parse(xhr.responseText);
-            _this.setState({ documentNode: n });
+            var flow = JSON.parse(xhr.responseText);
+            _this.setState({ flow: flow });
         };
         xhr.send();
     };
@@ -149,7 +149,12 @@ var Device = (function (_super) {
             React.createElement("div", { className: "pure-u-1-5" }),
             React.createElement("div", { className: "pure-u-1-5" },
                 React.createElement("nav", null,
-                    React.createElement(NodeTree, { index: 0, node: this.state.documentNode }))),
+                    React.createElement(NodeTree, { index: 0, node: this.state.flow.documentNode }),
+                    React.createElement("section", { className: "functions" }, this.state.flow.functions.map(function (x) {
+                        return React.createElement("a", { className: "function" },
+                            x,
+                            " ");
+                    })))),
             React.createElement("div", { className: "pure-u-2-5" }),
             React.createElement("div", { className: "pure-u-1-5" }));
     };

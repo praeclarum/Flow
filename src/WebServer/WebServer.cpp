@@ -174,7 +174,20 @@ void WebServer::sendReply(const char *url, WiFiClient &client)
         client.println(F("Content-Type: application/json"));
         client.println(F("Connection: close"));  // the connection will be closed after completion of the response
         client.println();
+        client.println(F("{\"documentNode\":"));
         printNode(flow, flow->getDocument(), client);
+        client.println(F(",\"functions\":["));
+        Function *f = flow->getFunctions();
+        char head = ' ';
+        while (f) {
+            client.print(head);
+            client.print('\"');
+            client.print(flow->getNameText(f->name));
+            client.print('\"');
+            head = ',';
+            f = f->next;
+        }
+        client.println(F("]}"));
     }
     else {
         client.println(F("HTTP/1.1 404 Not found"));
