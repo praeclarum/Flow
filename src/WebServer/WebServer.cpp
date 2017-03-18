@@ -45,7 +45,7 @@ void WebServer::loop()
                     }
                     // Send the response
                     if (client.connected())
-                        sendReply(firstLine.c_str(), client);
+                        sendReply(firstLine.c_str(), content.c_str(), client);
                     break;
                 }
                 if (c == '\n') {
@@ -177,7 +177,7 @@ static void printNode(FlowController *flow, Node *node, WiFiClient &client)
     client.print(F("]}"));
 }
 
-void WebServer::sendReply(const char *url, WiFiClient &client)
+void WebServer::sendReply(const char *url, const char *content, WiFiClient &client)
 {
     if (strstr(url, "GET / ") == url) {
         // send a standard http response header
@@ -218,6 +218,16 @@ void WebServer::sendReply(const char *url, WiFiClient &client)
             f = f->next;
         }
         client.println(F("]}"));
+    }
+    else if (strstr(url, "POST /eval ") == url) {
+        client.println(F("HTTP/1.1 200 OK"));
+        client.println(F("Content-Type: application/json"));
+        client.println(F("Connection: close"));  // the connection will be closed after completion of the response
+        client.println();
+        client.println(F("{\"value\":"));
+        Number r = flow->eval(content);
+        client.print(r);
+        client.print('}');
     }
     else {
         client.println(F("HTTP/1.1 404 Not found"));

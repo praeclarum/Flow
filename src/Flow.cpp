@@ -196,23 +196,23 @@ void FlowController::readStreamCode()
 
 static const char newline[] = {'\n', '\0'};
 
-Number FlowController::eval(const __FlashStringHelper *code, FlowError *error)
+Number FlowController::eval(const char *code, FlowError *error)
 {
-    PGM_P p = reinterpret_cast<PGM_P>(code);
+    const char *p = code;
     yypstate *parseState = yypstate_new();
     FlowLexer lexer(&names);
     bool onnewline = false;
-    while (pgm_read_byte(p)) {
+    while (*p) {
         bool gotnewline = false;
         int parseres = -1;
         bool hasResult = false;
         Node *result = 0;
         while (!gotnewline) {
-            if (pgm_read_byte(p) == 0 && !onnewline) {
+            if (*p == 0 && !onnewline) {
                 onnewline = true;
                 p = newline;
             }
-            int r = pgm_read_byte(p);
+            int r = *p;
             if (r == '\n') gotnewline = true;
             if (parseres == 1) { gotnewline = true; break; }
             bool consumed = false;
@@ -222,7 +222,7 @@ Number FlowController::eval(const __FlashStringHelper *code, FlowError *error)
                     parseres = yypush_parse(parseState, lexer.tok, &lexer.val, this, &hasResult, &result);
                 }
             } while (!consumed);
-            if (pgm_read_byte(p) == 0) break;
+            if (*p == 0) break;
             else p++;
         }
         if (gotnewline) {
@@ -242,7 +242,7 @@ Number FlowController::eval(const __FlashStringHelper *code, FlowError *error)
                 return 0;
             }
             else if (parseres == YYPUSH_MORE) {
-                if (pgm_read_byte(p) == 0) {
+                if (*p == 0) {
                     yypstate_delete(parseState);
                     if (error) *error = FE_SyntaxIncomplete;
                     return 0;

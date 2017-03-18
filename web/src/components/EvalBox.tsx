@@ -42,6 +42,7 @@ export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
         }
         return <form className="pure-form">
                 <input type="text" value={this.state.input} onChange={e=>this.handleChange(e.target.value)} />
+                {res}
             </form>
     }
 }

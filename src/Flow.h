@@ -21,7 +21,7 @@ public:
     ~FlowController();
     void begin();
     void loop();
-    Number eval(const __FlashStringHelper *code, FlowError *error = 0);
+    Number eval(const char *code, FlowError *error = 0);
     void addFunction(const __FlashStringHelper *funcName, ApplyFunction func, int stateSize = 0);
 
     inline Stream *getStream() { return stream; }

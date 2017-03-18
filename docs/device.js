@@ -257,7 +257,9 @@ var EvalBox = (function (_super) {
         xhr.open("POST", url);
         xhr.onload = function (_) {
             var value = parseFloat(xhr.responseText);
-            _this.setState({ response: { input: code, output: value } });
+            if (code === _this.state.input) {
+                _this.setState({ response: { input: code, output: value } });
+            }
         };
         xhr.send(code);
     };
@@ -268,11 +270,12 @@ var EvalBox = (function (_super) {
     EvalBox.prototype.render = function () {
         var _this = this;
         var res = null;
-        if (this.state.input == this.state.response.input) {
+        if (this.state.input === this.state.response.input) {
             res = React.createElement("div", null, this.state.response.output);
         }
         return React.createElement("form", { className: "pure-form" },
-            React.createElement("input", { type: "text", value: this.state.input, onChange: function (e) { return _this.handleChange(e.target.value); } }));
+            React.createElement("input", { type: "text", value: this.state.input, onChange: function (e) { return _this.handleChange(e.target.value); } }),
+            res);
     };
     return EvalBox;
 }(React.Component));

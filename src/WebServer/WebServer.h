@@ -10,7 +10,7 @@ class WebServer
     FlowController *flow;
     WiFiServer server;
 
-    void sendReply(const char *url, WiFiClient &client);
+    void sendReply(const char *url, const char *content, WiFiClient &client);
 
 public:
     WebServer(FlowController *flow, int port);
