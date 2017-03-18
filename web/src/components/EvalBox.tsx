@@ -44,15 +44,15 @@ export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
     {
         let xhr = new XMLHttpRequest();
         let url = "eval";
-        this.setState ({ input: code, lastEval: { req: code, resp: {value:42,errorCode:4} } });
-        // xhr.open("POST", url);
-        // xhr.onload = _ => {
-        //     let resp: EvalResponse = JSON.parse(xhr.responseText);
-        //     if (code === this.state.input) {
-        //         this.setState ({ input: code, lastEval: { req: code, resp: resp } });
-        //     }
-        // };
-        // xhr.send(code);
+        // this.setState ({ input: code, lastEval: { req: code, resp: {value:42,errorCode:4} } });
+        xhr.open("POST", url);
+        xhr.onload = _ => {
+            let resp: EvalResponse = JSON.parse(xhr.responseText);
+            if (code === this.state.input) {
+                this.setState ({ input: code, lastEval: { req: code, resp: resp } });
+            }
+        };
+        xhr.send(code);
     }
     handleChange(code: string)
     {

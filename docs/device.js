@@ -266,17 +266,18 @@ var EvalBox = (function (_super) {
         return _this;
     }
     EvalBox.prototype.eval = function (code) {
+        var _this = this;
         var xhr = new XMLHttpRequest();
         var url = "eval";
-        this.setState({ input: code, lastEval: { req: code, resp: { value: 42, errorCode: 4 } } });
-        // xhr.open("POST", url);
-        // xhr.onload = _ => {
-        //     let resp: EvalResponse = JSON.parse(xhr.responseText);
-        //     if (code === this.state.input) {
-        //         this.setState ({ input: code, lastEval: { req: code, resp: resp } });
-        //     }
-        // };
-        // xhr.send(code);
+        // this.setState ({ input: code, lastEval: { req: code, resp: {value:42,errorCode:4} } });
+        xhr.open("POST", url);
+        xhr.onload = function (_) {
+            var resp = JSON.parse(xhr.responseText);
+            if (code === _this.state.input) {
+                _this.setState({ input: code, lastEval: { req: code, resp: resp } });
+            }
+        };
+        xhr.send(code);
     };
     EvalBox.prototype.handleChange = function (code) {
         this.setState({ input: code, lastEval: this.state.lastEval });
