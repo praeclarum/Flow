@@ -61,7 +61,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -95,6 +95,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
 var Flow_1 = __webpack_require__(4);
+var FunctionDocs_1 = __webpack_require__(5);
 var NodeTree = (function (_super) {
     __extends(NodeTree, _super);
     function NodeTree(props) {
@@ -129,7 +130,13 @@ var Device = (function (_super) {
     __extends(Device, _super);
     function Device(props) {
         var _this = _super.call(this, props) || this;
-        _this.state = { flow: { documentNode: Flow_1.newFNode("Document"), functions: [] } };
+        _this.state = {
+            flow: {
+                documentNode: Flow_1.newFNode("Document"),
+                functions: []
+            },
+            selection: ""
+        };
         _this.refresh();
         return _this;
     }
@@ -140,22 +147,37 @@ var Device = (function (_super) {
         xhr.open("GET", url);
         xhr.onload = function (ev) {
             var flow = JSON.parse(xhr.responseText);
-            _this.setState({ flow: flow });
+            var h = window.location.hash;
+            if (h)
+                h = h.substr(1);
+            _this.setState({ flow: flow, selection: h });
         };
         xhr.send();
     };
+    Device.prototype.select = function (thing) {
+        this.setState({ flow: this.state.flow, selection: thing });
+    };
     Device.prototype.render = function () {
+        var _this = this;
+        var sel = null;
+        var f = this.state.flow.functions.indexOf(this.state.selection);
+        if (f >= 0) {
+            sel = React.createElement(FunctionDocs_1.FunctionDocs, { name: this.state.flow.functions[f] });
+        }
         return React.createElement("div", { className: "pure-g" },
             React.createElement("div", { className: "pure-u-1-5" }),
             React.createElement("div", { className: "pure-u-1-5" },
                 React.createElement("nav", null,
                     React.createElement(NodeTree, { index: 0, node: this.state.flow.documentNode }),
-                    React.createElement("section", { className: "functions" }, this.state.flow.functions.map(function (x) {
-                        return React.createElement("a", { className: "function" },
-                            x,
+                    React.createElement("section", { className: "functionNavs" }, this.state.flow.functions.map(function (x) {
+                        var c = "functionNav";
+                        if (_this.state.selection == x)
+                            c += " selected";
+                        return React.createElement("span", null,
+                            React.createElement("a", { href: "#" + x, key: x, onClick: function (_) { return _this.select(x); }, className: c }, x),
                             " ");
                     })))),
-            React.createElement("div", { className: "pure-u-2-5" }),
+            React.createElement("div", { className: "pure-u-2-5" }, sel),
             React.createElement("div", { className: "pure-u-1-5" }));
     };
     return Device;
@@ -202,6 +224,91 @@ exports.getHeaderText = getHeaderText;
 
 /***/ },
 /* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = __webpack_require__(0);
+var docs = {
+    "cos": {
+        description: React.createElement("section", null,
+            "Cosine is the ",
+            React.createElement("b", null, "ratio"),
+            " of the length of the side of a triangle that is ",
+            React.createElement("b", null, "adjacent"),
+            " to the given angle ",
+            React.createElement("span", { className: "param" }, "\u03B8 "),
+            "to the length of the ",
+            React.createElement("b", null, "hypotenuse"),
+            "."),
+        params: [
+            { name: "\u03B8", units: "radians", description: React.createElement("p", null, "The angle") }
+        ]
+    },
+    "sin": {
+        description: React.createElement("section", null,
+            "Sine is the ",
+            React.createElement("b", null, "ratio"),
+            " of the length of the side of a triangle that is ",
+            React.createElement("b", null, "opposite"),
+            " of the given angle ",
+            React.createElement("span", { className: "param" }, "\u03B8 "),
+            "to the length of the ",
+            React.createElement("b", null, "hypotenuse"),
+            "."),
+        params: [
+            { name: "\u03B8", units: "radians", description: React.createElement("p", null, "The angle") }
+        ]
+    },
+};
+var FunctionDocs = (function (_super) {
+    __extends(FunctionDocs, _super);
+    function FunctionDocs() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    FunctionDocs.prototype.render = function () {
+        var d = docs[this.props.name];
+        if (d) {
+            var ps = null;
+            if (d.params.length > 0) {
+                ps = React.createElement("section", null, d.params.map(function (x) {
+                    return React.createElement("section", { key: x.name, id: x.name },
+                        React.createElement("p", { className: "proto" },
+                            React.createElement("span", { className: "param" }, x.name),
+                            ": ",
+                            React.createElement("span", { className: "units" }, x.units)),
+                        x.description);
+                }));
+            }
+            return React.createElement("section", null,
+                React.createElement("h1", { className: "fun" }, this.props.name),
+                d.description,
+                ps);
+        }
+        else {
+            return React.createElement("section", null,
+                React.createElement("h1", { className: "fun" }, this.props.name));
+        }
+    };
+    ;
+    return FunctionDocs;
+}(React.Component));
+exports.FunctionDocs = FunctionDocs;
+
+
+/***/ },
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";

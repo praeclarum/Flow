@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { Flow, FNode, newFNode, getHeaderText } from "../Flow"
+import { FunctionDocs } from "./FunctionDocs"
 
 export interface NodeTreeProps {
     index: number
@@ -47,12 +48,19 @@ export interface DeviceProps {
 
 export interface DeviceState {
     flow: Flow;
+    selection: string;
 }
 
 export class Device extends React.Component<DeviceProps, DeviceState> {
     constructor(props: DeviceProps) {
         super(props);
-        this.state = {flow:{documentNode: newFNode("Document"),functions:[]}};
+        this.state = {
+            flow: {
+                documentNode: newFNode("Document"),
+                functions:[]
+            },
+            selection: ""
+        };
         this.refresh();
     }
     refresh()
@@ -62,23 +70,41 @@ export class Device extends React.Component<DeviceProps, DeviceState> {
         xhr.open("GET", url);
         xhr.onload = ev => {
             let flow: Flow = JSON.parse(xhr.responseText);
-            this.setState ({flow: flow});
+            let h = window.location.hash;
+            if (h) h = h.substr(1);
+            this.setState ({flow: flow, selection: h});
         };
         xhr.send();
     }
+    select(thing: string)
+    {
+        this.setState ({flow: this.state.flow, selection: thing});
+    }
     render() {
+        var sel = null;
+        var f = this.state.flow.functions.indexOf(this.state.selection);
+        if (f >= 0) {
+            sel = <FunctionDocs name={this.state.flow.functions[f]} />
+        }
+
         return <div className="pure-g">
             <div className="pure-u-1-5"/>
             <div className="pure-u-1-5">
                 <nav>
                     <NodeTree index={0} node={this.state.flow.documentNode} />
-                    <section className="functions">
-                        {this.state.flow.functions.map(x =>
-                            <a className="function">{x} </a>)}
+                    <section className="functionNavs">
+                        {this.state.flow.functions.map(x => {
+                            var c = "functionNav";
+                            if (this.state.selection == x)
+                                c += " selected";
+                            return <span><a href={"#"+x} key={x} onClick={_=>this.select(x)} className={c}>{x}</a> </span>;
+                        })}
                     </section>
                 </nav>
             </div>
-            <div className="pure-u-2-5"/>
+            <div className="pure-u-2-5">
+                {sel}
+            </div>
             <div className="pure-u-1-5"/>        
         </div>
     }

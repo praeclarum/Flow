@@ -20,6 +20,7 @@ TEST_HEADERS=flow/Arduino.h flow/EEPROM.h test/CppUnitTest.h
 WEB_SRC=web/webpack.config.js web/tsconfig.json \
 	web/src/Flow.ts \
 	web/src/components/Device.tsx \
+	web/src/components/FunctionDocs.tsx \
 	web/src/components/Hello.tsx
 
 EXAMPLES=examples/Blink/Blink.ino

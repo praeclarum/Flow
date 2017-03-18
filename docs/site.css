@@ -1,8 +1,30 @@
 body {
-    background-color: #263238;
+    background-color: #262831;
     color: #bdbdbd;
 }
 
+h1,h2,h3,h4,h5,h6,h7 {
+    color: #e0e0e0;
+}
+
+b {
+    color: #e0e0e0;
+}
+
+.param {
+    color: #86E6FA;
+    font-weight: bold;
+}
+
+.fun {
+    color: #E29BF7;
+    font-weight: bold;
+}
+
+.units {
+    color: #e0e0e0;
+    font-weight: bold;
+}
 
 nav {
     margin-top: 8em;
@@ -25,18 +47,29 @@ nav {
     background-color: #37474f;
 }
 
-.functions {
+.functionNavs {
     line-height: 2em;
 }
 
-.function {    
+.functionNav {    
     margin: 1em 0.2em 1em 0.2em;
-    padding: 0.5em 0.5em 0.5em 0.5em;
+    padding: 0.25em 0.5em 0.25em 0.5em;
     cursor: pointer;
     border-radius: 0.25em;
+    text-decoration: none;
+    color: #bdbdbd;
 }
 
-.function:hover {
+.functionNav.selected {
+    background-color: #E29BF7;
+    color: #262831;
+}
+
+.functionNav:hover {
     background-color: #37474f;
+}
+
+.functionNav.selected:hover {
+    background-color: #E29BF7;
 }
 
