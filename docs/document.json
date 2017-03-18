@@ -1,34 +1,154 @@
 {
     "nodeType": "Document",
+    "value": 0,
     "childNodes": [
         {
             "nodeType": "Sub",
-            "name": "Foo",
+            "value": 0,
+            "childNodes": []
+        },
+        {
+            "nodeType": "Assignment",
+            "value": 0,
             "childNodes": [
                 {
-                    "nodeType": "Assignment",
+                    "nodeType": "Name",
+                    "value": "0x856a5aa8",
+                    "childNodes": []
+                },
+                {
+                    "nodeType": "Function",
                     "value": 0,
-                    "childNodes": [
-                        {
-                            "nodeType": "Name",
-                            "name": "x",
-                            "childNodes": [
-                            ]
-                        },
-                        {
-                            "nodeType": "Number",
-                            "value": 42,
-                            "childNodes": [
-                            ]
-                        }
-                    ]
+                    "childNodes": []
                 }
             ]
         },
         {
-            "nodeType": "Sub",
-            "name": "Bar",
-            "childNodes": [                
+            "nodeType": "Assignment",
+            "value": 0,
+            "childNodes": [
+                {
+                    "nodeType": "Name",
+                    "value": "0x5a88b2f5",
+                    "childNodes": []
+                },
+                {
+                    "nodeType": "Function",
+                    "value": 0,
+                    "childNodes": []
+                }
+            ]
+        },
+        {
+            "nodeType": "Assignment",
+            "value": 0,
+            "childNodes": [
+                {
+                    "nodeType": "Name",
+                    "value": "0xb7c393aa",
+                    "childNodes": []
+                },
+                {
+                    "nodeType": "Function",
+                    "value": 0,
+                    "childNodes": []
+                }
+            ]
+        },
+        {
+            "nodeType": "Assignment",
+            "value": 0,
+            "childNodes": [
+                {
+                    "nodeType": "Name",
+                    "value": "0x9eb9fb85",
+                    "childNodes": []
+                },
+                {
+                    "nodeType": "Function",
+                    "value": 0,
+                    "childNodes": []
+                }
+            ]
+        },
+        {
+            "nodeType": "Assignment",
+            "value": 0,
+            "childNodes": [
+                {
+                    "nodeType": "Name",
+                    "value": "0xa17b1dd0",
+                    "childNodes": []
+                },
+                {
+                    "nodeType": "Function",
+                    "value": 0,
+                    "childNodes": []
+                }
+            ]
+        },
+        {
+            "nodeType": "Assignment",
+            "value": 0,
+            "childNodes": [
+                {
+                    "nodeType": "Name",
+                    "value": "0x9d762289",
+                    "childNodes": []
+                },
+                {
+                    "nodeType": "Function",
+                    "value": 0,
+                    "childNodes": []
+                }
+            ]
+        },
+        {
+            "nodeType": "Assignment",
+            "value": 0,
+            "childNodes": [
+                {
+                    "nodeType": "Name",
+                    "value": "0xa00377fa",
+                    "childNodes": []
+                },
+                {
+                    "nodeType": "Function",
+                    "value": 0,
+                    "childNodes": []
+                }
+            ]
+        },
+        {
+            "nodeType": "Assignment",
+            "value": 0,
+            "childNodes": [
+                {
+                    "nodeType": "Name",
+                    "value": "0x55663ade",
+                    "childNodes": []
+                },
+                {
+                    "nodeType": "Function",
+                    "value": 0,
+                    "childNodes": []
+                }
+            ]
+        },
+        {
+            "nodeType": "Assignment",
+            "value": 0,
+            "childNodes": [
+                {
+                    "nodeType": "Name",
+                    "value": "0x2506e41d",
+                    "childNodes": []
+                },
+                {
+                    "nodeType": "Function",
+                    "value": 0,
+                    "childNodes": []
+                }
             ]
         }
     ]
