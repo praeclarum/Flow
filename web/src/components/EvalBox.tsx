@@ -4,18 +4,23 @@ import { Flow, FNode, newFNode, getHeaderText } from "../Flow"
 import { FunctionDocs } from "./FunctionDocs"
 
 
+interface EvalResponse
+{
+    value: number;
+}
+
 export interface EvalBoxProps {
 }
 
 export interface EvalBoxState {
     input: string;
-    response: {input: string, output:number};
+    lastEval: {req: string, resp: EvalResponse};
 }
 
 export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
     constructor(props: EvalBoxProps) {
         super(props);
-        this.state = { input: "", response: { input: "", output: 0 } }
+        this.state = { input: "", lastEval: { req: "init", resp: {value: 0} } }
     }
     eval(code: string)
     {
@@ -23,22 +28,22 @@ export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
         let url = "eval";
         xhr.open("POST", url);
         xhr.onload = _ => {
-            let value = parseFloat(xhr.responseText);
+            let resp: EvalResponse = JSON.parse(xhr.responseText);
             if (code === this.state.input) {
-                this.setState ({ response: { input: code, output: value } });
+                this.setState ({ input: code, lastEval: { req: code, resp: resp } });
             }
         };
         xhr.send(code);
     }
     handleChange(code: string)
     {
-        this.setState ({input: code, response: this.state.response});
+        this.setState ({ input: code, lastEval: this.state.lastEval });
         this.eval(code);
     }
     render() {
         let res = null;
-        if (this.state.input === this.state.response.input) {
-            res = <div>{this.state.response.output}</div>
+        if (this.state.input === this.state.lastEval.req) {
+            res = <div>{this.state.lastEval.resp.value}</div>
         }
         return <form className="pure-form">
                 <input type="text" value={this.state.input} onChange={e=>this.handleChange(e.target.value)} />

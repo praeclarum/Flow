@@ -247,7 +247,7 @@ var EvalBox = (function (_super) {
     __extends(EvalBox, _super);
     function EvalBox(props) {
         var _this = _super.call(this, props) || this;
-        _this.state = { input: "", response: { input: "", output: 0 } };
+        _this.state = { input: "", lastEval: { req: "init", resp: { value: 0 } } };
         return _this;
     }
     EvalBox.prototype.eval = function (code) {
@@ -256,22 +256,22 @@ var EvalBox = (function (_super) {
         var url = "eval";
         xhr.open("POST", url);
         xhr.onload = function (_) {
-            var value = parseFloat(xhr.responseText);
+            var resp = JSON.parse(xhr.responseText);
             if (code === _this.state.input) {
-                _this.setState({ response: { input: code, output: value } });
+                _this.setState({ input: code, lastEval: { req: code, resp: resp } });
             }
         };
         xhr.send(code);
     };
     EvalBox.prototype.handleChange = function (code) {
-        this.setState({ input: code, response: this.state.response });
+        this.setState({ input: code, lastEval: this.state.lastEval });
         this.eval(code);
     };
     EvalBox.prototype.render = function () {
         var _this = this;
         var res = null;
-        if (this.state.input === this.state.response.input) {
-            res = React.createElement("div", null, this.state.response.output);
+        if (this.state.input === this.state.lastEval.req) {
+            res = React.createElement("div", null, this.state.lastEval.resp.value);
         }
         return React.createElement("form", { className: "pure-form" },
             React.createElement("input", { type: "text", value: this.state.input, onChange: function (e) { return _this.handleChange(e.target.value); } }),
