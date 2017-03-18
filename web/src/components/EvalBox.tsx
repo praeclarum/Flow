@@ -80,6 +80,7 @@ export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
         }
         return <form className="eval-box">
                 <input type="text" value={this.state.input}
+                       autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false}
                        className={c}
                        onChange={e=>this.handleChange(e.target.value)} />
                 {em}

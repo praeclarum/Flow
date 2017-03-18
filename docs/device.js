@@ -304,7 +304,7 @@ var EvalBox = (function (_super) {
             }
         }
         return React.createElement("form", { className: "eval-box" },
-            React.createElement("input", { type: "text", value: this.state.input, className: c, onChange: function (e) { return _this.handleChange(e.target.value); } }),
+            React.createElement("input", { type: "text", value: this.state.input, autoComplete: "off", autoCorrect: "off", autoCapitalize: "off", spellCheck: false, className: c, onChange: function (e) { return _this.handleChange(e.target.value); } }),
             em,
             rv);
     };
