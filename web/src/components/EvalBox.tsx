@@ -36,14 +36,22 @@ export interface EvalBoxState {
 }
 
 export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
+    intervals: Array<number> = [];
     constructor(props: EvalBoxProps) {
         super(props);
         this.state = { input: "", lastEval: { req: "init", resp: { value: 0, errorCode: 0 } } }
+        this.setInterval(()=>this.reeval(), 1000);
     }
-    eval(code: string)
+    setInterval(handler: any, timeout: number) {
+        this.intervals.push(setInterval(handler, timeout));
+    }
+    componentWillUnmount() {
+        this.intervals.forEach(clearTimeout);
+    }
+    eval(code: string, force: boolean)
     {
         let tcode = code.trim();
-        if (tcode === this.state.lastEval.req)
+        if (!force && tcode === this.state.lastEval.req)
             return;
 
         let xhr = new XMLHttpRequest();
@@ -58,10 +66,16 @@ export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
         };
         xhr.send(tcode);
     }
+    reeval()
+    {
+        if (this.state.input.trim() !== "")
+            this.eval(this.state.input, true);
+        return 1;
+    }
     handleChange(code: string)
     {
         this.setState ({ input: code, lastEval: this.state.lastEval });
-        this.eval(code);
+        this.eval(code, false);
     }
     render() {
         let em = <div />

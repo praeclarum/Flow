@@ -262,13 +262,21 @@ var EvalBox = (function (_super) {
     __extends(EvalBox, _super);
     function EvalBox(props) {
         var _this = _super.call(this, props) || this;
+        _this.intervals = [];
         _this.state = { input: "", lastEval: { req: "init", resp: { value: 0, errorCode: 0 } } };
+        _this.setInterval(function () { return _this.reeval(); }, 1000);
         return _this;
     }
-    EvalBox.prototype.eval = function (code) {
+    EvalBox.prototype.setInterval = function (handler, timeout) {
+        this.intervals.push(setInterval(handler, timeout));
+    };
+    EvalBox.prototype.componentWillUnmount = function () {
+        this.intervals.forEach(clearTimeout);
+    };
+    EvalBox.prototype.eval = function (code, force) {
         var _this = this;
         var tcode = code.trim();
-        if (tcode === this.state.lastEval.req)
+        if (!force && tcode === this.state.lastEval.req)
             return;
         var xhr = new XMLHttpRequest();
         var url = "eval";
@@ -282,9 +290,14 @@ var EvalBox = (function (_super) {
         };
         xhr.send(tcode);
     };
+    EvalBox.prototype.reeval = function () {
+        if (this.state.input.trim() !== "")
+            this.eval(this.state.input, true);
+        return 1;
+    };
     EvalBox.prototype.handleChange = function (code) {
         this.setState({ input: code, lastEval: this.state.lastEval });
-        this.eval(code);
+        this.eval(code, false);
     };
     EvalBox.prototype.render = function () {
         var _this = this;
