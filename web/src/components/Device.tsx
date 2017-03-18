@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { Flow, FNode, newFNode, getHeaderText } from "../Flow"
 import { FunctionDocs } from "./FunctionDocs"
+import { EvalBox } from "./EvalBox"
 
 export interface NodeTreeProps {
     index: number
@@ -103,6 +104,7 @@ export class Device extends React.Component<DeviceProps, DeviceState> {
                 </nav>
             </div>
             <div className="pure-u-2-5">
+                <EvalBox />
                 {sel}
             </div>
             <div className="pure-u-1-5"/>        

@@ -61,7 +61,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -95,7 +95,8 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
 var Flow_1 = __webpack_require__(4);
-var FunctionDocs_1 = __webpack_require__(5);
+var FunctionDocs_1 = __webpack_require__(6);
+var EvalBox_1 = __webpack_require__(5);
 var NodeTree = (function (_super) {
     __extends(NodeTree, _super);
     function NodeTree(props) {
@@ -177,7 +178,9 @@ var Device = (function (_super) {
                             React.createElement("a", { href: "#" + x, key: x, onClick: function (_) { return _this.select(x); }, className: c }, x),
                             " ");
                     })))),
-            React.createElement("div", { className: "pure-u-2-5" }, sel),
+            React.createElement("div", { className: "pure-u-2-5" },
+                React.createElement(EvalBox_1.EvalBox, null),
+                sel),
             React.createElement("div", { className: "pure-u-1-5" }));
     };
     return Device;
@@ -224,6 +227,60 @@ exports.getHeaderText = getHeaderText;
 
 /***/ },
 /* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = __webpack_require__(0);
+var EvalBox = (function (_super) {
+    __extends(EvalBox, _super);
+    function EvalBox(props) {
+        var _this = _super.call(this, props) || this;
+        _this.state = { input: "", response: { input: "", output: 0 } };
+        return _this;
+    }
+    EvalBox.prototype.eval = function (code) {
+        var _this = this;
+        var xhr = new XMLHttpRequest();
+        var url = "eval";
+        xhr.open("POST", url);
+        xhr.onload = function (_) {
+            var value = parseFloat(xhr.responseText);
+            _this.setState({ response: { input: code, output: value } });
+        };
+        xhr.send(code);
+    };
+    EvalBox.prototype.handleChange = function (code) {
+        this.setState({ input: code, response: this.state.response });
+        this.eval(code);
+    };
+    EvalBox.prototype.render = function () {
+        var _this = this;
+        var res = null;
+        if (this.state.input == this.state.response.input) {
+            res = React.createElement("div", null, this.state.response.output);
+        }
+        return React.createElement("form", { className: "pure-form" },
+            React.createElement("input", { type: "text", value: this.state.input, onChange: function (e) { return _this.handleChange(e.target.value); } }));
+    };
+    return EvalBox;
+}(React.Component));
+exports.EvalBox = EvalBox;
+
+
+/***/ },
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -308,7 +365,7 @@ exports.FunctionDocs = FunctionDocs;
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
