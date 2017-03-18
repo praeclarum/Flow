@@ -17,13 +17,14 @@ class FlowLexer
     char buffer[MAX_BUFFER_LENGTH];
     int bufferLength;
     int col;
+    NameTable *names;
 public:
     yytokentype tok;
     YYSTYPE val;
     FlowLexerState state;
     int tcol;
 
-    FlowLexer();
+    FlowLexer(NameTable *names);
     bool push(int c);
     void reset();
 };

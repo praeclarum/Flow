@@ -26,6 +26,7 @@ public:
 
     inline Stream *getStream() { return stream; }
     inline Node *getDocument() { return document; }
+    inline const char *getNameText(Name name) { return names.get(name); }
 
     int saveToEEPROM();
     int loadFromEEPROM();
@@ -38,6 +39,7 @@ private:
     Node *document;
     Node *editingSub;
     WebServer webServer;
+    NameTable names;
 
     Number evalDeclaration(Node *node);
     void link(Node *parentNode, Node *node);

@@ -28,6 +28,7 @@ FlowController::FlowController()
     , document(new Node(NT_Document))
     , editingSub(0)
     , webServer(this, 8080)
+    , streamLexer(&names)
 {
     clear();
 #define FUNCTION(functionName) addFunction(F(#functionName), functionName##Function, 0, 0)
@@ -199,7 +200,7 @@ Number FlowController::eval(const __FlashStringHelper *code, FlowError *error)
 {
     PGM_P p = reinterpret_cast<PGM_P>(code);
     yypstate *parseState = yypstate_new();
-    FlowLexer lexer;
+    FlowLexer lexer(&names);
     bool onnewline = false;
     while (pgm_read_byte(p)) {
         bool gotnewline = false;
@@ -276,7 +277,21 @@ void FlowController::addFunction(const __FlashStringHelper *funcName, ApplyFunct
         delete fdn;
         return;
     }
+
     nn->value.name = crc_string(funcName);
+    char nameBuffer[32];
+    int nameBufferLength = 0;
+    PGM_P p = reinterpret_cast<PGM_P>(funcName);
+    uint32_t crc = ~0L;
+    byte b = pgm_read_byte(p);
+    while (b && nameBufferLength + 2 <= 32) {
+        nameBuffer[nameBufferLength++] = b;
+        p++;
+        b = pgm_read_byte(p);
+    }
+    nameBuffer[nameBufferLength] = 0;
+    names.put(nn->value.name, nameBuffer);
+
     Node *an = new Node(NT_Assignment);
     if (!an) {
         delete fdn;

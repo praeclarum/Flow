@@ -51,7 +51,7 @@ void WebServer::loop()
     }
 }
 
-static void printNode(Node *node, WiFiClient &client)
+static void printNode(FlowController *flow, Node *node, WiFiClient &client)
 {
     client.print(F("{\"nodeType\":\""));
     switch (node->nodeType)
@@ -123,7 +123,7 @@ static void printNode(Node *node, WiFiClient &client)
         break;
     case NT_Name:
         client.print('"');
-        client.print(node->value.name, HEX);
+        client.print(flow->getNameText(node->value.name));
         client.print('"');
         break;
     case NT_AssignmentReference:
@@ -143,7 +143,7 @@ static void printNode(Node *node, WiFiClient &client)
         char head=' ';
         while (c) {
             client.print(head);
-            printNode(c, client);
+            printNode(flow, c, client);
             head = ',';
             c = c->nextSibling;
         }
@@ -178,7 +178,7 @@ void WebServer::sendReply(const char *url, WiFiClient &client)
         client.println(F("Content-Type: application/json"));
         client.println(F("Connection: close"));  // the connection will be closed after completion of the response
         client.println();
-        printNode(flow->getDocument(), client);
+        printNode(flow, flow->getDocument(), client);
     }
     else {
         client.println(F("HTTP/1.1 404 Not found"));

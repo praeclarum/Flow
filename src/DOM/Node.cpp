@@ -121,3 +121,63 @@ int Node::loadFromEEPROM(int idx)
     i++;
     return i;
 }
+
+class NNode
+{
+public:
+    Name name;
+    char *text;
+    NNode *less;
+    NNode *greater;
+    ~NNode()
+    {
+        free(text);
+        delete less;
+        delete greater;
+    }
+};
+
+NameTable::NameTable()
+    : head(0)
+{
+}
+
+NameTable::~NameTable()
+{
+    delete head;
+}
+
+void NameTable::put(Name name, const char *str)
+{
+    NNode *pn = 0;
+    NNode *n = head;
+    while (n) {
+        if (n->name == name)
+            return;
+        pn = n;
+        n = (name > n->name) ? n->greater : n->less;
+    }
+    n = new NNode();
+    n->name = name;
+    n->text = strdup(str);
+    n->less = 0;
+    n->greater = 0;
+    if (pn) {
+        if (name > pn->name) pn->greater = n;
+        else pn->less = n;
+    }
+    else {
+        head = n;
+    }
+}
+
+const char *NameTable::get(Name name)
+{
+    NNode *n = head;
+    while (n) {
+        if (n->name == name)
+            return n->text;
+        n = (name > n->name) ? n->greater : n->less;
+    }
+    return "?";
+}

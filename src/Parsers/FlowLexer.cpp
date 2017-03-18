@@ -4,8 +4,10 @@ uint32_t crc_start();
 uint32_t crc_end(uint32_t crc);
 uint32_t crc_update(uint32_t crc, byte data);
 
-FlowLexer::FlowLexer()
-    : tok(yytokentype(0)), state(FLS_Reset), col(1)
+FlowLexer::FlowLexer(NameTable *names)
+    : tok(yytokentype(0)), state(FLS_Reset)
+    , col(1)
+    , bufferLength(0), names(names)
 {
 }
 
@@ -59,6 +61,8 @@ bool FlowLexer::push(int c)
                 if (c == '_' || isalpha(c)) {
                     consumed = true;
                     val.name = crc_update(crc_start(), c);
+                    buffer[0] = (char)c;
+                    bufferLength = 1;
                     tcol = col;
                     state = FLS_InName;
                 }
@@ -123,6 +127,10 @@ bool FlowLexer::push(int c)
     case FLS_InName:
         if (c == '_' || isalnum(c)) {
             consumed = true;
+            if (bufferLength + 2 < MAX_BUFFER_LENGTH) {
+                buffer[bufferLength] = c;
+                bufferLength++;
+            }
             val.name = crc_update(val.name, c);
         }
         else {
@@ -137,6 +145,8 @@ bool FlowLexer::push(int c)
                 break;
             default:
                 tok = NAME;
+                buffer[bufferLength] = 0;
+                names->put(val.name, buffer);
                 break;
             }
             consumed = false;
