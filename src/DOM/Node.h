@@ -5,15 +5,17 @@
 
 enum NodeType
 {
+    // Billion dollar bug. Also used as sentinel.
     NT_Null,
+    // The root
     NT_Document,
+    // Primitives
     NT_Number,
     // Expressions
     NT_BinaryOperator,
     NT_UnaryOperator,
     NT_Call,
     // Declaring and Referencing Things
-    NT_Function,
     NT_Sub,
     NT_Assignment,
     NT_Name,

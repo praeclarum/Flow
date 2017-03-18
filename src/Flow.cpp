@@ -264,25 +264,14 @@ uint32_t crc_string(const __FlashStringHelper *s);
 
 void FlowController::addFunction(const __FlashStringHelper *funcName, ApplyFunction func, int stateSize)
 {
-    Function *f = new Function(func, stateSize);
+    Function *f = new Function(crc_string(funcName), func, stateSize);
     if (!f) return;
-    Node *fdn = new Node(NT_Function);
-    if (!fdn) {
-        delete f;
-        return;
-    }
-    fdn->value.function = f;
-    Node *nn = new Node(NT_Name);
-    if (!nn) {
-        delete fdn;
-        return;
-    }
+    f->next = functions;
+    functions = f;
 
-    nn->value.name = crc_string(funcName);
     char nameBuffer[32];
     int nameBufferLength = 0;
     PGM_P p = reinterpret_cast<PGM_P>(funcName);
-    uint32_t crc = ~0L;
     byte b = pgm_read_byte(p);
     while (b && nameBufferLength + 2 <= 32) {
         nameBuffer[nameBufferLength++] = b;
@@ -290,17 +279,7 @@ void FlowController::addFunction(const __FlashStringHelper *funcName, ApplyFunct
         b = pgm_read_byte(p);
     }
     nameBuffer[nameBufferLength] = 0;
-    names.put(nn->value.name, nameBuffer);
-
-    Node *an = new Node(NT_Assignment);
-    if (!an) {
-        delete fdn;
-        delete nn;
-        return;
-    }
-    an->firstChild = nn;
-    nn->nextSibling = fdn;
-    document->appendChild(an);
+    names.put(f->name, nameBuffer);
 }
 
 Number FlowController::evalDeclaration(Node *node)
@@ -385,8 +364,6 @@ Number FlowController::eval(Node *node)
         return node->value.number;
     case NT_Sub:
         return 0;
-    case NT_Function:
-        return node->value.function ? node->value.function->apply(this, 0, 0, 0) : 0;
     case NT_Assignment:
         return node->value.number;
     case NT_Name:
@@ -462,30 +439,11 @@ void FlowController::link(Node *parentNode, Node *node)
                 }
             }
             //
-            // Did we link?
+            // Did we link to a user object?
             //
             if (c) {
                 Node *rhs = c->firstChild->nextSibling;
-                if (rhs && rhs->nodeType == NT_Function) {
-                    Node *rn = new Node(NT_FunctionReference);
-                    if (rn) {
-                        int numInputs = 0;
-                        if (parentNode && parentNode->nodeType == NT_Call && parentNode->firstChild == node) {
-                            Node *a = node->nextSibling;
-                            while (a) {
-                                numInputs++;
-                                a = a->nextSibling;
-                            }
-                        }
-                        Function *f = rhs->value.function;
-                        rn->value.functionReference = new FunctionReference(f, numInputs);
-                        node->firstChild = rn;
-                    }
-                    else {
-                        // No memory :-(
-                    }
-                }
-                else if (rhs) {
+                if (rhs) {
                     Node *rn = new Node(NT_AssignmentReference);
                     if (rn) {
                         rn->value.assignmentReference = c;
@@ -500,7 +458,36 @@ void FlowController::link(Node *parentNode, Node *node)
                 }
             }
             else {
-                // Link failed
+                //
+                // Try linking to a function
+                //
+                Function *f = functions;
+                while (f) {
+                    if (f->name == name)
+                        break;
+                    f = f->next;
+                }
+                if (f) {
+                    Node *rn = new Node(NT_FunctionReference);
+                    if (rn) {
+                        int numInputs = 0;
+                        if (parentNode && parentNode->nodeType == NT_Call && parentNode->firstChild == node) {
+                            Node *a = node->nextSibling;
+                            while (a) {
+                                numInputs++;
+                                a = a->nextSibling;
+                            }
+                        }
+                        rn->value.functionReference = new FunctionReference(f, numInputs);
+                        node->firstChild = rn;
+                    }
+                    else {
+                        // No memory :-(
+                    }
+                }
+                else {
+                    // Linking failed :-(
+                }
             }
         }
         else {

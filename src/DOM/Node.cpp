@@ -7,9 +7,6 @@ Node::~Node()
 {
     switch (nodeType)
     {
-    case NT_Function:
-        delete value.function;
-        break;
     case NT_FunctionReference:
         delete value.functionReference;
         break;
@@ -74,9 +71,6 @@ int Node::saveToEEPROM(int idx)
             EEPROM.update(idx, 0);
         return EEPROM.length();
     }
-    // Don't write functions
-    if (nodeType == NT_Assignment && firstChild && firstChild->nextSibling && firstChild->nextSibling->nodeType == NT_Function)
-        return idx;
     // Write the type and value
     int i = idx;
     EEPROM.update(i++, nodeType);

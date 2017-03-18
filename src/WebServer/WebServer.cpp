@@ -74,9 +74,6 @@ static void printNode(FlowController *flow, Node *node, WiFiClient &client)
     case NT_Call:
         client.print(F("Call"));
         break;
-    case NT_Function:
-        client.print(F("Function"));
-        break;
     case NT_Sub:
         client.print(F("Sub"));
         break;
@@ -133,7 +130,6 @@ static void printNode(FlowController *flow, Node *node, WiFiClient &client)
     case NT_End:
     case NT_Document:
     case NT_Call:
-    case NT_Function:
         client.print('0');
         break;
     }

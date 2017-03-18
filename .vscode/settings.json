@@ -3,6 +3,7 @@
         "typeinfo": "cpp",
         "cmath": "cpp",
         "limits": "cpp",
-        "cstring": "cpp"
+        "cstring": "cpp",
+        "*.tcc": "cpp"
     }
 }

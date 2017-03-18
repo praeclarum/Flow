@@ -40,6 +40,7 @@ private:
     Node *editingSub;
     WebServer webServer;
     NameTable names;
+    Function *functions;
 
     Number evalDeclaration(Node *node);
     void link(Node *parentNode, Node *node);

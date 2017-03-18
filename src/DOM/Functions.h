@@ -3,18 +3,16 @@
 #include <Arduino.h>
 #include "Primitives.h"
 
-class Function
+struct Function
 {
-    ApplyFunction apply_;
-    byte stateSize_;
-public:
-    Function(ApplyFunction func, byte stateSize)
-        : apply_(func), stateSize_(stateSize)
+    Name name;
+    Function *next;
+    ApplyFunction apply;
+    byte stateSize;
+
+    Function(Name name, ApplyFunction apply, byte stateSize)
+        : name(name), apply(apply), stateSize(stateSize), next(0)
     {}
-    inline int stateSize() { return stateSize_; }
-    inline Number apply(FlowController *flow, void *state, int numInputs, Number *inputs) {
-        return apply_(flow, state, numInputs, inputs);
-    }
 };
 
 struct FunctionReference
@@ -25,7 +23,7 @@ struct FunctionReference
     FunctionReference(Function *function, int numInputs)
         : function(function), numInputs(numInputs)
     {
-        int nvalues = numInputs*sizeof(Number) + function->stateSize();
+        int nvalues = numInputs*sizeof(Number) + function->stateSize;
         values = (byte*)calloc(nvalues, 1);
     }
     ~FunctionReference()
