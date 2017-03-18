@@ -28,20 +28,50 @@ void WebServer::loop()
         bool currentLineIsBlank = true;
         String firstLine;
         bool gotFirstLine = false;
+        String header;
+        bool gotHeaderColon = false;
+        String content;
+        int contentLength = 0;
         while (client.connected()) {
             if (client.available()) {
                 char c = client.read();
                 if (c == '\n' && currentLineIsBlank) {
-                    sendReply(firstLine.c_str(), client);
+                    // Read the body
+                    content.reserve(contentLength);
+                    while (client.connected() && content.length() < contentLength) {
+                        if (client.available()) {
+                            content += client.read();
+                        }
+                    }
+                    // Send the response
+                    if (client.connected())
+                        sendReply(firstLine.c_str(), client);
                     break;
                 }
                 if (c == '\n') {
+                    // End of the first line or a header
+                    const char *h = header.c_str();
+                    h = header.c_str();
+                    if ((h = strstr(h, "content-length:"))) {
+                        h += 15;
+                        contentLength = atoi(h);
+                    }
                     currentLineIsBlank = true;
                     gotFirstLine = true;
+                    gotHeaderColon = false;
+                    header.remove (0, header.length());
                 } else if (c != '\r') {
+                    // More text on the first line or a header
                     currentLineIsBlank = false;
                     if (!gotFirstLine) {
                         firstLine += (char)c;
+                    }
+                    else {
+                        if (c == ':' && !gotHeaderColon) {
+                            gotHeaderColon = true;
+                            header.toLowerCase();
+                        }
+                        header += c;
                     }
                 }
             }

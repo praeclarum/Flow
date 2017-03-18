@@ -29,6 +29,7 @@ public:
     String (const char *rhs);
     float toFloat();
     void remove(unsigned int index, unsigned int count);
+    void toLowerCase();
 };
 
 #define DEC 10

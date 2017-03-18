@@ -7,7 +7,6 @@
 
 static long startMillis = 0;
 static unsigned long startMicros = 0;
-
 long millis()
 {
     struct timeval  tv;
@@ -17,7 +16,6 @@ long millis()
         startMillis = ms;
     return ms - startMillis;
 }
-
 long micros()
 {
     struct timeval  tv;
@@ -27,7 +25,6 @@ long micros()
         startMicros = ms;
     return ms - startMicros;
 }
-
 void delay(unsigned long ms)
 {
     usleep(ms*1000);
@@ -52,6 +49,10 @@ void String::remove(unsigned int index, unsigned int count)
 	if (count > s - index)
         count = s - index;
     erase(begin() + index, begin() + index + count);
+}
+void String::toLowerCase()
+{
+    transform(begin(), end(), begin(), tolower);
 }
 
 StdioStream::StdioStream()
