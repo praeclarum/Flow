@@ -303,8 +303,8 @@ var LineChart = (function (_super) {
             maxY = Math.max(y, maxY);
             beginI--;
         }
-        if (beginI < lastI)
-            beginI++;
+        if (beginI < 0)
+            beginI = 0;
         var eps = 1.0e-3;
         if ((maxY - minY) < eps) {
             maxY = minY + eps;
@@ -422,7 +422,7 @@ var EvalBox = (function (_super) {
             else {
                 c = "ok";
                 rv = React.createElement("div", { className: "result-value " + c },
-                    React.createElement(LineChart, { width: 480, height: 240, series: this.state.log, color: "#C1FFBE", filled: true, strokeWidth: 4 }),
+                    React.createElement(LineChart, { width: 480, height: 240, series: this.state.log, color: "#C1FFBE", filled: false, strokeWidth: 5 }),
                     this.state.lastEval.resp.value);
             }
         }

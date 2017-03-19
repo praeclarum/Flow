@@ -78,7 +78,7 @@ export class LineChart extends React.Component<LineChartProps, undefined> {
             maxY = Math.max(y, maxY);
             beginI--;
         }
-        if (beginI < lastI) beginI++;
+        if (beginI < 0) beginI = 0;
         let eps = 1.0e-3;
         if ((maxY - minY) < eps) {
             maxY = minY + eps;
@@ -212,7 +212,7 @@ export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
             else {
                 c = "ok";
                 rv = <div className={"result-value "+c}>
-                        <LineChart width={480} height={240} series={this.state.log} color="#C1FFBE" filled={true} strokeWidth={4} />
+                        <LineChart width={480} height={240} series={this.state.log} color="#C1FFBE" filled={false} strokeWidth={5} />
                         {this.state.lastEval.resp.value}
                     </div>
             }
