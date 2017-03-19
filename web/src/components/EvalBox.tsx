@@ -63,8 +63,8 @@ export class LineChart extends React.Component<LineChartProps, undefined> {
         //
         let maxX = s[lastI][0];
         var minX = maxX - 30;
-        let minY = s[lastI][1];
-        let maxY = minY;
+        let minY = 0; // Always include 0 to stabilize graphs
+        let maxY = 0;
         let beginI = lastI;
         while (beginI >= 0) {
             let x = s[beginI][0];
@@ -201,7 +201,7 @@ export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
             else {
                 c = "ok";
                 rv = <div className={"result-value "+c}>
-                        <LineChart width={480} height={240} series={this.state.log} color="#C1FFBE" filled={true} strokeWidth={4} />
+                        <LineChart width={480} height={240} series={this.state.log} color="#C1FFBE" filled={false} strokeWidth={4} />
                         {this.state.lastEval.resp.value}
                     </div>
             }

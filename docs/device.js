@@ -287,8 +287,8 @@ var LineChart = (function (_super) {
         //
         var maxX = s[lastI][0];
         var minX = maxX - 30;
-        var minY = s[lastI][1];
-        var maxY = minY;
+        var minY = 0; // Always include 0 to stabilize graphs
+        var maxY = 0;
         var beginI = lastI;
         while (beginI >= 0) {
             var x = s[beginI][0];
@@ -413,7 +413,7 @@ var EvalBox = (function (_super) {
             else {
                 c = "ok";
                 rv = React.createElement("div", { className: "result-value " + c },
-                    React.createElement(LineChart, { width: 480, height: 240, series: this.state.log, color: "#C1FFBE", filled: true, strokeWidth: 4 }),
+                    React.createElement(LineChart, { width: 480, height: 240, series: this.state.log, color: "#C1FFBE", filled: false, strokeWidth: 4 }),
                     this.state.lastEval.resp.value);
             }
         }
