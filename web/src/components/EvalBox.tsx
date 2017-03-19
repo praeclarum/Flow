@@ -64,7 +64,7 @@ export class LineChart extends React.Component<LineChartProps, undefined> {
         // Measure
         //
         let now = getTime();
-        let maxX = now;
+        let maxX = s[lastI][0];
         var minX = maxX - 30;
         let minY = 0; // Always include 0 to stabilize graphs
         let maxY = 0;

@@ -289,7 +289,7 @@ var LineChart = (function (_super) {
         // Measure
         //
         var now = Flow_1.getTime();
-        var maxX = now;
+        var maxX = s[lastI][0];
         var minX = maxX - 30;
         var minY = 0; // Always include 0 to stabilize graphs
         var maxY = 0;
