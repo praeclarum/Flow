@@ -370,28 +370,29 @@ var EvalBox = (function (_super) {
         this.intervals.forEach(clearTimeout);
     };
     EvalBox.prototype.eval = function (code, force) {
+        var _this = this;
         var tcode = code.trim();
         if (!force && tcode === this.state.lastEval.req)
             return;
         var xhr = new XMLHttpRequest();
         var url = "eval";
         // TEST
-        var y = Math.random() * 2 - 0.5;
-        this.state.log.push([Flow_1.getTime(), y]);
-        this.setState({ input: code, lastEval: { req: tcode, resp: { value: y, errorCode: 0 } } });
+        // let y = Math.random() * 2 - 0.5;
+        // this.state.log.push([getTime(), y]);
+        // this.setState ({ input: code, lastEval: { req: tcode, resp: {value:y,errorCode:0} } });
         // REAL
-        // xhr.open("POST", url);
-        // xhr.onload = _ => {
-        //     let resp: EvalResponse = JSON.parse(xhr.responseText);
-        //     if (tcode === this.state.input.trim()) {
-        //         var h = this.state.log;
-        //         if (resp.errorCode === 0) {
-        //             h.push([getTime(), resp.value]);
-        //         }
-        //         this.setState ({ lastEval: { req: tcode, resp: resp } });
-        //     }
-        // };
-        // xhr.send(tcode);
+        xhr.open("POST", url);
+        xhr.onload = function (_) {
+            var resp = JSON.parse(xhr.responseText);
+            if (tcode === _this.state.input.trim()) {
+                var h = _this.state.log;
+                if (resp.errorCode === 0) {
+                    h.push([Flow_1.getTime(), resp.value]);
+                }
+                _this.setState({ lastEval: { req: tcode, resp: resp } });
+            }
+        };
+        xhr.send(tcode);
     };
     EvalBox.prototype.reeval = function () {
         if (this.state.input.trim() !== "")

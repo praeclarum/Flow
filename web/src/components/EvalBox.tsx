@@ -165,23 +165,23 @@ export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
         let url = "eval";
 
         // TEST
-        let y = Math.random() * 2 - 0.5;
-        this.state.log.push([getTime(), y]);
-        this.setState ({ input: code, lastEval: { req: tcode, resp: {value:y,errorCode:0} } });
+        // let y = Math.random() * 2 - 0.5;
+        // this.state.log.push([getTime(), y]);
+        // this.setState ({ input: code, lastEval: { req: tcode, resp: {value:y,errorCode:0} } });
 
         // REAL
-        // xhr.open("POST", url);
-        // xhr.onload = _ => {
-        //     let resp: EvalResponse = JSON.parse(xhr.responseText);
-        //     if (tcode === this.state.input.trim()) {
-        //         var h = this.state.log;
-        //         if (resp.errorCode === 0) {
-        //             h.push([getTime(), resp.value]);
-        //         }
-        //         this.setState ({ lastEval: { req: tcode, resp: resp } });
-        //     }
-        // };
-        // xhr.send(tcode);
+        xhr.open("POST", url);
+        xhr.onload = _ => {
+            let resp: EvalResponse = JSON.parse(xhr.responseText);
+            if (tcode === this.state.input.trim()) {
+                var h = this.state.log;
+                if (resp.errorCode === 0) {
+                    h.push([getTime(), resp.value]);
+                }
+                this.setState ({ lastEval: { req: tcode, resp: resp } });
+            }
+        };
+        xhr.send(tcode);
     }
     reeval()
     {
