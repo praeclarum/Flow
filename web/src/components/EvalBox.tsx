@@ -120,9 +120,9 @@ export class LineChart extends React.Component<LineChartProps, undefined> {
                     dangerouslySetInnerHTML={{__html: "<animateTransform attributeName='transform'" +
                             "attributeType='XML'" +
                             "type='translate'" +
-                            "from='480'" +
-                            "to='"+(-dpxdx*1000)+"'" +
-                            "dur='1000s'" +
+                            "from='"+w+"'" +
+                            "to='"+(-dpxdx*100000)+"'" +
+                            "dur='100000s'" +
                             "repeatCount='0'/>"}} />
                 // {/*<animate attributeType="XML" attributeName="x" from={0} to={dpxdx} dur="1s" repeatCount={1} />*/}
             

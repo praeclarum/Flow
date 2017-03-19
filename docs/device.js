@@ -344,9 +344,9 @@ var LineChart = (function (_super) {
         var path = React.createElement("path", { fill: fill, stroke: stroke, strokeWidth: sw, strokeLinejoin: "round", strokeLinecap: "round", d: data, dangerouslySetInnerHTML: { __html: "<animateTransform attributeName='transform'" +
                     "attributeType='XML'" +
                     "type='translate'" +
-                    "from='480'" +
-                    "to='" + (-dpxdx * 1000) + "'" +
-                    "dur='1000s'" +
+                    "from='" + w + "'" +
+                    "to='" + (-dpxdx * 100000) + "'" +
+                    "dur='100000s'" +
                     "repeatCount='0'/>" } });
         // {/*<animate attributeType="XML" attributeName="x" from={0} to={dpxdx} dur="1s" repeatCount={1} />*/}
         return React.createElement("svg", { width: w, height: h }, path);
