@@ -310,13 +310,13 @@ var LineChart = (function (_super) {
             maxY = minY + eps;
         }
         var dpxdx = (w) / (maxX - minX);
-        var dpydy = (h) / (maxY - minY);
+        var dpydy = (h - sw) / (maxY - minY);
         //
         // Draw
         //
         var data = "";
         var getpx = function (x) { return (x - _this.startTime) * dpxdx; };
-        var getpy = function (y) { return h - ((y - minY) * dpydy); };
+        var getpy = function (y) { return h - ((y - minY) * dpydy + sw / 2); };
         var moveTo = function (x, y) { return data += "M " + x + " " + y + " "; };
         var lineTo = function (x, y) { return data += "L " + x + " " + y + " "; };
         var end = function () { return data += "z"; };

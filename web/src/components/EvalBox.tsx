@@ -84,13 +84,13 @@ export class LineChart extends React.Component<LineChartProps, undefined> {
             maxY = minY + eps;
         }
         let dpxdx = (w) / (maxX - minX);
-        let dpydy = (h) / (maxY - minY);
+        let dpydy = (h-sw) / (maxY - minY);
         //
         // Draw
         //
         var data = "";
         var getpx = (x: number) => (x - this.startTime) * dpxdx;
-        var getpy = (y: number) => h - ((y - minY) * dpydy);
+        var getpy = (y: number) => h - ((y - minY) * dpydy + sw/2);
         var moveTo = (x: number, y: number) => data += "M " + x + " " + y + " ";
         var lineTo = (x: number, y: number) => data += "L " + x + " " + y + " ";
         var end = () => data += "z";
