@@ -289,7 +289,7 @@ var LineChart = (function (_super) {
         // Measure
         //
         var now = Flow_1.getTime();
-        var maxX = s[lastI][0];
+        var maxX = now;
         var minX = maxX - 30;
         var minY = 0; // Always include 0 to stabilize graphs
         var maxY = 0;
@@ -309,14 +309,14 @@ var LineChart = (function (_super) {
         if ((maxY - minY) < eps) {
             maxY = minY + eps;
         }
-        var dpxdx = (w - sw) / (maxX - minX);
-        var dpydy = (h - sw) / (maxY - minY);
+        var dpxdx = (w) / (maxX - minX);
+        var dpydy = (h) / (maxY - minY);
         //
         // Draw
         //
         var data = "";
-        var getpx = function (x) { return (x - _this.startTime) * dpxdx + sw / 2; };
-        var getpy = function (y) { return h - ((y - minY) * dpydy + sw / 2); };
+        var getpx = function (x) { return (x - _this.startTime) * dpxdx; };
+        var getpy = function (y) { return h - ((y - minY) * dpydy); };
         var moveTo = function (x, y) { return data += "M " + x + " " + y + " "; };
         var lineTo = function (x, y) { return data += "L " + x + " " + y + " "; };
         var end = function () { return data += "z"; };
