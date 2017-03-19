@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Flow, FNode, newFNode, getHeaderText } from "../Flow"
+import { Flow, FNode, newFNode, getHeaderText, getTime } from "../Flow"
 import { FunctionDocs } from "./FunctionDocs"
 
 
@@ -27,19 +27,115 @@ function getErrorMessage(errorCode: number)
     }
 }
 
+export type Datum = number[]
+
+export interface LineChartProps {
+    series: Datum[];
+    color: string;
+    filled: boolean;
+    strokeWidth: number;
+    width: number;
+    height: number;
+}
+
+export class LineChart extends React.Component<LineChartProps, undefined> {
+    constructor(props: LineChartProps) {
+        super(props);
+    }
+    render() {
+        var w = this.props.width;
+        var h = this.props.height;
+        var sw = this.props.strokeWidth;
+        var fill = "none";
+        var stroke = this.props.color;
+        if (this.props.filled) {
+            fill = this.props.color;
+            stroke = "none";
+        }
+        
+        let s = this.props.series;
+        var lastI = s.length - 1;
+        if (lastI < 0)
+            return <svg width={w} height={h} />;
+
+        //
+        // Measure
+        //
+        let maxX = s[lastI][0];
+        var minX = maxX - 30;
+        let minY = s[lastI][1];
+        let maxY = minY;
+        let beginI = lastI;
+        while (beginI >= 0) {
+            let x = s[beginI][0];
+            if (x < minX)
+                break;
+            let y = s[beginI][1];
+            minY = Math.min(y, minY);
+            maxY = Math.max(y, maxY);
+            beginI--;
+        }
+        if (beginI < lastI) beginI++;
+        let eps = 1.0e-3;
+        if ((maxY - minY) < eps) {
+            maxY = minY + eps;
+        }
+        let dpxdx = (w-sw) / (maxX - minX);
+        let dpydy = (h-sw) / (maxY - minY);
+        //
+        // Draw
+        //
+        var data = "";
+        var getpx = (x: number) => (x - minX) * dpxdx + sw/2;
+        var getpy = (y: number) => h - ((y - minY) * dpydy + sw/2);
+        var moveTo = (x: number, y: number) => data += "M " + x + " " + y + " ";
+        var lineTo = (x: number, y: number) => data += "L " + x + " " + y + " ";
+        var end = () => data += "z";
+        var i = beginI;
+        let px = getpx(s[i][0]);
+        let py = getpy(s[i][1]);
+        if (fill !== "none") {
+            py = getpy(0);
+        }
+        else {
+            i++;
+        }
+        moveTo(px, py);        
+        for (; i <= lastI; i++) {
+            px = getpx(s[i][0]);
+            py = getpy(s[i][1]);
+            lineTo(px, py);
+        }
+        if (fill !== "none") {
+            px = getpx(s[lastI][0]) + sw * 0.51;
+            py = getpy(s[lastI][1]);
+            lineTo(px, py);
+            py = getpy(0);
+            lineTo(px, py);
+            end();
+        }
+        var path = <path fill={fill} stroke={stroke} strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round" d={data} />
+        return <svg width={w} height={h}>
+                {/*<circle cx={w/2} cy={h/2} r={h/4} fill="red" />*/}
+                {path}
+            </svg>;
+    }
+}
+
 export interface EvalBoxProps {
 }
 
 export interface EvalBoxState {
     input: string;
     lastEval: {req: string, resp: EvalResponse};
+    log: Datum[];
 }
 
 export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
     intervals: Array<number> = [];
     constructor(props: EvalBoxProps) {
         super(props);
-        this.state = { input: "", lastEval: { req: "init", resp: { value: 0, errorCode: 0 } } }
+        this.state = { input: "", lastEval: { req: "init", resp: { value: 0, errorCode: 0 } }, log: [] }
         this.setInterval(()=>this.reeval(), 1000);
     }
     setInterval(handler: any, timeout: number) {
@@ -56,12 +152,22 @@ export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
 
         let xhr = new XMLHttpRequest();
         let url = "eval";
-        // this.setState ({ input: code, lastEval: { req: tcode, resp: {value:42,errorCode:4} } });
+
+        // TEST
+        // let y = Math.random() * 2 - 0.5;
+        // this.state.log.push([getTime(), y]);
+        // this.setState ({ input: code, lastEval: { req: tcode, resp: {value:y,errorCode:0} } });
+
+        // REAL
         xhr.open("POST", url);
         xhr.onload = _ => {
             let resp: EvalResponse = JSON.parse(xhr.responseText);
             if (tcode === this.state.input.trim()) {
-                this.setState ({ input: code, lastEval: { req: tcode, resp: resp } });
+                var h = this.state.log;
+                if (resp.errorCode === 0) {
+                    h.push([getTime(), resp.value]);
+                }
+                this.setState ({ lastEval: { req: tcode, resp: resp } });
             }
         };
         xhr.send(tcode);
@@ -94,7 +200,10 @@ export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
             }
             else {
                 c = "ok";
-                rv = <div className={"result-value "+c}>{this.state.lastEval.resp.value}</div>
+                rv = <div className={"result-value "+c}>
+                        <LineChart width={480} height={240} series={this.state.log} color="#C1FFBE" filled={true} strokeWidth={4} />
+                        {this.state.lastEval.resp.value}
+                    </div>
             }
         }
         return <form className="eval-box">

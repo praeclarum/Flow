@@ -78,6 +78,46 @@ module.exports = ReactDOM;
 
 /***/ },
 /* 2 */
+/***/ function(module, exports) {
+
+"use strict";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function getTime() {
+    return new Date().getTime() / 1000.0;
+}
+exports.getTime = getTime;
+function newFNode(nodeType) {
+    return { nodeType: nodeType, value: 0, childNodes: new Array() };
+}
+exports.newFNode = newFNode;
+function getHeaderText(node) {
+    var left;
+    var right;
+    switch (node.nodeType) {
+        case "Document":
+            return "Flow";
+        case "Name":
+            return node.value.toString();
+        case "Assignment":
+            left = "?";
+            if (node.childNodes.length > 0) {
+                left = getHeaderText(node.childNodes[0]);
+            }
+            right = "?";
+            if (node.childNodes.length > 1) {
+                right = getHeaderText(node.childNodes[1]);
+            }
+            return left + " = " + right;
+        default:
+            return node.nodeType;
+    }
+}
+exports.getHeaderText = getHeaderText;
+
+
+/***/ },
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -94,7 +134,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
-var Flow_1 = __webpack_require__(4);
+var Flow_1 = __webpack_require__(2);
 var FunctionDocs_1 = __webpack_require__(6);
 var EvalBox_1 = __webpack_require__(5);
 var NodeTree = (function (_super) {
@@ -189,43 +229,7 @@ exports.Device = Device;
 
 
 /***/ },
-/* 3 */,
-/* 4 */
-/***/ function(module, exports) {
-
-"use strict";
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function newFNode(nodeType) {
-    return { nodeType: nodeType, value: 0, childNodes: new Array() };
-}
-exports.newFNode = newFNode;
-function getHeaderText(node) {
-    var left;
-    var right;
-    switch (node.nodeType) {
-        case "Document":
-            return "Flow";
-        case "Name":
-            return node.value.toString();
-        case "Assignment":
-            left = "?";
-            if (node.childNodes.length > 0) {
-                left = getHeaderText(node.childNodes[0]);
-            }
-            right = "?";
-            if (node.childNodes.length > 1) {
-                right = getHeaderText(node.childNodes[1]);
-            }
-            return left + " = " + right;
-        default:
-            return node.nodeType;
-    }
-}
-exports.getHeaderText = getHeaderText;
-
-
-/***/ },
+/* 4 */,
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -243,6 +247,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
+var Flow_1 = __webpack_require__(2);
 function getErrorMessage(errorCode) {
     switch (errorCode) {
         case 0:
@@ -258,12 +263,94 @@ function getErrorMessage(errorCode) {
             return "Unknown error";
     }
 }
+var LineChart = (function (_super) {
+    __extends(LineChart, _super);
+    function LineChart(props) {
+        return _super.call(this, props) || this;
+    }
+    LineChart.prototype.render = function () {
+        var w = this.props.width;
+        var h = this.props.height;
+        var sw = this.props.strokeWidth;
+        var fill = "none";
+        var stroke = this.props.color;
+        if (this.props.filled) {
+            fill = this.props.color;
+            stroke = "none";
+        }
+        var s = this.props.series;
+        var lastI = s.length - 1;
+        if (lastI < 0)
+            return React.createElement("svg", { width: w, height: h });
+        //
+        // Measure
+        //
+        var maxX = s[lastI][0];
+        var minX = maxX - 30;
+        var minY = s[lastI][1];
+        var maxY = minY;
+        var beginI = lastI;
+        while (beginI >= 0) {
+            var x = s[beginI][0];
+            if (x < minX)
+                break;
+            var y = s[beginI][1];
+            minY = Math.min(y, minY);
+            maxY = Math.max(y, maxY);
+            beginI--;
+        }
+        if (beginI < lastI)
+            beginI++;
+        var eps = 1.0e-3;
+        if ((maxY - minY) < eps) {
+            maxY = minY + eps;
+        }
+        var dpxdx = (w - sw) / (maxX - minX);
+        var dpydy = (h - sw) / (maxY - minY);
+        //
+        // Draw
+        //
+        var data = "";
+        var getpx = function (x) { return (x - minX) * dpxdx + sw / 2; };
+        var getpy = function (y) { return h - ((y - minY) * dpydy + sw / 2); };
+        var moveTo = function (x, y) { return data += "M " + x + " " + y + " "; };
+        var lineTo = function (x, y) { return data += "L " + x + " " + y + " "; };
+        var end = function () { return data += "z"; };
+        var i = beginI;
+        var px = getpx(s[i][0]);
+        var py = getpy(s[i][1]);
+        if (fill !== "none") {
+            py = getpy(0);
+        }
+        else {
+            i++;
+        }
+        moveTo(px, py);
+        for (; i <= lastI; i++) {
+            px = getpx(s[i][0]);
+            py = getpy(s[i][1]);
+            lineTo(px, py);
+        }
+        if (fill !== "none") {
+            px = getpx(s[lastI][0]) + sw * 0.51;
+            py = getpy(s[lastI][1]);
+            lineTo(px, py);
+            py = getpy(0);
+            lineTo(px, py);
+            end();
+        }
+        var path = React.createElement("path", { fill: fill, stroke: stroke, strokeWidth: sw, strokeLinejoin: "round", strokeLinecap: "round", d: data });
+        return React.createElement("svg", { width: w, height: h }, path);
+    };
+    return LineChart;
+}(React.Component));
+exports.LineChart = LineChart;
 var EvalBox = (function (_super) {
     __extends(EvalBox, _super);
     function EvalBox(props) {
         var _this = _super.call(this, props) || this;
         _this.intervals = [];
-        _this.state = { input: "", lastEval: { req: "init", resp: { value: 0, errorCode: 0 } } };
+        _this.state = { input: "", lastEval: { req: "init", resp: { value: 0, errorCode: 0 } }, log: [] };
         _this.setInterval(function () { return _this.reeval(); }, 1000);
         return _this;
     }
@@ -280,12 +367,20 @@ var EvalBox = (function (_super) {
             return;
         var xhr = new XMLHttpRequest();
         var url = "eval";
-        // this.setState ({ input: code, lastEval: { req: tcode, resp: {value:42,errorCode:4} } });
+        // TEST
+        // let y = Math.random() * 2 - 0.5;
+        // this.state.log.push([getTime(), y]);
+        // this.setState ({ input: code, lastEval: { req: tcode, resp: {value:y,errorCode:0} } });
+        // REAL
         xhr.open("POST", url);
         xhr.onload = function (_) {
             var resp = JSON.parse(xhr.responseText);
             if (tcode === _this.state.input.trim()) {
-                _this.setState({ input: code, lastEval: { req: tcode, resp: resp } });
+                var h = _this.state.log;
+                if (resp.errorCode === 0) {
+                    h.push([Flow_1.getTime(), resp.value]);
+                }
+                _this.setState({ lastEval: { req: tcode, resp: resp } });
             }
         };
         xhr.send(tcode);
@@ -317,7 +412,9 @@ var EvalBox = (function (_super) {
             }
             else {
                 c = "ok";
-                rv = React.createElement("div", { className: "result-value " + c }, this.state.lastEval.resp.value);
+                rv = React.createElement("div", { className: "result-value " + c },
+                    React.createElement(LineChart, { width: 480, height: 240, series: this.state.log, color: "#C1FFBE", filled: true, strokeWidth: 4 }),
+                    this.state.lastEval.resp.value);
             }
         }
         return React.createElement("form", { className: "eval-box" },
@@ -424,7 +521,7 @@ exports.FunctionDocs = FunctionDocs;
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
 var ReactDOM = __webpack_require__(1);
-var Device_1 = __webpack_require__(2);
+var Device_1 = __webpack_require__(3);
 ReactDOM.render(React.createElement(Device_1.Device, null), document.getElementById("device"));
 
 

@@ -12,6 +12,11 @@ export interface FNode
     childNodes: FNode[];
 }
 
+export function getTime(): number
+{
+    return new Date().getTime() / 1000.0;
+}
+
 export function newFNode(nodeType: string)
 {
     return {nodeType:nodeType, value:0, childNodes:new Array<FNode>()};
