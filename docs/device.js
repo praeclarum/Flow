@@ -266,9 +266,12 @@ function getErrorMessage(errorCode) {
 var LineChart = (function (_super) {
     __extends(LineChart, _super);
     function LineChart(props) {
-        return _super.call(this, props) || this;
+        var _this = _super.call(this, props) || this;
+        _this.startTime = Flow_1.getTime();
+        return _this;
     }
     LineChart.prototype.render = function () {
+        var _this = this;
         var w = this.props.width;
         var h = this.props.height;
         var sw = this.props.strokeWidth;
@@ -285,7 +288,8 @@ var LineChart = (function (_super) {
         //
         // Measure
         //
-        var maxX = s[lastI][0];
+        var now = Flow_1.getTime();
+        var maxX = now;
         var minX = maxX - 30;
         var minY = 0; // Always include 0 to stabilize graphs
         var maxY = 0;
@@ -311,7 +315,7 @@ var LineChart = (function (_super) {
         // Draw
         //
         var data = "";
-        var getpx = function (x) { return (x - minX) * dpxdx + sw / 2; };
+        var getpx = function (x) { return (x - _this.startTime) * dpxdx + sw / 2; };
         var getpy = function (y) { return h - ((y - minY) * dpydy + sw / 2); };
         var moveTo = function (x, y) { return data += "M " + x + " " + y + " "; };
         var lineTo = function (x, y) { return data += "L " + x + " " + y + " "; };
@@ -333,13 +337,18 @@ var LineChart = (function (_super) {
         }
         if (fill !== "none") {
             px = getpx(s[lastI][0]) + sw * 0.51;
-            py = getpy(s[lastI][1]);
-            lineTo(px, py);
             py = getpy(0);
             lineTo(px, py);
             end();
         }
-        var path = React.createElement("path", { fill: fill, stroke: stroke, strokeWidth: sw, strokeLinejoin: "round", strokeLinecap: "round", d: data });
+        var path = React.createElement("path", { fill: fill, stroke: stroke, strokeWidth: sw, strokeLinejoin: "round", strokeLinecap: "round", d: data, dangerouslySetInnerHTML: { __html: "<animateTransform attributeName='transform'" +
+                    "attributeType='XML'" +
+                    "type='translate'" +
+                    "from='480'" +
+                    "to='" + (-dpxdx * 1000) + "'" +
+                    "dur='1000s'" +
+                    "repeatCount='0'/>" } });
+        // {/*<animate attributeType="XML" attributeName="x" from={0} to={dpxdx} dur="1s" repeatCount={1} />*/}
         return React.createElement("svg", { width: w, height: h }, path);
     };
     return LineChart;
@@ -361,29 +370,28 @@ var EvalBox = (function (_super) {
         this.intervals.forEach(clearTimeout);
     };
     EvalBox.prototype.eval = function (code, force) {
-        var _this = this;
         var tcode = code.trim();
         if (!force && tcode === this.state.lastEval.req)
             return;
         var xhr = new XMLHttpRequest();
         var url = "eval";
         // TEST
-        // let y = Math.random() * 2 - 0.5;
-        // this.state.log.push([getTime(), y]);
-        // this.setState ({ input: code, lastEval: { req: tcode, resp: {value:y,errorCode:0} } });
+        var y = Math.random() * 2 - 0.5;
+        this.state.log.push([Flow_1.getTime(), y]);
+        this.setState({ input: code, lastEval: { req: tcode, resp: { value: y, errorCode: 0 } } });
         // REAL
-        xhr.open("POST", url);
-        xhr.onload = function (_) {
-            var resp = JSON.parse(xhr.responseText);
-            if (tcode === _this.state.input.trim()) {
-                var h = _this.state.log;
-                if (resp.errorCode === 0) {
-                    h.push([Flow_1.getTime(), resp.value]);
-                }
-                _this.setState({ lastEval: { req: tcode, resp: resp } });
-            }
-        };
-        xhr.send(tcode);
+        // xhr.open("POST", url);
+        // xhr.onload = _ => {
+        //     let resp: EvalResponse = JSON.parse(xhr.responseText);
+        //     if (tcode === this.state.input.trim()) {
+        //         var h = this.state.log;
+        //         if (resp.errorCode === 0) {
+        //             h.push([getTime(), resp.value]);
+        //         }
+        //         this.setState ({ lastEval: { req: tcode, resp: resp } });
+        //     }
+        // };
+        // xhr.send(tcode);
     };
     EvalBox.prototype.reeval = function () {
         if (this.state.input.trim() !== "")
@@ -413,7 +421,7 @@ var EvalBox = (function (_super) {
             else {
                 c = "ok";
                 rv = React.createElement("div", { className: "result-value " + c },
-                    React.createElement(LineChart, { width: 480, height: 240, series: this.state.log, color: "#C1FFBE", filled: false, strokeWidth: 4 }),
+                    React.createElement(LineChart, { width: 480, height: 240, series: this.state.log, color: "#C1FFBE", filled: true, strokeWidth: 4 }),
                     this.state.lastEval.resp.value);
             }
         }

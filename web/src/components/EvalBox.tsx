@@ -39,8 +39,10 @@ export interface LineChartProps {
 }
 
 export class LineChart extends React.Component<LineChartProps, undefined> {
+    startTime: number;
     constructor(props: LineChartProps) {
         super(props);
+        this.startTime = getTime();
     }
     render() {
         var w = this.props.width;
@@ -61,7 +63,8 @@ export class LineChart extends React.Component<LineChartProps, undefined> {
         //
         // Measure
         //
-        let maxX = s[lastI][0];
+        let now = getTime();
+        let maxX = now;
         var minX = maxX - 30;
         let minY = 0; // Always include 0 to stabilize graphs
         let maxY = 0;
@@ -86,7 +89,7 @@ export class LineChart extends React.Component<LineChartProps, undefined> {
         // Draw
         //
         var data = "";
-        var getpx = (x: number) => (x - minX) * dpxdx + sw/2;
+        var getpx = (x: number) => (x - this.startTime) * dpxdx + sw/2;
         var getpy = (y: number) => h - ((y - minY) * dpydy + sw/2);
         var moveTo = (x: number, y: number) => data += "M " + x + " " + y + " ";
         var lineTo = (x: number, y: number) => data += "L " + x + " " + y + " ";
@@ -108,13 +111,21 @@ export class LineChart extends React.Component<LineChartProps, undefined> {
         }
         if (fill !== "none") {
             px = getpx(s[lastI][0]) + sw * 0.51;
-            py = getpy(s[lastI][1]);
-            lineTo(px, py);
             py = getpy(0);
             lineTo(px, py);
             end();
         }
-        var path = <path fill={fill} stroke={stroke} strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round" d={data} />
+        var path = 
+                <path fill={fill} stroke={stroke} strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round" d={data}
+                    dangerouslySetInnerHTML={{__html: "<animateTransform attributeName='transform'" +
+                            "attributeType='XML'" +
+                            "type='translate'" +
+                            "from='480'" +
+                            "to='"+(-dpxdx*1000)+"'" +
+                            "dur='1000s'" +
+                            "repeatCount='0'/>"}} />
+                // {/*<animate attributeType="XML" attributeName="x" from={0} to={dpxdx} dur="1s" repeatCount={1} />*/}
+            
         return <svg width={w} height={h}>
                 {/*<circle cx={w/2} cy={h/2} r={h/4} fill="red" />*/}
                 {path}
@@ -154,23 +165,23 @@ export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
         let url = "eval";
 
         // TEST
-        // let y = Math.random() * 2 - 0.5;
-        // this.state.log.push([getTime(), y]);
-        // this.setState ({ input: code, lastEval: { req: tcode, resp: {value:y,errorCode:0} } });
+        let y = Math.random() * 2 - 0.5;
+        this.state.log.push([getTime(), y]);
+        this.setState ({ input: code, lastEval: { req: tcode, resp: {value:y,errorCode:0} } });
 
         // REAL
-        xhr.open("POST", url);
-        xhr.onload = _ => {
-            let resp: EvalResponse = JSON.parse(xhr.responseText);
-            if (tcode === this.state.input.trim()) {
-                var h = this.state.log;
-                if (resp.errorCode === 0) {
-                    h.push([getTime(), resp.value]);
-                }
-                this.setState ({ lastEval: { req: tcode, resp: resp } });
-            }
-        };
-        xhr.send(tcode);
+        // xhr.open("POST", url);
+        // xhr.onload = _ => {
+        //     let resp: EvalResponse = JSON.parse(xhr.responseText);
+        //     if (tcode === this.state.input.trim()) {
+        //         var h = this.state.log;
+        //         if (resp.errorCode === 0) {
+        //             h.push([getTime(), resp.value]);
+        //         }
+        //         this.setState ({ lastEval: { req: tcode, resp: resp } });
+        //     }
+        // };
+        // xhr.send(tcode);
     }
     reeval()
     {
@@ -201,7 +212,7 @@ export class EvalBox extends React.Component<EvalBoxProps, EvalBoxState> {
             else {
                 c = "ok";
                 rv = <div className={"result-value "+c}>
-                        <LineChart width={480} height={240} series={this.state.log} color="#C1FFBE" filled={false} strokeWidth={4} />
+                        <LineChart width={480} height={240} series={this.state.log} color="#C1FFBE" filled={true} strokeWidth={4} />
                         {this.state.lastEval.resp.value}
                     </div>
             }
